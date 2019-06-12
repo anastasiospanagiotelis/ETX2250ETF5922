@@ -5,8 +5,8 @@
     <meta charset="utf-8" />
     <meta name="author" content="Anastasios Panagiotelis" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
-    <link rel="stylesheet" href="mtheme.css" type="text/css" />
-    <link rel="stylesheet" href="mod.css" type="text/css" />
+    <link rel="stylesheet" href="css/mtheme.css" type="text/css" />
+    <link rel="stylesheet" href="css/mod.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -40,7 +40,7 @@ class: inverse, center, middle
 
 # An example
 &lt;video width="720" height="480" controls&gt;
-  &lt;source src="Rosling.webm" type="video/webm"&gt;
+  &lt;source src="img/Rosling.webm" type="video/webm"&gt;
 &lt;/video&gt;
 ---
 
@@ -137,11 +137,11 @@ class: inverse, middle, center
 
 A popular palette is jet.
 
-&lt;img src="jet.jpeg" width="800" style="display: block; margin: auto;" /&gt;
+&lt;img src="img/jet.jpeg" width="800" style="display: block; margin: auto;" /&gt;
 
 A better palette (by the above criteria) is viridis
 
-&lt;img src="ViridisContinuousContinuous.png" width="3733" style="display: block; margin: auto;" /&gt;
+&lt;img src="img/ViridisContinuousContinuous.png" width="3733" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -156,14 +156,14 @@ A better palette (by the above criteria) is viridis
 
 # Jet Colormap
 
-&lt;img src="mona-lisa-rainbow.png" width="384" style="display: block; margin: auto;" /&gt;
+&lt;img src="img/mona-lisa-rainbow.png" width="384" style="display: block; margin: auto;" /&gt;
 
 
 ---
 
 #Viridis colormap
 
-&lt;img src="mona-lisa-gradient.png" width="384" style="display: block; margin: auto;" /&gt;
+&lt;img src="img/mona-lisa-gradient.png" width="384" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -468,25 +468,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();</script>
-<script>
-(function() {
-  var i, text, code, codes = document.getElementsByTagName('code');
-  for (i = 0; i < codes.length;) {
-    code = codes[i];
-    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
-      text = code.textContent;
-      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
-          /^\$\$(.|\s)+\$\$$/.test(text) ||
-          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
-        code.outerHTML = code.innerHTML;  // remove <code></code>
-        continue;
-      }
-    }
-    i++;
-  }
-})();
-
-</script>
 
 <script>
 (function() {

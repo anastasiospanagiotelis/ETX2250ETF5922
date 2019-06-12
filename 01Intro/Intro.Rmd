@@ -7,14 +7,13 @@ output:
   xaringan::moon_reader:
     chakra: libs/remark-latest.min.js
     lib_dir: libs
-    css: [default,"mtheme.css","mod.css"]
+    css: [default,"css/mtheme.css","css/mod.css"]
     nature:
       slideNumberFormat: "%current%"
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-    includes:
-      after_body: extra.html
+
     
 ---
 
@@ -78,7 +77,7 @@ class: inverse, center, middle
 
 
 ```{r snow,eval=TRUE}
-  knitr::include_graphics('Snow-cholera-map.jpg',dpi = 40)
+  knitr::include_graphics('img/Snow-cholera-map.jpg',dpi = 40)
 ```
 
 ---
@@ -86,7 +85,7 @@ class: inverse, center, middle
 # Snow's map
 
 ```{r snowres,eval=TRUE}
-  knitr::include_graphics('Snow_Cholera.svg')
+  knitr::include_graphics('img/Snow_Cholera.svg')
 ```
 
 ---
@@ -112,14 +111,14 @@ class: inverse, center, middle
 # Nightingale's Rose chart
 
 ```{r nightingale,eval=TRUE}
-knitr::include_graphics('florose.jpg',dpi=40)
+knitr::include_graphics('img/florose.jpg',dpi=40)
 ```
 
 ---
 # Nightingale's Rose chart 
 
 ```{r nightingaleres,eval=TRUE}
-knitr::include_graphics('nightingale_rose_chart.svg')
+knitr::include_graphics('img/nightingale_rose_chart.svg')
 ```
 
 - Blue areas: Preventible deaths.
@@ -146,7 +145,7 @@ knitr::include_graphics('nightingale_rose_chart.svg')
 # Minard's plot
 
 ```{r minard}
-knitr::include_graphics('Minard_Map.svg')
+knitr::include_graphics('img/Minard_Map.svg')
 ```
 
 ---

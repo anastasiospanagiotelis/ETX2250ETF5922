@@ -7,15 +7,13 @@ output:
   xaringan::moon_reader:
     chakra: libs/remark-latest.min.js
     lib_dir: libs
-    css: [default,"mtheme.css","mod.css"]
+    css: [default,"css/mtheme.css","css/mod.css"]
     nature:
       slideNumberFormat: "%current%"
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-    includes:
-      after_body: extra.html
-    
+
 ---
 
 class: inverse, center, middle

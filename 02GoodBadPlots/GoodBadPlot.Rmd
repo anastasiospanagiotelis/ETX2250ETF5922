@@ -1,21 +1,19 @@
 ---
 title: "Plots: The Good, the Bad and the Ugly"
-subtitle: "Data Visualisation and analytics"
+subtitle: "Data Visualisation and Analytics"
 author: "Anastasios Panagiotelis"
 date: "Lecture 2"
 output:
   xaringan::moon_reader:
     chakra: libs/remark-latest.min.js
     lib_dir: libs
-    css: [default,"mtheme.css","mod.css"]
+    css: [default,"css/mtheme.css","css/mod.css"]
     nature:
       slideNumberFormat: "%current%"
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-    includes:
-      after_body: extra.html
-    
+
 ---
 
 class: inverse, center, middle
@@ -65,7 +63,7 @@ class: inverse, center, middle
 # An ugly plot
 
 ```{r}
-knitr::include_graphics('monster.jpg')
+knitr::include_graphics('img/monster.jpg')
 ```
 
 ---
@@ -83,7 +81,7 @@ knitr::include_graphics('monster.jpg')
 # Another example
 
 ```{r}
-knitr::include_graphics('Chartjunk-example.svg')
+knitr::include_graphics('img/Chartjunk-example.svg')
 ```
 
 ---
@@ -103,7 +101,7 @@ If data density is small, perhaps use a table
 #Low data density
 
 ```{r}
-knitr::include_graphics('sword.jpg')
+knitr::include_graphics('img/sword.jpg')
 ```
 
 
@@ -162,7 +160,7 @@ class: inverse, center, middle
 # Confusing length and area
 
 ```{r}
-knitr::include_graphics('mac.jpg')
+knitr::include_graphics('img/mac.jpg')
 ```
 
 ---
@@ -179,7 +177,7 @@ knitr::include_graphics('mac.jpg')
 # Beware 3D
 
 ```{r}
-knitr::include_graphics('seo-traffic-columns.gif')
+knitr::include_graphics('img/seo-traffic-columns.gif')
 ```
 
 ---
@@ -187,7 +185,7 @@ knitr::include_graphics('seo-traffic-columns.gif')
 # Beware 3D
 
 ```{r}
-knitr::include_graphics('seo-traffic-pie-chart.gif')
+knitr::include_graphics('img/seo-traffic-pie-chart.gif')
 ```
 
 ---
@@ -216,7 +214,7 @@ $$\mbox{Lie factor}=\frac{\mbox{Size of effect in graph}}{\mbox{Size of effect i
 # Road miles (from Tufte)
 
 ```{r}
-knitr::include_graphics('Lie_factor_example1_image.jpg')
+knitr::include_graphics('img/Lie_factor_example1_image.jpg')
 ```
 
 ---
@@ -232,7 +230,7 @@ knitr::include_graphics('Lie_factor_example1_image.jpg')
 # The y-axis
 
 <video width="640" height="480" controls>
-  <source src="voxyaxis.webm" type="video/webm">
+  <source src="img/voxyaxis.webm" type="video/webm">
 </video> 
 
 ---
@@ -260,7 +258,7 @@ class: inverse, middle, center
 # College cost
 
 ```{r}
-knitr::include_graphics('diminishing-return.jpg')
+knitr::include_graphics('img/diminishing-return.jpg')
 ```
 
 ---
@@ -282,7 +280,7 @@ class: inverse, middle center
 # Electrolux
 
 ```{r}
-knitr::include_graphics('Consultantsmind-Electrolux-Profit-then-Growth.png',dpi=110)
+knitr::include_graphics('img/Consultantsmind-Electrolux-Profit-then-Growth.png',dpi=110)
 ```
 
 ???
@@ -294,7 +292,7 @@ Data-to-ink ratio is zero
 # McKesson
 
 ```{r}
-knitr::include_graphics('Consultantsmind-McKesson-Graph-Forecast.png')
+knitr::include_graphics('img/Consultantsmind-McKesson-Graph-Forecast.png')
 ```
 
 ???
@@ -306,7 +304,7 @@ Forecast not in different colour
 # McKinsey
 
 ```{r}
-knitr::include_graphics('Consultantsmind-McKinsey-Gig-Economy-Messy-Slide.jpg')
+knitr::include_graphics('img/Consultantsmind-McKinsey-Gig-Economy-Messy-Slide.jpg')
 ```
 
 ---
@@ -314,7 +312,7 @@ knitr::include_graphics('Consultantsmind-McKinsey-Gig-Economy-Messy-Slide.jpg')
 # Pizza
 
 ```{r}
-knitr::include_graphics('Its-a-pizza-Chart-Not-a-Pie-chart-1.png',dpi = 150)
+knitr::include_graphics('img/Its-a-pizza-Chart-Not-a-Pie-chart-1.png',dpi = 150)
 ```
 
 ???
@@ -327,7 +325,7 @@ Chart junk numbers do not add up
 # Pie chart
 
 ```{r}
-knitr::include_graphics('Misleading_Pie_Chart.png')
+knitr::include_graphics('img/Misleading_Pie_Chart.png')
 ```
 
 ???
@@ -339,7 +337,7 @@ knitr::include_graphics('Misleading_Pie_Chart.png')
 # Climate Change
 
 ```{r}
-knitr::include_graphics('Nature-climate-change.png',dpi=120)
+knitr::include_graphics('img/Nature-climate-change.png',dpi=120)
 ```
 
 
@@ -348,7 +346,7 @@ knitr::include_graphics('Nature-climate-change.png',dpi=120)
 #Season
 
 ```{r}
-knitr::include_graphics('season.png')
+knitr::include_graphics('img/season.png')
 ```
 
 ???
@@ -359,7 +357,7 @@ lie factor
 # Narcotics
 
 ```{r}
-knitr::include_graphics('display.jpeg')
+knitr::include_graphics('img/display.jpeg')
 ```
 
 

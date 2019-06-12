@@ -5,8 +5,8 @@
     <meta charset="utf-8" />
     <meta name="author" content="Anastasios Panagiotelis" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
-    <link rel="stylesheet" href="mtheme.css" type="text/css" />
-    <link rel="stylesheet" href="mod.css" type="text/css" />
+    <link rel="stylesheet" href="css/mtheme.css" type="text/css" />
+    <link rel="stylesheet" href="css/mod.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -696,25 +696,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();</script>
-<script>
-(function() {
-  var i, text, code, codes = document.getElementsByTagName('code');
-  for (i = 0; i < codes.length;) {
-    code = codes[i];
-    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
-      text = code.textContent;
-      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
-          /^\$\$(.|\s)+\$\$$/.test(text) ||
-          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
-        code.outerHTML = code.innerHTML;  // remove <code></code>
-        continue;
-      }
-    }
-    i++;
-  }
-})();
-
-</script>
 
 <script>
 (function() {

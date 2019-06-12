@@ -7,15 +7,13 @@ output:
   xaringan::moon_reader:
     chakra: libs/remark-latest.min.js
     lib_dir: libs
-    css: [default,"mtheme.css","mod.css"]
+    css: [default,"css/mtheme.css","css/mod.css"]
     nature:
       slideNumberFormat: "%current%"
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-    includes:
-      after_body: extra.html
-    
+
 ---
 
 class: inverse, center, middle
@@ -52,7 +50,7 @@ require(GGally)
 
 # An example
 <video width="720" height="480" controls>
-  <source src="Rosling.webm" type="video/webm">
+  <source src="img/Rosling.webm" type="video/webm">
 </video>
 ---
 
@@ -141,13 +139,13 @@ class: inverse, middle, center
 A popular palette is jet.
 
 ```{r}
-knitr::include_graphics('jet.jpeg')
+knitr::include_graphics('img/jet.jpeg')
 ```
 
 A better palette (by the above criteria) is viridis
 
 ```{r}
-knitr::include_graphics('ViridisContinuousContinuous.png')
+knitr::include_graphics('img/ViridisContinuousContinuous.png')
 ```
 
 ---
@@ -164,7 +162,7 @@ knitr::include_graphics('ViridisContinuousContinuous.png')
 # Jet Colormap
 
 ```{r}
-knitr::include_graphics('mona-lisa-rainbow.png',dpi = 100)
+knitr::include_graphics('img/mona-lisa-rainbow.png',dpi = 100)
 ```
 
 
@@ -173,7 +171,7 @@ knitr::include_graphics('mona-lisa-rainbow.png',dpi = 100)
 #Viridis colormap
 
 ```{r}
-knitr::include_graphics('mona-lisa-gradient.png',dpi = 100)
+knitr::include_graphics('img/mona-lisa-gradient.png',dpi = 100)
 ```
 
 ---

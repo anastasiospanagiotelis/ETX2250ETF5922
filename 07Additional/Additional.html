@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Additional Issues</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Anastasios Panagiotelis" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets/htmlwidgets.js"></script>
+    <script src="libs/pymjs/pym.v1.js"></script>
+    <script src="libs/widgetframe-binding/widgetframe.js"></script>
+    <link rel="stylesheet" href="css/mtheme.css" type="text/css" />
+    <link rel="stylesheet" href="css/mod.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Additional Issues
+## Data Visualisation and Analytics
+### Anastasios Panagiotelis
+### Lecture 7
+
+---
+
+
+class: inverse, center, middle
+
+# Minor adjustments
+
+
+
+---
+
+# Minor adjustments
+
+- Sometimes we would like to add a title to a plot or change the labels.
+  - This is achieved by `labs`
+- Sometimes we may wish to change the general look
+  - This is achieved by the `theme` function and functions in the `ggtheme` package.
+
+---
+
+# Change labels
+
+
+```r
+economics%&gt;%
+  ggplot(aes(x=psavert,y=uempmed))+
+  geom_point()
+```
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-1-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Change labels
+
+
+```r
+economics%&gt;%
+  ggplot(aes(x=psavert,y=uempmed))+
+  geom_point()+labs(title = 'Savings v Duration')+
+  xlab('Savings Rate')+
+  ylab('Medium Duration of Unemployment')
+```
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Change theme
+
+
+```r
+economics%&gt;%
+  ggplot(aes(x=psavert,y=uempmed))+
+  geom_point()+theme_classic()
+```
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Change theme
+
+
+```r
+economics%&gt;%
+  ggplot(aes(x=psavert,y=uempmed))+
+  geom_point()+theme_bw()
+```
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# One from ggthemes
+
+
+```r
+economics%&gt;%
+  ggplot(aes(x=psavert,y=uempmed))+
+  geom_point()+theme_economist()
+```
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Another from ggthemes
+
+
+```r
+economics%&gt;%
+  ggplot(aes(x=psavert,y=uempmed))+
+  geom_point()+theme_wsj()
+```
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+---
+
+# Theme
+
+- You can customise your own themes using the `theme` function.
+- There are many guides for using this
+- One can be found &lt;a href="http://www.sthda.com/english/wiki/ggplot2-themes-and-background-colors-the-3-elements"&gt;here&lt;/a&gt;. 
+
+---
+
+# Annotation
+
+- Remember that plots tell a story.
+- Sometimes it helps to add text to a plot to help tell this story.
+- This can be done with the `annotate` function.
+---
+
+#Annotate
+
+
+```r
+economics%&gt;%
+  ggplot(aes(x=psavert,y=uempmed))+
+  geom_point()+ annotate('text',
+   x=4,y=24,label='Bad Times!',size=5,col='red')
+```
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+class: inverse, middle, center
+
+#More on time series
+
+---
+#Many time series on one plot
+
+- It is common to see multiple time series on a single plot.
+- This can be achieved using the `group` aesthetic.
+- We will do this with the `txhousing` data.
+- Suppose we are looking at `sales` and `listings` since 2010 for Houston only.
+
+---
+
+#Houston Data
+
+
+```r
+txhousing%&gt;%
+  filter(city=='Houston',date&gt;2010)%&gt;%
+  select(date,sales,listings)-&gt;houston_sales_listings
+
+houston_sales_listings%&gt;%
+  gather('variable','value',-date)%&gt;%
+  ggplot(aes(x=date,y=value,group=variable))+
+  geom_line()
+```
+
+---
+
+#Houston Data
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Beware
+
+- Plotting time series measured in different units on the same plot is very very risky.
+- Something commonly seen is a plot with two time series but with different y axes.
+- For some debate on this issue see &lt;a href='https://stackoverflow.com/questions/3099219/ggplot-with-2-y-axes-on-each-side-and-different-scales/3101876#3101876'&gt; this discussion &lt;/a&gt;.
+- Crossing points can be manipulated by arbitrarily changing the scale.
+
+---
+
+# Crossing points
+
+&lt;img src="dualy.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Aspect Ratio
+
+- Another issue when looking at time series plots is the aspect ratio.
+- The aspect ratio is the ratio of the width to the height of the plot.
+- For time series plot larger aspect ratios can make trends look smaller.
+- Aspect ratio can be controlled through the `coord_fixed` function
+
+---
+
+#Aspect Ratio
+
+
+```r
+houston_sales_listings%&gt;%
+  ggplot(aes(x=date,y=sales))+
+  geom_line()+
+  coord_fixed(ratio=0.002)
+
+houston_sales_listings%&gt;%
+  ggplot(aes(x=date,y=sales))+
+  geom_line()+coord_fixed(0.0001)
+```
+
+---
+
+#Aspect Ratio
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Banking to 45
+
+- An old rule of thumb suggested by Cleveland is *banking to 45 degrees*
+- Find the slopes of every line joining a point at time `\(t\)` to the the point at time `\(t+1\)`.
+- Set the aspect ratio so that the median of these is 45 degrees.
+- It is only a rough guide and has recently been called into question.
+
+---
+# Alternatives
+
+- If we are looking for the relationship between two variables it is often better to look at a scatterplot.
+- A problem with this is that the dimension of time is lost.
+- Time can however be represented using color and the `geom_path` geometry.
+---
+#Scatter plot
+
+
+```r
+houston_sales_listings%&gt;%
+  ggplot(aes(x=listings,y=sales))+
+  geom_point()
+```
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" /&gt;
+---
+#Path plot
+
+
+```r
+houston_sales_listings%&gt;%
+  ggplot(aes(x=listings,y=sales, col=date))+
+  geom_path()+scale_color_viridis_c()
+```
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+class: middle, center inverse
+
+# Modelling
+
+
+---
+
+# Modelling
+
+- Often visualisation is conducted with modelling in mind
+- Scatterplots can be visualised with a model fit as well
+- This is done using `geom_smooth` 
+- We can illustrate using the `mpg` data.
+
+---
+
+# Scatterplot
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-16-1.png" style="display: block; margin: auto;" /&gt;
+---
+
+# With fitted curve
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Smooth fit
+
+- The fitted line by default comes from the LOcal Estimated Scatterplot Smoothing (LOESS) method.
+- This technique combines the idea of nearest neighbours with regression.
+- Nearest neighbours are found (along the x-axis)
+- A constant, linear or quadratic regression is fit to the nearest neighbours.
+
+---
+
+# Nearest Neighbours
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-18-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Nearest Neighbours
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Local fit
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-20-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Nearest Neighbours
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-21-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Details
+
+- In the LOESS algorithm, the smoothing parameter `\(\alpha\)` is defined as the proportion of observations used as nearest neigbours.
+  - If `\(\alpha=0.2\)` and `\(n=20\)` then use `\(k=4\)` nearest neighbours.
+  - By default `\(\alpha=0.75\)` in R.
+- It is common to use weighted regression whereby closer neighbours are given more influence.
+- LOESS is not ideal for large datasets.
+
+---
+
+# Linear fit
+
+Linear regression can be used instead of LOESS
+
+
+```r
+ggplot(mpg,aes(x=displ,y=cty))+
+  geom_point()+geom_smooth(method = 'lm')
+```
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" /&gt;
+---
+
+# With Colour
+
+
+```r
+ggplot(mpg,aes(x=displ,y=cty,col=drv))+
+  geom_point()+geom_smooth(method = 'lm')
+```
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Confidence bands
+
+- The grey ribbons give an indication of uncertainty around the estimated line.
+- These relate to uncertainty around the estimate of the regression slope (or LOESS curve).
+- Since regression includes a noise term, observations can easily lie outside the confidence ribbons.
+
+---
+
+class: middle, center inverse
+
+#Interactivity
+
+---
+
+# Visualisation on the web
+
+- Plots these days are often looked at on a website or at least on a computer.
+- This is in contrast to the recent past when most plots were eventually printed onto paper.
+- This allows the user to interact with plots.
+- An example of this is the *plotly* software.
+
+---
+
+# Plotly and ggplot
+
+- There is an R package called `plotly` which allows plotly to be easily used with ggplot.
+- Simply store the result of ggplot in a variable and then run the function `ggplotly`
+
+
+```r
+houston_sales_listings%&gt;%
+  ggplot(aes(x=listings,y=sales, col=date))+
+  geom_path()+scale_color_viridis_c()-&gt;g
+ggplotly(g)
+```
+
+---
+
+# Plotly
+
+<div id="htmlwidget-fd3d1cde9f11126da1f1" style="width:100%;height:504px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-fd3d1cde9f11126da1f1">{"x":{"url":"Additional_files/figure-html//widgets/widget_unnamed-chunk-25.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+
+---
+
+# More plotly
+
+<div id="htmlwidget-b32d5e6172bf5c75cfed" style="width:100%;height:504px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b32d5e6172bf5c75cfed">{"x":{"url":"Additional_files/figure-html//widgets/widget_unnamed-chunk-26.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+
+---
+
+# Summary
+
+- Other interesting tools include the `gganimate` package.
+  - As the name suggests this allows for easy animation.
+- Also the `shiny` package 
+  - This allows for the design of interactive web apps.
+- You now have a strong base in R to teach yourself these how to use the tools.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

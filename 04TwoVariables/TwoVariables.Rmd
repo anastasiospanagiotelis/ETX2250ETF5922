@@ -7,15 +7,12 @@ output:
   xaringan::moon_reader:
     chakra: libs/remark-latest.min.js
     lib_dir: libs
-    css: [default,"mtheme.css","mod.css"]
+    css: [default,"css/mtheme.css","css/mod.css"]
     nature:
       slideNumberFormat: "%current%"
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-    includes:
-      after_body: extra.html
-    
 ---
 
 class: inverse, center, middle
@@ -211,7 +208,7 @@ $$\mbox{Prob}(r)=\frac{r^{-s}}{K}$$
 # Australian Constitution
 
 ```{r, message=FALSE}
-AusConsFreq<-read_csv('AusConstitution.csv')
+AusConsFreq<-read_csv('data/AusConstitution.csv')
 AusConsFreq%>%
   filter(Rank<51)%>%
   ggplot(aes(x=reorder(Word,Rank),y=Freq))+
@@ -260,7 +257,7 @@ AusConsFreq%>%
 # Avengers Endgame
 
 ```{r, message=FALSE}
-Avengers<-read_csv('Avengers.csv')
+Avengers<-read_csv('data/Avengers.csv')
 Avengers%>%
   filter(Rank<51)%>%
   ggplot(aes(x=reorder(Word,Rank),y=Freq))+
@@ -296,7 +293,7 @@ ggplotly(g)%>%
 # Tao Bao
 
 ```{r, message=FALSE}
-TaoBao<-read_csv('TaoBao.csv')
+TaoBao<-read_csv('data/TaoBao.csv')
 TaoBao%>%
   filter(Rank<51)%>%
   ggplot(aes(x=reorder(Character,Rank),y=Freq))+
@@ -593,8 +590,8 @@ ggplot(data = diamonds)+
 # Titanic
 
 ```{r}
-knitr::include_graphics('titanic.jpeg')
-knitr::include_graphics('jackrose.jpeg')
+knitr::include_graphics('img/titanic.jpeg')
+knitr::include_graphics('img/jackrose.jpeg')
 ```
 
 ---
