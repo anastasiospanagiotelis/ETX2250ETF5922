@@ -1,0 +1,537 @@
+---
+title: "Data Munging"
+subtitle: "Data Visualisation and Analytics"
+author: "Anastasios Panagiotelis"
+date: "Lecture 6"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"mtheme.css","mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    includes:
+      after_body: extra.html
+    
+---
+
+class: inverse, center, middle
+
+# Data is messy
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
+require(magrittr)
+require(tidyverse)
+require(plotly)
+require(widgetframe)
+require(animation)
+require(DT)
+require(PoEdata)
+require(kableExtra)
+require(gridExtra)
+require(ggmosaic)
+require(GGally)
+```
+
+---
+
+# Data 
+
+- Data rarely comes in the fomat we want:
+  - May not want to use all variables,
+  - May not want to use all observations,
+  - May need to transform variables.
+
+---
+
+# A few simple functions
+
+- Much can be done with a few simple functions from the `dplyr` package:
+  - Choose variables with `filter`
+  - Choose observations with `select`
+  - Transform variables with `mutate`
+- In all cases both input and output is a data frame.
+
+---
+
+#Data frame
+
+- A data frame is an object with:
+  - Each row corresponding to an observation or case,
+  - Each column corresponding to a variable.
+- Two types of data frames in R are:
+  - The `data.frame` in base R
+  - The `tibble` in the tidyverse
+
+---
+
+# Diamonds
+
+The diamonds data is a tibble
+
+```{r, echo=TRUE}
+diamonds
+```
+
+---
+
+# Select variables
+
+- The `select` function can be used if we only want to focus on a subset of variables.
+- For the diamonds dataset we may only be interested in `carat`, `cut` and `price`.
+
+```{r, echo=TRUE}
+selected<-select(diamonds,carat, cut, price)
+selected
+```
+
+---
+
+# Select variables
+
+- To drop variables, use a `-` sign
+
+```{r, echo=TRUE}
+select(diamonds,-carat, -cut, -price)
+```
+
+---
+
+# Filter variables
+
+- Suppose we only want to consider diamonds worth more than $1000
+```{r,echo=TRUE}
+filter(diamonds,(price>1000))
+```
+
+---
+
+# Logical stamtents
+
+- The term `(price>1000)` is an example of a logical statement.  It can be true or false.
+- Other examples are
+  - Price less than 1000 `(price<1000)`
+  - Price less than or equal to 1000 `(price<=1000)`
+  - Price not 1000 `(price!=1000)`
+  - Price exactly 1000 `(price==1000)`
+- Note **two** equals signs.
+- In general `!` is the negation of a statement.
+
+---
+
+# And operator
+
+- If two statements need to be satisfied use `&`
+```{r,echo=TRUE}
+filter(diamonds,
+       (price>1000)&(cut=='Ideal'))
+
+```
+
+---
+
+# Or operator
+
+- If either one or the other statement needs to be satisfied use `|`
+```{r,echo=TRUE}
+filter(diamonds,(cut=='Ideal')|color=='E')
+```
+
+---
+
+# In operator
+
+Another useful operator is `%in%`
+```{r,echo=TRUE}
+filter(diamonds,
+       (cut %in% c('Ideal','Fair')))
+```
+
+---
+
+# Not operator
+
+Use `!` as not 
+```{r,echo=TRUE}
+filter(diamonds,
+       !(cut %in% c('Ideal','Fair')))
+```
+
+---
+# Your turn
+
+- Write R code for the following:
+  - `price` greater than 2000 and `carat` less than 3.
+  - `price` greater than 2000 and `cut` either Very Good, Premium or Ideal.
+  - `carat` less than 2 or price greater than 500.
+  - `carat` less than 2 and `cut` not equal to Premium.
+---
+class: inverse, center, middle
+# Creating New Variables
+
+---
+
+# Mpg
+
+Mpg is also a tibble
+
+```{r, echo=TRUE}
+mpg
+```
+
+---
+
+# Mutate
+
+- Suppose we are interested in fuel efficiency (the variables `cty` and `hwy`).
+- These are measured in miles per gallon, but we want to convert into metric units.
+- One mile per gallon equals 0.425144 km per litre
+```{r,echo=TRUE}
+mpgSel<-select(mpg,cty,hwy)
+mpgMet<-mutate(mpgSel,ctyMetric=0.425144*cty,
+                  hwyMetric=0.425144*hwy)
+```
+---
+
+# Result
+
+```{r,echo=FALSE}
+mpgSel<-select(mpg,cty,hwy)
+mpgMet<-mutate(mpgSel,ctyMetric=0.425144*cty,
+                  hwyMetric=0.425144*hwy)
+mpgMet
+```
+---
+
+# The pipe operator
+
+- The fact that the input and output are always data frames makes the pipe operator useful.
+- Simply use `%>%` to chain commands together.
+- Somtimes it is clearer to use `->` rather than use `<-` for assignment.
+```{r, echo=TRUE}
+c(1,12,4)%>%
+  mean%>%
+  sqrt->out
+str(out)
+```
+---
+
+#Pipes and dplyr
+
+This code
+
+```{r,echo=TRUE}
+mpgSel<-select(mpg,cty,hwy)
+mpgMet<-mutate(mpgSel,ctyMetric=0.425144*cty,
+                  hwyMetric=0.425144*hwy)
+```
+
+does the same as this code
+
+```{r,echo=TRUE}
+select(mpg,cty,hwy)%>%
+  mutate(ctyMetric=0.425144*cty,
+                  hwyMetric=0.425144*hwy)->mpgMet
+```
+
+---
+class: inverse, middle, center
+
+# Grouping
+
+---
+
+# Group by function
+
+- A powerful function in dplyr is the `group_by` function.
+- Used in combination with `summarise`, it can construct  new datasets.
+- Consider the `txhousing` dataset.  There is monthly data for each city.
+- Suppose the aim is to find total number of sales for all cities in a year.
+
+---
+
+#Texas Housing
+
+```{r, echo=TRUE}
+txhousing
+```
+---
+
+#Group by and summarise
+
+```{r, echo=TRUE}
+txhousing%>%
+  group_by(year)%>%
+  summarise(TotalSales=
+              sum(sales,na.rm = TRUE))->TotSales
+TotSales
+```
+
+---
+
+#Group by two variables
+
+- In earlier years, data for some cities is unavailable and is filled in as `NA`.
+- The option `na.rm=TRUE` removes missing data before taking the sum.
+- Next, suppose we want to get the yearly total for each city
+- Need to group by `city` and `year`.
+
+
+---
+#Group by and summarise
+
+```{r, echo=TRUE}
+txhousing%>%
+  group_by(year,city)%>%
+  summarise(TotalSales=
+              sum(sales,na.rm = TRUE))->TotSales
+TotSales
+```
+
+---
+#Your turn
+
+- In the `diamonds` dataset, find the average price for each cut of diamond.
+- In the `diamonds` dataset, find the average price for each cut of diamond given that price in above 2000.
+- In the `mpg` dataset find the average fuel efficiency in the city of in each year.
+- In the `mpg` dataset, consider Toyota, Nissan and Honda. Find the value of `hwy` for each of these manufacturer's most fuel efficient cars on the highway.
+
+
+
+---
+
+class: inverse, center middle
+
+# About databases
+---
+
+# Codd's Model
+
+- Many of the functions in `dplyr` are built on similar functions in the SQL language that is used to query databases.
+- SQL is itself built upon (but not exactly the same) as a theoretical model known as Codd's model.
+- An important aspect of this model is the first normal form.
+- This also provide some guidelines for good data management.
+
+---
+
+# Example
+
+Suppose we have the following database:
+
+```{r}
+eg<-tibble(Name=c('Ahmed','Bin','Carol'),
+           DoB=c('1994/03/01','1954/12/23','1982/07/16'),
+           Email=c('ahmed@personal.com',
+                   'bin@me.com; bin@work.com',
+                   'carol@mailcom'))  
+kable(eg)%>%
+  kable_styling(font_size = 24)
+```
+
+---
+
+#Problems
+
+- Carol's entry not a valid email.  
+  - A function can be written to check and remove this.
+- A bigger problem is that the email entry is not **atomic**.  There are two emails for Bin.
+  - If code is written to check if the email is valid, then this code will also fail for Bin.
+- On the next slide is a solution.
+
+---
+
+# Possible solution
+
+```{r}
+eg<-tibble(Name=c('Ahmed','Bin','Carol'),
+           DoB=c('1994/03/01','1954/12/23','1982/07/16'),
+           Email1=c('ahmed@personal.com',
+                    'bin@me.com',
+                    'carol@mailcom'),
+           Email2=c(NA,
+                    'bin@work.com',
+                    NA))  
+kable(eg)%>%
+  kable_styling(font_size = 24)
+```
+---
+
+#Problems
+
+- This solution forces an ordering between Email1 and Email2 that may be arbitrary.
+- Also, a new entry into the database may be: 
+  - Name: Deepal
+  - DoB: 1987/04/23
+  - Email: deepal@work.com; deepal@me.com; coolgirl87@me.com
+- The entire database needs to be changed to allow for three email addresses
+---
+
+# Solution
+
+```{r}
+eg<-tibble(Name=c('Ahmed','Bin','Bin','Carol'),
+           DoB=c('1994/03/01','1954/12/23','1954/12/23','1982/07/16'),
+           Email=c('ahmed@personal.com',
+                    'bin@me.com',
+                    'bin@work.com',
+                    'carol@mailcom'))  
+kable(eg)%>%
+  kable_styling(font_size = 24)
+```
+
+Deepal can be added as
+
+```{r}
+eg<-tibble(Name=rep('Deepal',3),
+           DoB=rep('1987/04/23',3),
+           Email=c('deepal@work.com', 
+                   'deepal@me.com', 
+                   'coolgirl87@me.com'))  
+kable(eg)%>%
+  kable_styling(font_size = 24)
+```
+
+---
+
+# First Normal Form
+
+- This is only a very very superficial treatment of *database normalization*.
+- The emphasis here is getting data into a form that is easily workable and minimises the chance for mistakes.
+- It should be noted that the concept of *atomicity* is itself controversial and can be ambiguous.
+- The main message is to think carefully about how you get data into an easily workable and robust form.
+
+---
+
+class: inverse, middle, center
+
+# Reshaping
+
+---
+
+# Long v wide format
+
+- Generally attempt to have one column per variable.
+- Sometimes the meaning of a *variable* is ambiguous.
+- In many cases it is easier to use `ggplot2` if the data are reshaped into a different form.
+- We investigate using the `economics` data
+
+---
+
+# Economics wide
+
+```{r, echo=TRUE}
+economics
+```
+
+---
+
+# Economics long
+
+```{r, echo=TRUE, warning=FALSE}
+economics_long
+```
+
+---
+
+# Use wide
+
+```{r,echo=TRUE,fig.height=5}
+ggplot(economics,aes(x=uempmed,y=psavert))+
+  geom_point()
+```
+
+---
+
+# Use long
+
+```{r,echo=TRUE,fig.height=4.5}
+ggplot(economics_long,aes(x=date,y=value))+
+  geom_line()+
+  facet_wrap(~variable, scales = 'free_y')
+```
+
+---
+
+# From wide to long
+
+```{r,echo=TRUE}
+gather(economics,key = Variable, 
+       value = Value,-date)->long
+long
+```
+
+---
+
+# Gather function
+
+- The `key` will be the name of the function that stores the variable name.
+- The `value` will be the name of the variables that stores values.
+- Use `-` to exclude variable(s) from gathering.
+- Here this was done for date
+
+---
+
+#From long to wide
+
+```{r,echo=TRUE}
+economics_long%>%
+  select(-value01)%>%
+  spread(key = variable, 
+         value = value)->wide
+wide
+```
+
+---
+class: inverse, center middle
+
+# Data Import
+
+---
+# Data Import
+
+- In many cases data is stored in a *flat database*.
+- This means the data is stored in a single table.
+- Columns are separated by a comma or a tab.
+- Usually this table is contained in a single file.
+- For reading in such data the `readr` package is very useful.
+
+---
+
+# The readr package
+
+- Two of the more useful functions are `read_csv` and `read_tsv` for comma delimited and tab delimited files respectively.
+- Generally the defaults for this function work quite well.
+- One argument that is worth discussing a little is `col_types`
+
+---
+
+# Reading in long numbers
+
+- The largest integer that many computers will accurately store is about 19 digits long.
+- Some identification numbers are longer than that (for instance IBAN numbers used for bank transfers).
+- In some cases, R may try to read these numbers in as integers.
+- To avoid errors these should be read in as characters.
+
+---
+
+# Column types
+
+- Specifying `col_types='c'` overrides the default behaviour of `readr`.
+- You can use this to force everything to be read in as a string.
+- If needed these can subsequently be converted to numeric variables using `as.numeric`.
+
+---
+# Summary
+
+- With a small number of functions, much can be done
+  - `select`, `filter`, `mutate`
+  - `group_by`, `summarise`
+  - `gather`, `spread`
+- Mastering these functions takes practice.
+- Often these functions are the key to creating plots.
+

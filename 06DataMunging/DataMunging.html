@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Data Munging</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Anastasios Panagiotelis" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link rel="stylesheet" href="mtheme.css" type="text/css" />
+    <link rel="stylesheet" href="mod.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Data Munging
+## Data Visualisation and Analytics
+### Anastasios Panagiotelis
+### Lecture 6
+
+---
+
+
+class: inverse, center, middle
+
+# Data is messy
+
+
+
+---
+
+# Data 
+
+- Data rarely comes in the fomat we want:
+  - May not want to use all variables,
+  - May not want to use all observations,
+  - May need to transform variables.
+
+---
+
+# A few simple functions
+
+- Much can be done with a few simple functions from the `dplyr` package:
+  - Choose variables with `filter`
+  - Choose observations with `select`
+  - Transform variables with `mutate`
+- In all cases both input and output is a data frame.
+
+---
+
+#Data frame
+
+- A data frame is an object with:
+  - Each row corresponding to an observation or case,
+  - Each column corresponding to a variable.
+- Two types of data frames in R are:
+  - The `data.frame` in base R
+  - The `tibble` in the tidyverse
+
+---
+
+# Diamonds
+
+The diamonds data is a tibble
+
+
+```r
+diamonds
+```
+
+```
+## # A tibble: 53,940 x 10
+##    carat cut       color clarity depth table price     x     y     z
+##    &lt;dbl&gt; &lt;ord&gt;     &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 0.23  Ideal     E     SI2      61.5    55   326  3.95  3.98  2.43
+##  2 0.21  Premium   E     SI1      59.8    61   326  3.89  3.84  2.31
+##  3 0.23  Good      E     VS1      56.9    65   327  4.05  4.07  2.31
+##  4 0.290 Premium   I     VS2      62.4    58   334  4.2   4.23  2.63
+##  5 0.31  Good      J     SI2      63.3    58   335  4.34  4.35  2.75
+##  6 0.24  Very Good J     VVS2     62.8    57   336  3.94  3.96  2.48
+##  7 0.24  Very Good I     VVS1     62.3    57   336  3.95  3.98  2.47
+##  8 0.26  Very Good H     SI1      61.9    55   337  4.07  4.11  2.53
+##  9 0.22  Fair      E     VS2      65.1    61   337  3.87  3.78  2.49
+## 10 0.23  Very Good H     VS1      59.4    61   338  4     4.05  2.39
+## # … with 53,930 more rows
+```
+
+---
+
+# Select variables
+
+- The `select` function can be used if we only want to focus on a subset of variables.
+- For the diamonds dataset we may only be interested in `carat`, `cut` and `price`.
+
+
+```r
+selected&lt;-select(diamonds,carat, cut, price)
+selected
+```
+
+```
+## # A tibble: 53,940 x 3
+##    carat cut       price
+##    &lt;dbl&gt; &lt;ord&gt;     &lt;int&gt;
+##  1 0.23  Ideal       326
+##  2 0.21  Premium     326
+##  3 0.23  Good        327
+##  4 0.290 Premium     334
+##  5 0.31  Good        335
+##  6 0.24  Very Good   336
+##  7 0.24  Very Good   336
+##  8 0.26  Very Good   337
+##  9 0.22  Fair        337
+## 10 0.23  Very Good   338
+## # … with 53,930 more rows
+```
+
+---
+
+# Select variables
+
+- To drop variables, use a `-` sign
+
+
+```r
+select(diamonds,-carat, -cut, -price)
+```
+
+```
+## # A tibble: 53,940 x 7
+##    color clarity depth table     x     y     z
+##    &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 E     SI2      61.5    55  3.95  3.98  2.43
+##  2 E     SI1      59.8    61  3.89  3.84  2.31
+##  3 E     VS1      56.9    65  4.05  4.07  2.31
+##  4 I     VS2      62.4    58  4.2   4.23  2.63
+##  5 J     SI2      63.3    58  4.34  4.35  2.75
+##  6 J     VVS2     62.8    57  3.94  3.96  2.48
+##  7 I     VVS1     62.3    57  3.95  3.98  2.47
+##  8 H     SI1      61.9    55  4.07  4.11  2.53
+##  9 E     VS2      65.1    61  3.87  3.78  2.49
+## 10 H     VS1      59.4    61  4     4.05  2.39
+## # … with 53,930 more rows
+```
+
+---
+
+# Filter variables
+
+- Suppose we only want to consider diamonds worth more than $1000
+
+```r
+filter(diamonds,(price&gt;1000))
+```
+
+```
+## # A tibble: 39,416 x 10
+##    carat cut       color clarity depth table price     x     y     z
+##    &lt;dbl&gt; &lt;ord&gt;     &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  0.7  Ideal     E     SI1      62.5    57  2757  5.7   5.72  3.57
+##  2  0.86 Fair      E     SI2      55.1    69  2757  6.45  6.33  3.52
+##  3  0.7  Ideal     G     VS2      61.6    56  2757  5.7   5.67  3.5 
+##  4  0.71 Very Good E     VS2      62.4    57  2759  5.68  5.73  3.56
+##  5  0.78 Very Good G     SI2      63.8    56  2759  5.81  5.85  3.72
+##  6  0.7  Good      E     VS2      57.5    58  2759  5.85  5.9   3.38
+##  7  0.7  Good      F     VS1      59.4    62  2759  5.71  5.76  3.4 
+##  8  0.96 Fair      F     SI2      66.3    62  2759  6.27  5.95  4.07
+##  9  0.73 Very Good E     SI1      61.6    59  2760  5.77  5.78  3.56
+## 10  0.8  Premium   H     SI1      61.5    58  2760  5.97  5.93  3.66
+## # … with 39,406 more rows
+```
+
+---
+
+# Logical stamtents
+
+- The term `(price&gt;1000)` is an example of a logical statement.  It can be true or false.
+- Other examples are
+  - Price less than 1000 `(price&lt;1000)`
+  - Price less than or equal to 1000 `(price&lt;=1000)`
+  - Price not 1000 `(price!=1000)`
+  - Price exactly 1000 `(price==1000)`
+- Note **two** equals signs.
+- In general `!` is the negation of a statement.
+
+---
+
+# And operator
+
+- If two statements need to be satisfied use `&amp;`
+
+```r
+filter(diamonds,
+       (price&gt;1000)&amp;(cut=='Ideal'))
+```
+
+```
+## # A tibble: 14,700 x 10
+##    carat cut   color clarity depth table price     x     y     z
+##    &lt;dbl&gt; &lt;ord&gt; &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  0.7  Ideal E     SI1      62.5    57  2757  5.7   5.72  3.57
+##  2  0.7  Ideal G     VS2      61.6    56  2757  5.7   5.67  3.5 
+##  3  0.74 Ideal G     SI1      61.6    55  2760  5.8   5.85  3.59
+##  4  0.8  Ideal I     VS1      62.9    56  2760  5.94  5.87  3.72
+##  5  0.75 Ideal G     SI1      62.2    55  2760  5.87  5.8   3.63
+##  6  0.74 Ideal I     VVS2     62.3    55  2761  5.77  5.81  3.61
+##  7  0.81 Ideal F     SI2      58.8    57  2761  6.14  6.11  3.6 
+##  8  0.59 Ideal E     VVS2     62      55  2761  5.38  5.43  3.35
+##  9  0.8  Ideal F     SI2      61.4    57  2761  5.96  6     3.67
+## 10  0.74 Ideal E     SI2      62.2    56  2761  5.8   5.84  3.62
+## # … with 14,690 more rows
+```
+
+---
+
+# Or operator
+
+- If either one or the other statement needs to be satisfied use `|`
+
+```r
+filter(diamonds,(cut=='Ideal')|color=='E')
+```
+
+```
+## # A tibble: 27,445 x 10
+##    carat cut       color clarity depth table price     x     y     z
+##    &lt;dbl&gt; &lt;ord&gt;     &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  0.23 Ideal     E     SI2      61.5    55   326  3.95  3.98  2.43
+##  2  0.21 Premium   E     SI1      59.8    61   326  3.89  3.84  2.31
+##  3  0.23 Good      E     VS1      56.9    65   327  4.05  4.07  2.31
+##  4  0.22 Fair      E     VS2      65.1    61   337  3.87  3.78  2.49
+##  5  0.23 Ideal     J     VS1      62.8    56   340  3.93  3.9   2.46
+##  6  0.31 Ideal     J     SI2      62.2    54   344  4.35  4.37  2.71
+##  7  0.2  Premium   E     SI2      60.2    62   345  3.79  3.75  2.27
+##  8  0.32 Premium   E     I1       60.9    58   345  4.38  4.42  2.68
+##  9  0.3  Ideal     I     SI2      62      54   348  4.31  4.34  2.68
+## 10  0.23 Very Good E     VS2      63.8    55   352  3.85  3.92  2.48
+## # … with 27,435 more rows
+```
+
+---
+
+# In operator
+
+Another useful operator is `%in%`
+
+```r
+filter(diamonds,
+       (cut %in% c('Ideal','Fair')))
+```
+
+```
+## # A tibble: 23,161 x 10
+##    carat cut   color clarity depth table price     x     y     z
+##    &lt;dbl&gt; &lt;ord&gt; &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  0.23 Ideal E     SI2      61.5    55   326  3.95  3.98  2.43
+##  2  0.22 Fair  E     VS2      65.1    61   337  3.87  3.78  2.49
+##  3  0.23 Ideal J     VS1      62.8    56   340  3.93  3.9   2.46
+##  4  0.31 Ideal J     SI2      62.2    54   344  4.35  4.37  2.71
+##  5  0.3  Ideal I     SI2      62      54   348  4.31  4.34  2.68
+##  6  0.33 Ideal I     SI2      61.8    55   403  4.49  4.51  2.78
+##  7  0.33 Ideal I     SI2      61.2    56   403  4.49  4.5   2.75
+##  8  0.33 Ideal J     SI1      61.1    56   403  4.49  4.55  2.76
+##  9  0.23 Ideal G     VS1      61.9    54   404  3.93  3.95  2.44
+## 10  0.32 Ideal I     SI1      60.9    55   404  4.45  4.48  2.72
+## # … with 23,151 more rows
+```
+
+---
+
+# Not operator
+
+Use `!` as not 
+
+```r
+filter(diamonds,
+       !(cut %in% c('Ideal','Fair')))
+```
+
+```
+## # A tibble: 30,779 x 10
+##    carat cut       color clarity depth table price     x     y     z
+##    &lt;dbl&gt; &lt;ord&gt;     &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 0.21  Premium   E     SI1      59.8    61   326  3.89  3.84  2.31
+##  2 0.23  Good      E     VS1      56.9    65   327  4.05  4.07  2.31
+##  3 0.290 Premium   I     VS2      62.4    58   334  4.2   4.23  2.63
+##  4 0.31  Good      J     SI2      63.3    58   335  4.34  4.35  2.75
+##  5 0.24  Very Good J     VVS2     62.8    57   336  3.94  3.96  2.48
+##  6 0.24  Very Good I     VVS1     62.3    57   336  3.95  3.98  2.47
+##  7 0.26  Very Good H     SI1      61.9    55   337  4.07  4.11  2.53
+##  8 0.23  Very Good H     VS1      59.4    61   338  4     4.05  2.39
+##  9 0.3   Good      J     SI1      64      55   339  4.25  4.28  2.73
+## 10 0.22  Premium   F     SI1      60.4    61   342  3.88  3.84  2.33
+## # … with 30,769 more rows
+```
+
+---
+# Your turn
+
+- Write R code for the following:
+  - `price` greater than 2000 and `carat` less than 3.
+  - `price` greater than 2000 and `cut` either Very Good, Premium or Ideal.
+  - `carat` less than 2 or price greater than 500.
+  - `carat` less than 2 and `cut` not equal to Premium.
+---
+class: inverse, center, middle
+# Creating New Variables
+
+---
+
+# Mpg
+
+Mpg is also a tibble
+
+
+```r
+mpg
+```
+
+```
+## # A tibble: 234 x 11
+##    manufacturer model displ  year   cyl trans drv     cty   hwy fl    class
+##    &lt;chr&gt;        &lt;chr&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 audi         a4      1.8  1999     4 auto… f        18    29 p     comp…
+##  2 audi         a4      1.8  1999     4 manu… f        21    29 p     comp…
+##  3 audi         a4      2    2008     4 manu… f        20    31 p     comp…
+##  4 audi         a4      2    2008     4 auto… f        21    30 p     comp…
+##  5 audi         a4      2.8  1999     6 auto… f        16    26 p     comp…
+##  6 audi         a4      2.8  1999     6 manu… f        18    26 p     comp…
+##  7 audi         a4      3.1  2008     6 auto… f        18    27 p     comp…
+##  8 audi         a4 q…   1.8  1999     4 manu… 4        18    26 p     comp…
+##  9 audi         a4 q…   1.8  1999     4 auto… 4        16    25 p     comp…
+## 10 audi         a4 q…   2    2008     4 manu… 4        20    28 p     comp…
+## # … with 224 more rows
+```
+
+---
+
+# Mutate
+
+- Suppose we are interested in fuel efficiency (the variables `cty` and `hwy`).
+- These are measured in miles per gallon, but we want to convert into metric units.
+- One mile per gallon equals 0.425144 km per litre
+
+```r
+mpgSel&lt;-select(mpg,cty,hwy)
+mpgMet&lt;-mutate(mpgSel,ctyMetric=0.425144*cty,
+                  hwyMetric=0.425144*hwy)
+```
+---
+
+# Result
+
+
+```
+## # A tibble: 234 x 4
+##      cty   hwy ctyMetric hwyMetric
+##    &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+##  1    18    29      7.65      12.3
+##  2    21    29      8.93      12.3
+##  3    20    31      8.50      13.2
+##  4    21    30      8.93      12.8
+##  5    16    26      6.80      11.1
+##  6    18    26      7.65      11.1
+##  7    18    27      7.65      11.5
+##  8    18    26      7.65      11.1
+##  9    16    25      6.80      10.6
+## 10    20    28      8.50      11.9
+## # … with 224 more rows
+```
+---
+
+# The pipe operator
+
+- The fact that the input and output are always data frames makes the pipe operator useful.
+- Simply use `%&gt;%` to chain commands together.
+- Somtimes it is clearer to use `-&gt;` rather than use `&lt;-` for assignment.
+
+```r
+c(1,12,4)%&gt;%
+  mean%&gt;%
+  sqrt-&gt;out
+str(out)
+```
+
+```
+##  num 2.38
+```
+---
+
+#Pipes and dplyr
+
+This code
+
+
+```r
+mpgSel&lt;-select(mpg,cty,hwy)
+mpgMet&lt;-mutate(mpgSel,ctyMetric=0.425144*cty,
+                  hwyMetric=0.425144*hwy)
+```
+
+does the same as this code
+
+
+```r
+select(mpg,cty,hwy)%&gt;%
+  mutate(ctyMetric=0.425144*cty,
+                  hwyMetric=0.425144*hwy)-&gt;mpgMet
+```
+
+---
+class: inverse, middle, center
+
+# Grouping
+
+---
+
+# Group by function
+
+- A powerful function in dplyr is the `group_by` function.
+- Used in combination with `summarise`, it can construct  new datasets.
+- Consider the `txhousing` dataset.  There is monthly data for each city.
+- Suppose the aim is to find total number of sales for all cities in a year.
+
+---
+
+#Texas Housing
+
+
+```r
+txhousing
+```
+
+```
+## # A tibble: 8,602 x 9
+##    city     year month sales   volume median listings inventory  date
+##    &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;
+##  1 Abilene  2000     1    72  5380000  71400      701       6.3 2000 
+##  2 Abilene  2000     2    98  6505000  58700      746       6.6 2000.
+##  3 Abilene  2000     3   130  9285000  58100      784       6.8 2000.
+##  4 Abilene  2000     4    98  9730000  68600      785       6.9 2000.
+##  5 Abilene  2000     5   141 10590000  67300      794       6.8 2000.
+##  6 Abilene  2000     6   156 13910000  66900      780       6.6 2000.
+##  7 Abilene  2000     7   152 12635000  73500      742       6.2 2000.
+##  8 Abilene  2000     8   131 10710000  75000      765       6.4 2001.
+##  9 Abilene  2000     9   104  7615000  64500      771       6.5 2001.
+## 10 Abilene  2000    10   101  7040000  59300      764       6.6 2001.
+## # … with 8,592 more rows
+```
+---
+
+#Group by and summarise
+
+
+```r
+txhousing%&gt;%
+  group_by(year)%&gt;%
+  summarise(TotalSales=
+              sum(sales,na.rm = TRUE))-&gt;TotSales
+TotSales
+```
+
+```
+## # A tibble: 16 x 2
+##     year TotalSales
+##    &lt;int&gt;      &lt;dbl&gt;
+##  1  2000     222483
+##  2  2001     231453
+##  3  2002     234600
+##  4  2003     253909
+##  5  2004     283999
+##  6  2005     316046
+##  7  2006     347733
+##  8  2007     327701
+##  9  2008     276664
+## 10  2009     255254
+## 11  2010     243014
+## 12  2011     246356
+## 13  2012     287052
+## 14  2013     335094
+## 15  2014     345720
+## 16  2015     208124
+```
+
+---
+
+#Group by two variables
+
+- In earlier years, data for some cities is unavailable and is filled in as `NA`.
+- The option `na.rm=TRUE` removes missing data before taking the sum.
+- Next, suppose we want to get the yearly total for each city
+- Need to group by `city` and `year`.
+
+
+---
+#Group by and summarise
+
+
+```r
+txhousing%&gt;%
+  group_by(year,city)%&gt;%
+  summarise(TotalSales=
+              sum(sales,na.rm = TRUE))-&gt;TotSales
+TotSales
+```
+
+```
+## # A tibble: 736 x 3
+## # Groups:   year [16]
+##     year city                  TotalSales
+##    &lt;int&gt; &lt;chr&gt;                      &lt;dbl&gt;
+##  1  2000 Abilene                     1375
+##  2  2000 Amarillo                    2076
+##  3  2000 Arlington                   4969
+##  4  2000 Austin                     18621
+##  5  2000 Bay Area                    4884
+##  6  2000 Beaumont                    1781
+##  7  2000 Brazoria County             1060
+##  8  2000 Brownsville                  486
+##  9  2000 Bryan-College Station       1356
+## 10  2000 Collin County              10000
+## # … with 726 more rows
+```
+
+---
+#Your turn
+
+- In the `diamonds` dataset, find the average price for each cut of diamond.
+- In the `diamonds` dataset, find the average price for each cut of diamond given that price in above 2000.
+- In the `mpg` dataset find the average fuel efficiency in the city of in each year.
+- In the `mpg` dataset, consider Toyota, Nissan and Honda. Find the value of `hwy` for each of these manufacturer's most fuel efficient cars on the highway.
+
+
+
+---
+
+class: inverse, center middle
+
+# About databases
+---
+
+# Codd's Model
+
+- Many of the functions in `dplyr` are built on similar functions in the SQL language that is used to query databases.
+- SQL is itself built upon (but not exactly the same) as a theoretical model known as Codd's model.
+- An important aspect of this model is the first normal form.
+- This also provide some guidelines for good data management.
+
+---
+
+# Example
+
+Suppose we have the following database:
+
+&lt;table class="table" style="font-size: 24px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Name &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; DoB &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Email &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Ahmed &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1994/03/01 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ahmed@personal.com &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Bin &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1954/12/23 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; bin@me.com; bin@work.com &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Carol &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1982/07/16 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; carol@mailcom &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+#Problems
+
+- Carol's entry not a valid email.  
+  - A function can be written to check and remove this.
+- A bigger problem is that the email entry is not **atomic**.  There are two emails for Bin.
+  - If code is written to check if the email is valid, then this code will also fail for Bin.
+- On the next slide is a solution.
+
+---
+
+# Possible solution
+
+&lt;table class="table" style="font-size: 24px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Name &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; DoB &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Email1 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Email2 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Ahmed &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1994/03/01 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ahmed@personal.com &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Bin &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1954/12/23 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; bin@me.com &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; bin@work.com &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Carol &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1982/07/16 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; carol@mailcom &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; NA &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+---
+
+#Problems
+
+- This solution forces an ordering between Email1 and Email2 that may be arbitrary.
+- Also, a new entry into the database may be: 
+  - Name: Deepal
+  - DoB: 1987/04/23
+  - Email: deepal@work.com; deepal@me.com; coolgirl87@me.com
+- The entire database needs to be changed to allow for three email addresses
+---
+
+# Solution
+
+&lt;table class="table" style="font-size: 24px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Name &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; DoB &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Email &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Ahmed &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1994/03/01 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ahmed@personal.com &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Bin &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1954/12/23 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; bin@me.com &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Bin &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1954/12/23 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; bin@work.com &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Carol &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1982/07/16 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; carol@mailcom &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+Deepal can be added as
+
+&lt;table class="table" style="font-size: 24px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Name &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; DoB &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Email &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Deepal &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1987/04/23 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; deepal@work.com &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Deepal &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1987/04/23 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; deepal@me.com &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Deepal &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1987/04/23 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; coolgirl87@me.com &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+# First Normal Form
+
+- This is only a very very superficial treatment of *database normalization*.
+- The emphasis here is getting data into a form that is easily workable and minimises the chance for mistakes.
+- It should be noted that the concept of *atomicity* is itself controversial and can be ambiguous.
+- The main message is to think carefully about how you get data into an easily workable and robust form.
+
+---
+
+class: inverse, middle, center
+
+# Reshaping
+
+---
+
+# Long v wide format
+
+- Generally attempt to have one column per variable.
+- Sometimes the meaning of a *variable* is ambiguous.
+- In many cases it is easier to use `ggplot2` if the data are reshaped into a different form.
+- We investigate using the `economics` data
+
+---
+
+# Economics wide
+
+
+```r
+economics
+```
+
+```
+## # A tibble: 574 x 6
+##    date         pce    pop psavert uempmed unemploy
+##    &lt;date&gt;     &lt;dbl&gt;  &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;int&gt;
+##  1 1967-07-01  507. 198712    12.5     4.5     2944
+##  2 1967-08-01  510. 198911    12.5     4.7     2945
+##  3 1967-09-01  516. 199113    11.7     4.6     2958
+##  4 1967-10-01  513. 199311    12.5     4.9     3143
+##  5 1967-11-01  518. 199498    12.5     4.7     3066
+##  6 1967-12-01  526. 199657    12.1     4.8     3018
+##  7 1968-01-01  532. 199808    11.7     5.1     2878
+##  8 1968-02-01  534. 199920    12.2     4.5     3001
+##  9 1968-03-01  545. 200056    11.6     4.1     2877
+## 10 1968-04-01  545. 200208    12.2     4.6     2709
+## # … with 564 more rows
+```
+
+---
+
+# Economics long
+
+
+```r
+economics_long
+```
+
+```
+## # A tibble: 2,870 x 4
+## # Groups:   variable [5]
+##    date       variable value  value01
+##    &lt;date&gt;     &lt;fct&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+##  1 1967-07-01 pce       507. 0       
+##  2 1967-08-01 pce       510. 0.000266
+##  3 1967-09-01 pce       516. 0.000764
+##  4 1967-10-01 pce       513. 0.000472
+##  5 1967-11-01 pce       518. 0.000918
+##  6 1967-12-01 pce       526. 0.00158 
+##  7 1968-01-01 pce       532. 0.00207 
+##  8 1968-02-01 pce       534. 0.00230 
+##  9 1968-03-01 pce       545. 0.00322 
+## 10 1968-04-01 pce       545. 0.00319 
+## # … with 2,860 more rows
+```
+
+---
+
+# Use wide
+
+
+```r
+ggplot(economics,aes(x=uempmed,y=psavert))+
+  geom_point()
+```
+
+&lt;img src="DataMunging_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Use long
+
+
+```r
+ggplot(economics_long,aes(x=date,y=value))+
+  geom_line()+
+  facet_wrap(~variable, scales = 'free_y')
+```
+
+&lt;img src="DataMunging_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# From wide to long
+
+
+```r
+gather(economics,key = Variable, 
+       value = Value,-date)-&gt;long
+long
+```
+
+```
+## # A tibble: 2,870 x 3
+##    date       Variable Value
+##    &lt;date&gt;     &lt;chr&gt;    &lt;dbl&gt;
+##  1 1967-07-01 pce       507.
+##  2 1967-08-01 pce       510.
+##  3 1967-09-01 pce       516.
+##  4 1967-10-01 pce       513.
+##  5 1967-11-01 pce       518.
+##  6 1967-12-01 pce       526.
+##  7 1968-01-01 pce       532.
+##  8 1968-02-01 pce       534.
+##  9 1968-03-01 pce       545.
+## 10 1968-04-01 pce       545.
+## # … with 2,860 more rows
+```
+
+---
+
+# Gather function
+
+- The `key` will be the name of the function that stores the variable name.
+- The `value` will be the name of the variables that stores values.
+- Use `-` to exclude variable(s) from gathering.
+- Here this was done for date
+
+---
+
+#From long to wide
+
+
+```r
+economics_long%&gt;%
+  select(-value01)%&gt;%
+  spread(key = variable, 
+         value = value)-&gt;wide
+wide
+```
+
+```
+## # A tibble: 574 x 6
+##    date         pce    pop psavert uempmed unemploy
+##    &lt;date&gt;     &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+##  1 1967-07-01  507. 198712    12.5     4.5     2944
+##  2 1967-08-01  510. 198911    12.5     4.7     2945
+##  3 1967-09-01  516. 199113    11.7     4.6     2958
+##  4 1967-10-01  513. 199311    12.5     4.9     3143
+##  5 1967-11-01  518. 199498    12.5     4.7     3066
+##  6 1967-12-01  526. 199657    12.1     4.8     3018
+##  7 1968-01-01  532. 199808    11.7     5.1     2878
+##  8 1968-02-01  534. 199920    12.2     4.5     3001
+##  9 1968-03-01  545. 200056    11.6     4.1     2877
+## 10 1968-04-01  545. 200208    12.2     4.6     2709
+## # … with 564 more rows
+```
+
+---
+class: inverse, center middle
+
+# Data Import
+
+---
+# Data Import
+
+- In many cases data is stored in a *flat database*.
+- This means the data is stored in a single table.
+- Columns are separated by a comma or a tab.
+- Usually this table is contained in a single file.
+- For reading in such data the `readr` package is very useful.
+
+---
+
+# The readr package
+
+- Two of the more useful functions are `read_csv` and `read_tsv` for comma delimited and tab delimited files respectively.
+- Generally the defaults for this function work quite well.
+- One argument that is worth discussing a little is `col_types`
+
+---
+
+# Reading in long numbers
+
+- The largest integer that many computers will accurately store is about 19 digits long.
+- Some identification numbers are longer than that (for instance IBAN numbers used for bank transfers).
+- In some cases, R may try to read these numbers in as integers.
+- To avoid errors these should be read in as characters.
+
+---
+
+# Column types
+
+- Specifying `col_types='c'` overrides the default behaviour of `readr`.
+- You can use this to force everything to be read in as a string.
+- If needed these can subsequently be converted to numeric variables using `as.numeric`.
+
+---
+# Summary
+
+- With a small number of functions, much can be done
+  - `select`, `filter`, `mutate`
+  - `group_by`, `summarise`
+  - `gather`, `spread`
+- Mastering these functions takes practice.
+- Often these functions are the key to creating plots.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+
+</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Plots: The Good, the Bad and the Ugly</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Anastasios Panagiotelis" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="mtheme.css" type="text/css" />
+    <link rel="stylesheet" href="mod.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Plots: The Good, the Bad and the Ugly
+## Data Visualisation and analytics
+### Anastasios Panagiotelis
+### Lecture 2
+
+---
+
+
+class: inverse, center, middle
+
+# Plotting Principles
+
+
+
+---
+
+# Tufte's principles
+
+- Principles of good practice in data visualisation are outlined in *The Visual Display of Quantitative Information* by **Edward Tufte**. These include:
+  - Avoid distorting what the data have to say
+  - Present many numbers in a small space
+  - Make large data sets coherent
+  - Encourage the eye to compare different pieces of data
+  
+---
+
+# Bad plots
+
+- Tufte also provides a catalog of bad plots.
+- What makes these plots *bad* can be put into three categories.
+  - Taste (Aesthetic)
+  - Perceptual
+  - Substantive
+
+---
+class: inverse, center, middle
+
+# Errors of taste
+---
+
+# An ugly plot
+
+&lt;img src="monster.jpg" width="1387" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Chartjunk
+
+- Chartjunk is the inclusion of elements that are not necessary to communicate the information.
+- The inclusion of the following can be considered chartjunk:
+  + Heavy gridlines.
+  + Unnecessary text.
+  + Pictures within the chart.
+
+---
+
+# Another example
+
+&lt;img src="Chartjunk-example.svg" style="display: block; margin: auto;" /&gt;
+
+---
+# Guidelines
+
+Aim for a high Data Ink Ratio
+
+`$$\mbox{Data Ink ratio}=\frac{\mbox{Ink used to display data}}{\mbox{Ink used in graphic}}$$`
+
+Also aim for a high Data Density
+
+`$$\mbox{Data Density}=\frac{\mbox{Number of data points}}{\mbox{Area of graphic}}$$`
+If data density is small, perhaps use a table
+
+---
+
+#Low data density
+
+&lt;img src="sword.jpg" width="428" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Bad... but not misleading
+
+- Note that although the previous plots look bad, strictly speaking they do not mislead.
+- Also maximising data-ink ratio should be seen as a guideline rather than a strict rule.
+- For instance the default background for `ggplot2` is arguably chartjunk
+- There are good reasons for using it. 
+
+---
+# ggplot2
+
+&lt;img src="GoodBadPlot_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Wickham on the grey background
+
+*"We can still see the gridlines to aid in the judgement of position (Cleveland, 1993b), but they have little visual impact and we can easily "tune" them out... Finally, the grey background creates a continuous field of colour which ensures that the plot is perceived as a single visual entity"*
+
+ggplot2: Elegant Graphics for Data Analyis
+
+---
+class: inverse, center, middle
+
+# Errors of Perception
+
+---
+
+# What can we perceive?
+
+- Human perception is a broad field that takes in ideas from psychology and philosophy.
+- For data visualisation we can perceive:
+  - Length
+  - Area 
+  - Volume
+  - Shape
+  - Position
+  - Color
+  - Angle
+
+---
+
+#Errors of perception
+
+- Data visualisation is all about mapping data to things we can perceive.
+- This should not be done in a way that is innacurate or misleading.
+- The following plots provide some examples of what can go wrong.
+
+---
+# Confusing length and area
+
+&lt;img src="mac.jpg" width="652" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Confusing length and area
+
+- On the previous plot the number of customers is represented by length (height of computer)
+- However the *area* of the 2D pictures of computers scale up more than their *heights*.
+- Also the picture leads us to imagine a 3D computer making this effect worse.
+- The value for *Mac* is only about 3 to 4 times more than for *None* but we perceive the difference to be much more.
+
+---
+
+# Beware 3D
+
+&lt;img src="seo-traffic-columns.gif" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Beware 3D
+
+&lt;img src="seo-traffic-pie-chart.gif" style="display: block; margin: auto;" /&gt;
+
+---
+# Beware 3D
+
+- Difficult to line up the heights of bars with the actual values
+- Closer green bar (MSN) looks bigger.
+- On the pie chart rendering in 3D makes the blue segment (Google) look the biggest.
+- Do not use three dimensions when two will work well.
+
+???
+
+https://infolific.com/technology/internet/seo-lie-factor/
+
+---
+
+# Lie Factor
+
+The lie factor is given by
+
+`$$\mbox{Lie factor}=\frac{\mbox{Size of effect in graph}}{\mbox{Size of effect in data}}$$`
+- The lie factor should be 1.
+
+---
+
+# Road miles (from Tufte)
+
+&lt;img src="Lie_factor_example1_image.jpg" width="731" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Effects
+
+- The data says that mileage rose from 18 to 27.5 which is a 53% increase.
+- The line on the graph increases from 0.6 inches to 5.3 inches which is a 783% increase!
+- The lie factor is `\(783/53\approx 14\)`
+
+---
+
+# The y-axis
+
+&lt;video width="640" height="480" controls&gt;
+  &lt;source src="voxyaxis.webm" type="video/webm"&gt;
+&lt;/video&gt; 
+
+---
+
+# The y-axis
+
+- Are we interested in the size of the variable rather than changes in the variable?
+- Is zero a reasonable value for the variable to take?
+- Are we using a bar chart?
+- Answering yes to these questions means we should give more consideration to including zero on the y-axis.
+
+---
+class: inverse, middle, center
+# Errors of Substance
+
+---
+# Errors of Substance
+
+- Sometimes there is nothing wrong with the plot but with the data.
+- On the following slide is a plot comparing the cost of going to college in the US against the salaries of college graduates.
+- Can you find problems with this graph?
+
+---
+
+# College cost
+
+&lt;img src="diminishing-return.jpg" width="824" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Problems
+
+- There is nothing *incorrect* about this graph.
+- However the message is misleading.
+- The income is a yearly income while the cost of college is over four years (and only paid once).
+- Also it does not show the income of people who are not college graduates.
+
+---
+class: inverse, middle center
+
+# More bad plots
+
+---
+
+# Electrolux
+
+&lt;img src="Consultantsmind-Electrolux-Profit-then-Growth.png" width="548" style="display: block; margin: auto;" /&gt;
+
+???
+
+Data-to-ink ratio is zero
+
+---
+
+# McKesson
+
+&lt;img src="Consultantsmind-McKesson-Graph-Forecast.png" width="605" style="display: block; margin: auto;" /&gt;
+
+???
+
+Forecast not in different colour
+
+---
+
+# McKinsey
+
+&lt;img src="Consultantsmind-McKinsey-Gig-Economy-Messy-Slide.jpg" width="1381" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Pizza
+
+&lt;img src="Its-a-pizza-Chart-Not-a-Pie-chart-1.png" width="399" style="display: block; margin: auto;" /&gt;
+
+???
+
+Chart junk numbers do not add up
+
+---
+
+
+# Pie chart
+
+&lt;img src="Misleading_Pie_Chart.png" width="552" style="display: block; margin: auto;" /&gt;
+
+???
+
+3d makes one slice look small
+
+---
+
+# Climate Change
+
+&lt;img src="Nature-climate-change.png" width="690" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+#Season
+
+&lt;img src="season.png" width="1204" style="display: block; margin: auto;" /&gt;
+
+???
+
+lie factor
+
+---
+# Narcotics
+
+&lt;img src="display.jpeg" width="853" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+
+# Summary
+
+- Graphs can be misleading
+- The default options in ggplot are chosen to protect the user from errors of taste and errors of perception.
+- Nothing protects you from using bad or misleading data...
+- ...except for your own common sense
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+
+</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
