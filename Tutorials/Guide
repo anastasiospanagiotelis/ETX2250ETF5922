@@ -1,0 +1,62 @@
+Tutorial 1
+
+Make sure R is installed 
+
+Get them to install tidyverse
+
+Get them to read in a dataset (find one)
+
+histogram and scatterplot
+
+
+
+Tutorial 2
+
+Find more plots
+
+Comment on basis of 
+
+- chartjunk (data ink ratio)
+- data density
+- Errors of perception (including lie factor where relevant)
+- Errors of substance
+
+Tutorial 3
+
+In the RGB model what color is represented by #FF0000
+
+What is the hex code for pure green
+
+
+Desribe role of bandwidth.
+
+How are outliers defined in a boxplot?
+
+Order factor largest to smallest rather than alphabetically
+
+Exploratory analysis of dataset
+
+Tutorial 4
+
+
+Trend Seasonality Structural Break
+
+Swiss exports use log scale
+
+Tutorial 5
+
+Advantages of using Viridis
+
+Pairs plot with a different dataset - build story
+
+Tutorial 6
+
+Some funky Boolean logic
+
+FNF question
+
+Tutorial 7
+
+loess fit
+
+more analysis
