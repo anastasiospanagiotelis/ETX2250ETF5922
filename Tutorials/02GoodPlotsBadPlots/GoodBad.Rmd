@@ -1,0 +1,40 @@
+---
+output: pdf_document
+urlcolor: blue
+author: "Department of Econometrics and Business Statistics, Monash University"
+date: "Tutorial 2"
+---
+
+```{r, echo = FALSE}
+#rmarkdown::render('GoodBad.Rmd',output_file='GoodBadPlots.pdf')
+#rmarkdown::render('GoodBad.Rmd',output_file='GoodBadPlotsSols.pdf')
+sols<-FALSE
+title<-ifelse(sols, 'DataVizA Tutorial: Good Plots Bad Plots: Solutions','DataVizA Tutorial: Good Plots Bad Plots')
+```
+
+---
+title: "`r title`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## Bad plots
+
+  1. Go to the website [top ten bad graphs](https://www.biostat.wisc.edu/~kbroman/topten_worstgraphs/) by Karl Broman.  These graphs have all been published in reputable academic journals by respected scientists.  Form groups of two or three and you tutor will allocate a plot to each group.  In your groups discuss problems with the plots (if you are stuck, Karl Broman has his own commentary on each plot).  After five minutes of discussion each group should appoint a spokesperson to discuss the problems with their graph to the entire group.  
+  
+Try to critique the plots with reference to the following:
+  
+  - Data ink ratio
+  - Data density
+  - Chart junk
+  - Lie factor
+  - Errors of style
+  - Errors of perception
+  - Errors of substance
+  
+`r if(sols) "*The first plot suffers from a low data-ink ratio and the 3d rendering could lead to errors of perception.*\n\n *The second plot suffers from a low data density (data density of zero).*\n\n *The third and fourth plots both suffer from low data density although there are many data points the information can be compressed into the statement that the x and y variable are indistinguishable.*\n\n *The fifth plot suffers from low data density, low data-ink ratio.*\n\n *The sixth plot suffers from errors of perception due to the 3d rendering and low data density and data-ink ratios.*\n\n *The seventh plot has a low data to ink ratio. There is also the potential for errors of substance since the x axis is not truly numerical variable.*\n\n *The eighth plot is a clear case of chart junk with the dark gray background.  Also two plots are used to compare three variables potentially leading to errors of substance.*\n\n *The ninth plot suffers from errors of perception (3D rendering) and low data ink ratio.*\n\n  *The tenth plot suffers from errors of substance.  The data are in the form of a ratio meaning that numbers above 1 are exaggerated and numbers below 1 are downplayed.*"`
+
+  2. Find your own bad plot from business (try searching for terms like *bad graphs in business* on a search engine).  Critique it according to the above criteria.

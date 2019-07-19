@@ -185,7 +185,7 @@ houston_sales_listings%>%
 # Crossing points
 
 ```{r}
-knitr::include_graphics('dualy.png')
+knitr::include_graphics('img/dualy.png')
 ```
 
 ---

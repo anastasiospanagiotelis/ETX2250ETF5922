@@ -7,7 +7,7 @@ date: "Tutorial 1"
 ```{r, echo = FALSE}
 #rmarkdown::render('Intro.Rmd',output_file='Intro.pdf')
 #rmarkdown::render('Intro.Rmd',output_file='IntroSols.pdf')
-sols<-FALSE
+sols<-TRUE
 title<-ifelse(sols, 'DataVizA Tutorial: Introduction and R: Solutions','DataVizA Tutorial: Introduction and R')
 ```
 
@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ##Introduction to R
 
   1. Get R and R Studio installed on your computer.
-  2. Install the `tidyverse` onto your coputer.
+  2. Install the `tidyverse` onto your computer.
   3. Load the dataset SwissExports.rds which can be downloaded from Moodle.  This data has four variables, a country code, the total value of exports in January 1988 and December 2018 (both in Swiss Francs) and a region code. The data can be read using the `readRDS` function
 
 ```{r, echo = sols, eval=sols}
@@ -57,7 +57,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
   8. Are there outliers in the data?  
   
-`r if(sols) "There are two outliers in the data.  Further inspection shows that there are Germany and the USA.  In the case of Germany, it was by far Switzerlands largest export market in 1988 and is still the second market.  The US was the largest export market in December 2018 but was only the fourth largest in January 1988."`
+`r if(sols) "There are two outliers in the data.  Further inspection shows that these are Germany and the USA.  In the case of Germany, it was by far Switzerlands largest export market in 1988 and is still the second largest market.  The US was the largest export market in December 2018 but was only the fourth largest in January 1988."`
 
   9. How could this plot be improved?
   

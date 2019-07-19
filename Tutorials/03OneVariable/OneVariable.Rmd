@@ -32,7 +32,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
   3. Describe the role of bandwidth in kernel density estimation.
   
-`r if(sols) "*A kernel density estimated at a value x gives highest weight to values near x.  The bandwidth essentially determines how close it is mean by near.  Large values lead to smooth (in the limit flat) density estimates, small values lead to very bumpy estimates.*"`   
+`r if(sols) "*A kernel density estimated at a value x gives highest weight to values near x.  The bandwidth essentially determines how close is meant by 'near'.  Large values lead to smooth (in the limit flat) density estimates, small values lead to very bumpy estimates.*"`   
 
   4. How are outliers defined in a boxplot?
   
@@ -50,7 +50,7 @@ knitr::opts_chunk$set(echo = TRUE)
   
   6. What does this plot tell you?
 
-`r if(sols) "*The plot merely states that most countries are in Africa and very few are in North America.  This plot says nothing about Swiss Exports.*"`   
+`r if(sols) "*The plot merely states that most countries are in Africa and very few are in North America.  This plot says nothing about Swiss Exports.  In many cases this plot would not be worth including in an analysis.*"`   
 
   7. Construct a density plot, rug plot and boxplot for Exports in January 1988.
   
