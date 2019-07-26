@@ -5,7 +5,10 @@ date: "Tutorial 1"
 ---
 
 ```{r, echo = FALSE}
+#Run the following command with sols false to get the pdf file without solutions
 #rmarkdown::render('Intro.Rmd',output_file='Intro.pdf')
+
+#Run the following command with sols true to get the pdf file with solutions
 #rmarkdown::render('Intro.Rmd',output_file='IntroSols.pdf')
 sols<-TRUE
 title<-ifelse(sols, 'DataVizA Tutorial: Introduction and R: Solutions','DataVizA Tutorial: Introduction and R')
