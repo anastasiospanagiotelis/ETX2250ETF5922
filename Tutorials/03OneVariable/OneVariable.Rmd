@@ -7,7 +7,7 @@ date: "Tutorial 3"
 ```{r, echo = FALSE}
 #rmarkdown::render('OneVariable.Rmd',output_file='OneVariable.pdf')
 #rmarkdown::render('OneVariable.Rmd',output_file='OneVariableSols.pdf')
-sols<-TRUE
+sols<-FALSE
 title<-ifelse(sols, 'DataVizA Tutorial: Plotting one variable: Solutions','DataVizA Tutorial: Plotting one variable')
 ```
 
