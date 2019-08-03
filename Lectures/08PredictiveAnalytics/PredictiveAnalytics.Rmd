@@ -1,0 +1,332 @@
+---
+title: "Predictive Analytics"
+subtitle: "Data Visualisation and Analytics"
+author: "Anastasios Panagiotelis"
+date: "Lecture 8"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"css/mtheme.css","css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+
+---
+
+class: inverse, center, middle
+
+# Analytics
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
+require(magrittr)
+require(tidyverse)
+require(plotly)
+require(widgetframe)
+require(animation)
+require(DT)
+require(PoEdata)
+require(kableExtra)
+require(gridExtra)
+require(ggmosaic)
+require(ggthemes)
+```
+
+---
+
+# Minor adjustments
+
+- So far our attention has completely been on *visualisation*.
+--
+
+- For the remainder of the unit we will focus on *analytics*
+--
+
+- In particular our focus will be on making *predictions*.
+
+---
+
+# Textbook
+
+- Much of the content of these slides is covered in [Introduction to Statistical Learning](http://faculty.marshall.usc.edu/gareth-james/ISL/) by James, Witten Hastie, and Tibshirani.
+--
+
+- In particular Chapters 2, 4 and 8. 
+--
+
+- The textbook is not mandatory but you may find it useful.
+--
+
+- It is available for free.
+
+---
+
+# Prediction
+
+- Prediction arises in many business contexts.
+--
+
+- There is some unknown variable that is the target of the prediction.  
+  - This is usually denoted $y$ and may be called the *dependent variable*, or *response* or *target variable*.
+--
+
+- There are some known variables that are used to make the prediction.  
+  - These are usually denoted $\mathbf{x}$ and may be called the *independent variables*, or *predictors* or *features*.
+  
+---
+
+# Regression
+
+- Sometimes $y$ is a numeric (metric) variable.  For example
+  - Company profit next month.
+  - Amount spent by a customer.
+  - Demand for a new product.
+--
+
+- In this case we are doing *regression*.
+--
+
+- This can be more general than the linear regression that you may be familiar with.
+
+---
+
+# Classification
+
+- Sometimes $y$ is a categorical (nominal, non-metric) variable.  For example
+  - Will a borrower default on a loan?
+  - Fraud detection.
+  - Brand choice.
+--
+
+- In this case we are doing *classification*.
+--
+
+- The idea is to use data to determine a function (or rule) that takes a value of $\mathbf{x}$ and returns a prediction $\hat{y}=\hat{f}(\mathbf{x})$
+
+---
+
+# Predict v Explain
+
+- In this unit our emphasis will be on *prediction*.
+--
+
+- This is very different to *explanation* or *causality*.
+--
+
+- Consider the example of predicting sales of a Toyota by looking at number of internet searches for "Toyota".
+--
+
+- If there is a large number of people searching for "Toyota" it is more likely for sales of Toyota in the following period to be higher.
+
+---
+
+# Causality
+
+- This relationship is not easy to manipulate.
+--
+
+- For instance, if Toyota instructs its employees to spend the afternoon searching the word "Toyota" on Google, sales will not go up.
+--
+
+- In this case there is a *common cause* for browsing for cars and buying cars; namely the intent to buy cars.
+--
+
+- Unlike intent to buy a car, browsing behaviour is observable and can be used for prediction.
+
+---
+
+# Classification
+
+- For the remainder of the unit the focus will be on classification.
+--
+
+- We will consider different techniques for classification.
+--
+
+- Some of these techiniques can be modified and applied to regression as well.
+--
+
+- Many of the themes we cover for classification are also relevant to regression.
+
+---
+
+# Two class v Multiclass
+
+- Many classification problems involve a $y$ variable that can take two values.
+  - Default on credit card v Not Default
+--
+
+- In other cases the $y$ variable can take multiple values
+  - Brand choice, e.g. for instance Gucci v Louis Vuitton v YSL v Givenchy.
+
+---
+
+# Probabilistic Classification
+
+- In many cases an algorithm will predict a single "best" class.
+  - Predict a customer will purchase Gucci.
+--
+
+- In other instances an algorithm will provide probabilities.
+  - The customer has a 40% chance of purchasing Gucci, a 35% of purchasing Givenchy and a 25% chance of purchasing YSL.
+
+---
+
+class: inverse, middle, center
+
+# Assessing Classification 
+
+---
+
+# Some math
+
+- Generally data $y_i$ and $\mathbf{x}_i$ available for $i=1,2,3,\ldots,n$.
+--
+
+- An algorithm is trained on this data. Some function of  $\mathbf{x}_i$ is derived where $\hat{y}=\hat{f}(\mathbf{x})$.
+--
+
+- How to decide if $\hat{f}$ is a good classifier or bad classifier?
+
+---
+
+# Misclassification
+
+- The **misclassification error** is given by
+
+$$
+\frac{1}{n}\sum\limits_{i=1}^n I(y_i\neq\hat{y}_i)
+$$
+
+- Here $I(.)$ equals 1 of the statement in parentheses is true and 0 otherwise.
+- Large numbers imply a worse performance.
+
+---
+
+# Training v Test
+
+- In practice we want predictions for values of $y$ that are not yet observed.
+--
+
+- To artificially create this scenario the data we have available can be split into two
+  - *Training* sample used to determing $\hat{f}$
+  - *Test* sample used to evaluate $\hat{f}$.
+
+---
+
+#Notation
+
+- $\mathcal{N}_{1}$ is the set of indices for training data.
+- $|\mathcal{N}_{1}|$ is the number of observations in training data.
+- $\mathcal{N}_{0}$ is the set of indices for test data
+- $|\mathcal{N}_{0}|$ is the number of observations in test data.
+
+---
+
+# Example
+
+- Suppose there are five observations, $(y_1,\mathbf{x}_1),(y_2,\mathbf{x}_2),\ldots,(y_5,\mathbf{x}_5)$ 
+- Suppose observations 1,2 and 4 are used as training data.
+- Suppose observations 3 and 5 are used as test data.
+- Then $\mathcal{N_1}=\left\{1,2,4\right\}$ and $|\mathcal{N_1}|=3$
+- And $\mathcal{N_0}=\left\{3,5\right\}$ and $|\mathcal{N_0}|=2$
+
+---
+
+# Training v Test
+
+*Training* error rate
+
+$$\frac{1}{|\mathcal{N}_{1}|}\sum\limits_{i\in\mathcal{N}_{1}} I(y_i\neq\hat{y}_i)$$
+
+*Test* error rate
+
+$$\frac{1}{|\mathcal{N}_{0}|}\sum\limits_{i\in\mathcal{N}_{0}} I(y_i\neq\hat{y}_i)$$
+
+---
+
+# Overfitting
+
+- Some methods perform very well (even perfectly) on training error rate.
+--
+
+- Usually these same methods will perform poorly on test error rate.
+--
+
+- This phenomenon is called *overfitting*.
+--
+
+- Generally achieving a low training error rate (also called out-of-sample or generalisation error) is more important.
+
+---
+
+# A simple example
+
+- Consider a test set of a single observation $\mathcal{N_0}=\left\{j \right\}$.
+--
+
+- The classifier is trained using all data apart from $j$.
+--
+
+- This classifier is then used to predict observation the value of $y_j$.
+--
+
+- The choice of $j$ may seem arbitrary.
+
+---
+
+# Cross validation
+
+- The process can be repeated so that each observation is left out exactly once.
+--
+
+- Each time all remaining observations are used as the training set.
+--
+
+- This process is called **Leave-one-out cross validation(LOOCV)**
+
+---
+
+# k-fold CV
+
+- A faster alternative to LOOCV is **k-fold cross validation**
+--
+
+- The data are randomly split into $k$ partitions.
+--
+
+- Each observation appears in exactly one partition, i.e. the partitions are *non-overlapping*.
+--
+
+- Each partition is used as the test set exactly once.
+
+---
+
+# For regression
+
+- In regression rather than looking at the error rate it may be better to look at sums of squared errors.
+--
+
+- The concepts of test and training set can be used.
+--
+
+- Leave one out cross validation and k-fold cross validation can be used in the same way.
+
+---
+
+# Next step
+
+- Next we will introduce specific algorithms for doing classification.
+--
+
+- However for all these algorithms the distinction between training and test data is important.
+--
+
+- Equally cross validation will consistently be used.
+--
+
+Make sure you understand how these ideas work, separately from specific algorithms.
