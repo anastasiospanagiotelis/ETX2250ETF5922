@@ -22,7 +22,7 @@ class: center, middle, inverse, title-slide
 
 class: inverse, center, middle
 
-# Analytics
+# Time for Analytics
 
 
 
@@ -68,6 +68,29 @@ class: inverse, center, middle
   - These are usually denoted `\(\mathbf{x}\)` and may be called the *independent variables*, or *predictors* or *features*.
   
 ---
+#Summary
+
+
+|Variable               |Training       |Evaluation         |
+|-----------------------|---------------|-------------------|
+|Predictor 1 (X1)       |Data available |Data available     |
+|Predictor 2 (X2)       |Data available |Data available     |
+|Dependent Variable (Y) |Data available |Data NOT available |
+
+
+---
+
+#Example
+
+
+|Variable               |Old Customers  |New Customer       |
+|-----------------------|---------------|-------------------|
+|Age (X1)               |Data available |Data available     |
+|Limit  (X2)            |Data available |Data available     |
+|Default (Y)            |Data available |Data NOT available |
+
+
+---
 
 # Regression
 
@@ -99,73 +122,23 @@ class: inverse, center, middle
 
 ---
 
-# Predict v Explain
+# Credit Data
 
-- In this unit our emphasis will be on *prediction*.
---
-
-- This is very different to *explanation* or *causality*.
---
-
-- Consider the example of predicting sales of a Toyota by looking at number of internet searches for "Toyota".
---
-
-- If there is a large number of people searching for "Toyota" it is more likely for sales of Toyota in the following period to be higher.
+&lt;img src="PredictiveAnalytics_files/figure-html/unnamed-chunk-1-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
-# Causality
+# Default or not?
 
-- This relationship is not easy to manipulate.
---
-
-- For instance, if Toyota instructs its employees to spend the afternoon searching the word "Toyota" on Google, sales will not go up.
---
-
-- In this case there is a *common cause* for browsing for cars and buying cars; namely the intent to buy cars.
---
-
-- Unlike intent to buy a car, browsing behaviour is observable and can be used for prediction.
+&lt;img src="PredictiveAnalytics_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
-# Classification
+# Default or not?
 
-- For the remainder of the unit the focus will be on classification.
---
-
-- We will consider different techniques for classification.
---
-
-- Some of these techiniques can be modified and applied to regression as well.
---
-
-- Many of the themes we cover for classification are also relevant to regression.
+&lt;img src="PredictiveAnalytics_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
-
-# Two class v Multiclass
-
-- Many classification problems involve a `\(y\)` variable that can take two values.
-  - Default on credit card v Not Default
---
-
-- In other cases the `\(y\)` variable can take multiple values
-  - Brand choice, e.g. for instance Gucci v Louis Vuitton v YSL v Givenchy.
-
----
-
-# Probabilistic Classification
-
-- In many cases an algorithm will predict a single "best" class.
-  - Predict a customer will purchase Gucci.
---
-
-- In other instances an algorithm will provide probabilities.
-  - The customer has a 40% chance of purchasing Gucci, a 35% of purchasing Givenchy and a 25% chance of purchasing YSL.
-
----
-
 class: inverse, middle, center
 
 # Assessing Classification 
@@ -194,6 +167,7 @@ $$
 
 - Here `\(I(.)\)` equals 1 of the statement in parentheses is true and 0 otherwise.
 - Large numbers imply a worse performance.
+- More specifically this in a measure of *in-sample* performance.
 
 ---
 
@@ -224,8 +198,10 @@ $$
 - Suppose observations 3 and 5 are used as test data.
 - Then `\(\mathcal{N_1}=\left\{1,2,4\right\}\)` and `\(|\mathcal{N_1}|=3\)`
 - And `\(\mathcal{N_0}=\left\{3,5\right\}\)` and `\(|\mathcal{N_0}|=2\)`
+- Only the data in `\(\mathcal{N_1}\)` is used to determine `\(\hat{f}\)`
 
 ---
+
 
 # Training v Test
 
@@ -319,7 +295,61 @@ $$
 - Equally cross validation will consistently be used.
 --
 
-Make sure you understand how these ideas work, separately from specific algorithms.
+- Make sure you understand how these ideas work, separately from specific algorithms.
+
+---
+# Additional issues with prediction
+---
+
+# Predict v Explain
+
+- In this unit our emphasis will be on *prediction*.
+--
+
+- This is very different to *explanation* or *causality*.
+--
+
+- Consider the example of predicting sales of a Toyota by looking at number of internet searches for "Toyota".
+--
+
+- If there is a large number of people searching for "Toyota" it is more likely for sales of Toyota in the following period to be higher.
+
+---
+
+# Causality
+
+- This relationship is not easy to manipulate.
+--
+
+- For instance, if Toyota instructs its employees to spend the afternoon searching the word "Toyota" on Google, sales will not go up.
+--
+
+- In this case there is a *common cause* for browsing for cars and buying cars; namely the intent to buy cars.
+--
+
+- Unlike intent to buy a car, browsing behaviour is observable and can be used for prediction.
+
+---
+
+# Two class v Multiclass
+
+- Many classification problems involve a `\(y\)` variable that can take two values.
+  - Default on credit card v Not Default
+--
+
+- In other cases the `\(y\)` variable can take multiple values
+  - Brand choice, e.g. for instance Gucci v Louis Vuitton v YSL v Givenchy.
+
+---
+
+# Probabilistic Classification
+
+- In many cases an algorithm will predict a single "best" class.
+  - Predict a customer will purchase Gucci.
+--
+
+- In other instances an algorithm will provide probabilities.
+  - The customer has a 40% chance of purchasing Gucci, a 35% of purchasing Givenchy and a 25% chance of purchasing YSL.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
