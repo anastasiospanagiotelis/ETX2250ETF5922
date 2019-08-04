@@ -78,6 +78,22 @@ require(ggthemes)
   - These are usually denoted $\mathbf{x}$ and may be called the *independent variables*, or *predictors* or *features*.
   
 ---
+
+# Supervised Learning
+
+- For some observations data will be available for both $y$ AND $\mathbf{x}$.
+--
+
+- We can use these observations to *learn* some rule that gives predictions of $y$ as a function of $\mathbf{x}$.
+--
+
+- This prediction is denoted $\hat{y}=\hat{f}(\mathbf{x})$
+--
+
+- This general setup is often called *supervised learning*.
+
+---
+
 #Summary
 
 
@@ -121,14 +137,12 @@ require(ggthemes)
 
 - Sometimes $y$ is a categorical (nominal, non-metric) variable.  For example
   - Will a borrower default on a loan?
-  - Fraud detection.
-  - Brand choice.
+  - Can we detect which tax returns are fraudulent?
+  - Can we predict which brand customers will choose?
 --
 
 - In this case we are doing *classification*.
---
 
-- The idea is to use data to determine a function (or rule) that takes a value of $\mathbf{x}$ and returns a prediction $\hat{y}=\hat{f}(\mathbf{x})$
 
 ---
 
@@ -187,8 +201,12 @@ $$
 $$
 
 - Here $I(.)$ equals 1 of the statement in parentheses is true and 0 otherwise.
+--
+
 - Large numbers imply a worse performance.
-- More specifically this in a measure of *in-sample* performance.
+--
+
+- Since all $n$ points are used for training and evaluation this measures *in-sample* performance.
 
 ---
 
@@ -200,6 +218,9 @@ $$
 - To artificially create this scenario the data we have available can be split into two
   - *Training* sample used to determing $\hat{f}$
   - *Test* sample used to evaluate $\hat{f}$.
+--
+
+- The $y$ values of the test sample will be treated as unknown during training.
 
 ---
 
@@ -259,7 +280,7 @@ $$\frac{1}{|\mathcal{N}_{0}|}\sum\limits_{i\in\mathcal{N}_{0}} I(y_i\neq\hat{y}_
 - The classifier is trained using all data apart from $j$.
 --
 
-- This classifier is then used to predict observation the value of $y_j$.
+- This classifier is then used to predict the value of $y_j$.
 --
 
 - The choice of $j$ may seem arbitrary.
@@ -307,7 +328,7 @@ $$\frac{1}{|\mathcal{N}_{0}|}\sum\limits_{i\in\mathcal{N}_{0}} I(y_i\neq\hat{y}_
 
 # Next step
 
-- Next we will introduce specific algorithms for doing classification.
+- Eventually we will introduce specific algorithms for doing classification.
 --
 
 - However for all these algorithms the distinction between training and test data is important.
@@ -319,6 +340,8 @@ $$\frac{1}{|\mathcal{N}_{0}|}\sum\limits_{i\in\mathcal{N}_{0}} I(y_i\neq\hat{y}_
 - Make sure you understand how these ideas work, separately from specific algorithms.
 
 ---
+class:inverse,middle,center
+
 # Additional issues with prediction
 ---
 
@@ -360,6 +383,9 @@ $$\frac{1}{|\mathcal{N}_{0}|}\sum\limits_{i\in\mathcal{N}_{0}} I(y_i\neq\hat{y}_
 
 - In other cases the $y$ variable can take multiple values
   - Brand choice, e.g. for instance Gucci v Louis Vuitton v YSL v Givenchy.
+--
+
+- The methods we cover are general enough for both settings.
 
 ---
 
@@ -370,7 +396,7 @@ $$\frac{1}{|\mathcal{N}_{0}|}\sum\limits_{i\in\mathcal{N}_{0}} I(y_i\neq\hat{y}_
 --
 
 - In other instances an algorithm will provide probabilities.
-  - The customer has a 40% chance of purchasing Gucci, a 35% of purchasing Givenchy and a 25% chance of purchasing YSL.
+  - The customer has a 40% chance of purchasing Gucci, a 35% of chance of purchasing Givenchy and a 25% chance of purchasing YSL.
 
 ---
 
@@ -398,3 +424,71 @@ $$\frac{1}{|\mathcal{N}_{0}|}\sum\limits_{i\in\mathcal{N}_{0}} I(y_i\neq\hat{y}_
 --
 
 - This is particularly the case if there are asymmetric costs involved with different types of misclassification.
+
+---
+
+# An example
+
+- Suppose you work for the tax office.
+--
+
+- You need to decide who should be audited and who should not be audited.
+--
+
+- When doing classification you can make two mistakes
+  - Audit an innocent person
+  - Fail to audit a guilty person
+- Are these mistakes equally costly?
+
+---
+
+# Tax example
+
+- Auditing an innocent person is costly since resources are used for no gain.
+  - Suppose it costs $100 to audit a person.
+- Failing to audit a guilty person is costly since there is a failure to recover tax revenue.
+  - Let $500 be recovered from the guilty.
+- In this example, it is more costly to fail to audit the guilty.
+- However, misclassification rate treats both errors the same.
+
+---
+
+#Sensitivity v Specificity
+
+- In a 2-class problem think of one class as the presence of a condition and the other class as the absence of a condition.
+--
+
+- In the auditing example the condition can be that the person is guilty.
+--
+
+- *Sensitivity* refers to the true positive rate.  The proportion of guily classified as guilty.
+--
+
+- *Specificity* refers to the true negative rate.  The proportion of innocent classified as innocent.
+
+---
+
+#Sensitivity v Specificity
+
+- Consider that we audit when the probability of being guilty is greater than 50%.
+--
+
+- Changing this threshold can change the sensitivity and specificity.
+--
+
+- Reducing the threshold to 0 means everyone is audited.  The sensitivity will be perfect but specificity will be zero.
+--
+
+- Raising the threshold to 1 means no one is audited.  The specificity will be perfect but sensitivity will be zero.
+
+---
+
+# Conclusion
+
+- For the remainder of the unit the focus is on different ways to do classification.
+--
+
+- In a business (and any other setting) be aware that
+  - Correlation does not imply causation
+  - Prediction should be thought about probabilisitcally.
+  - Cost should be taken into account when classification is used in decision making.
