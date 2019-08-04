@@ -404,6 +404,24 @@ grid%>%
 ```
 
 ---
+
+# An ethical problem
+
+- A classifier with such high variability obviously poses statistical problems.
+--
+
+- It also poses ethical issues.
+--
+
+- Suppose the algorithm is used to decide who recieves a loan or who is audited by the tax office.
+--
+
+- It should be possible to clearly explain to this person why their loan application was rejected or why they were chosen for audit.
+--
+
+- Having such a sensitive algorithm makes this difficult.
+
+---
 class: inverse, center, middle
 
 # k-NN Classification in R
@@ -413,3 +431,136 @@ class: inverse, center, middle
 # Package
 
 - The k-NN algorithm can be implemented using the `class` package.
+- We will go through an example using the data that has already been cleaned and is in the file *knnexample.RData*
+- Load this file using
+```{r,echo=T,eval=T}
+load('knnexample.RData')
+```
+
+---
+
+# Data
+
+- A data frame of 250 randomly selected training observations for the predictors LIMIT_BAL and AGE (`train_x`)
+- The values of the target variable for the training data stored as a factor (`train_y`)
+- A data frame of 250 randomly selected test observations for the predictors LIMIT_BAL and AGE (`test_x`)
+- The values of the target variable for the test data stored as a factor (`test_y`)
+
+---
+
+# Standardisation
+
+- An important issue with k-NN is that distances can be sensitive to units of messurement.
+- For this reason we should standardise so that all predictors have a standard deviation of 1. 
+
+```{r, echo=T, eval=T}
+
+train_x_std<-scale(train_x)
+mean_train_x<-attr(train_x_std,"scaled:center")
+std_train_x<-attr(train_x_std,"scaled:scale")
+
+```
+
+---
+
+# Standardise training data
+
+- The test data should also be standardised but using the same mean and standard deviation
+
+```{r,echo=T, evel=T}
+test_x_std<-scale(test_x,
+                   center = mean_train_x,
+                   scale = std_train_x)
+
+```
+
+- Now the data are ready to be used in the `knn` function
+
+---
+
+# Using knn
+
+With k=1
+
+```{r, eval=T,echo=T}
+
+knn(train_x_std,
+    test_x_std,
+    train_y,k=1)->yhat_k1
+print(yhat_k1)
+
+```
+
+---
+
+# Test misclassification rate
+
+To compute test misclassification
+
+```{r,echo=T}
+
+miscl_k1<-mean(test_y==yhat_k1)
+print(miscl_k1)
+
+```
+
+Overall, 68% of the training sample is correctly predicted
+--
+
+Now you obtain the misclassification rate with $k=5$
+
+---
+# Answer
+
+```{r, eval=T,echo=T}
+
+
+knn(train_x_std,
+    test_x_std,
+    train_y,k=5)->yhat_k5
+print(yhat_k5)
+
+```
+
+There are also mutliple options for handling ties (for the nearest neighbours)
+
+---
+
+# Additional features
+
+- If the argument `prob=TRUE` is included then the function returns probabilities.
+
+```{r, eval=T,echo=T}
+knn(train_x_std,
+    test_x_std,
+    train_y,k=5,prob = TRUE)->prob_k5
+print(attr(prob_k5,"prob"))
+
+```
+---
+
+# Regression 
+
+- The same principal can be used for regression.
+--
+
+- The predicted value is simply the average value of $y$ for the $k$-nearest neighbours.
+--
+
+- This leads to a highly non-linear regression function.
+
+Choosing $k=5$ leads to better results.
+
+---
+
+# Conclusion
+
+- Using k-NN is a simple but often effective method for classification.
+--
+
+- There are limitations
+--
+
+  - Complicated decision boundaries.
+  - High variance.
+  - Also it works poorly when there is a large number of predictors.

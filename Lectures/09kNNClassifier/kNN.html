@@ -280,6 +280,24 @@ class: inverse, middle, center
 &lt;img src="kNN_files/figure-html/unnamed-chunk-18-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
+
+# An ethical problem
+
+- A classifier with such high variability obviously poses statistical problems.
+--
+
+- It also poses ethical issues.
+--
+
+- Suppose the algorithm is used to decide who recieves a loan or who is audited by the tax office.
+--
+
+- It should be possible to clearly explain to this person why their loan application was rejected or why they were chosen for audit.
+--
+
+- Having such a sensitive algorithm makes this difficult.
+
+---
 class: inverse, center, middle
 
 # k-NN Classification in R
@@ -289,6 +307,270 @@ class: inverse, center, middle
 # Package
 
 - The k-NN algorithm can be implemented using the `class` package.
+- We will go through an example using the data that has already been cleaned and is in the file *knnexample.RData*
+- Load this file using
+
+```r
+load('knnexample.RData')
+```
+
+---
+
+# Data
+
+- A data frame of 250 randomly selected training observations for the predictors LIMIT_BAL and AGE (`train_x`)
+- The values of the target variable for the training data stored as a factor (`train_y`)
+- A data frame of 250 randomly selected test observations for the predictors LIMIT_BAL and AGE (`test_x`)
+- The values of the target variable for the test data stored as a factor (`test_y`)
+
+---
+
+# Standardisation
+
+- An important issue with k-NN is that distances can be sensitive to units of messurement.
+- For this reason we should standardise so that all predictors have a standard deviation of 1. 
+
+
+```r
+train_x_std&lt;-scale(train_x)
+mean_train_x&lt;-attr(train_x_std,"scaled:center")
+std_train_x&lt;-attr(train_x_std,"scaled:scale")
+```
+
+---
+
+# Standardise training data
+
+- The test data should also be standardised but using the same mean and standard deviation
+
+
+```r
+test_x_std&lt;-scale(test_x,
+                   center = mean_train_x,
+                   scale = std_train_x)
+```
+
+- Now the data are ready to be used in the `knn` function
+
+---
+
+# Using knn
+
+With k=1
+
+
+```r
+knn(train_x_std,
+    test_x_std,
+    train_y,k=1)-&gt;yhat_k1
+print(yhat_k1)
+```
+
+```
+##   [1] No Default Default    Default    Default    No Default No Default
+##   [7] No Default No Default No Default Default    No Default No Default
+##  [13] No Default No Default No Default Default    No Default No Default
+##  [19] No Default No Default Default    No Default Default    Default   
+##  [25] No Default No Default Default    No Default Default    No Default
+##  [31] Default    No Default No Default No Default No Default No Default
+##  [37] Default    No Default No Default Default    Default    No Default
+##  [43] No Default No Default No Default No Default Default    No Default
+##  [49] No Default No Default Default    No Default No Default No Default
+##  [55] No Default No Default No Default Default    No Default No Default
+##  [61] Default    No Default No Default Default    No Default No Default
+##  [67] Default    Default    No Default No Default No Default No Default
+##  [73] No Default No Default No Default Default    No Default No Default
+##  [79] No Default No Default No Default No Default No Default No Default
+##  [85] Default    No Default No Default No Default No Default No Default
+##  [91] No Default No Default No Default No Default Default    No Default
+##  [97] No Default No Default No Default No Default No Default No Default
+## [103] No Default No Default No Default No Default Default    No Default
+## [109] No Default Default    No Default No Default No Default Default   
+## [115] No Default No Default No Default No Default No Default No Default
+## [121] No Default No Default Default    No Default Default    No Default
+## [127] No Default Default    No Default No Default No Default No Default
+## [133] No Default No Default No Default No Default No Default No Default
+## [139] No Default No Default Default    No Default Default    No Default
+## [145] Default    No Default No Default No Default No Default No Default
+## [151] No Default No Default No Default Default    No Default Default   
+## [157] No Default No Default No Default No Default No Default Default   
+## [163] No Default No Default No Default No Default No Default No Default
+## [169] No Default No Default No Default No Default No Default No Default
+## [175] No Default No Default No Default Default    Default    No Default
+## [181] No Default No Default No Default Default    No Default No Default
+## [187] No Default No Default Default    No Default Default    No Default
+## [193] Default    No Default No Default No Default No Default No Default
+## [199] Default    No Default No Default Default    Default    No Default
+## [205] No Default No Default No Default No Default Default    No Default
+## [211] No Default No Default No Default No Default Default    No Default
+## [217] No Default No Default No Default Default    No Default No Default
+## [223] No Default Default    No Default No Default No Default No Default
+## [229] No Default No Default No Default No Default No Default No Default
+## [235] No Default No Default No Default No Default No Default No Default
+## [241] Default    No Default No Default Default    No Default Default   
+## [247] No Default No Default No Default No Default
+## Levels: Default No Default
+```
+
+---
+
+# Test misclassification rate
+
+To compute test misclassification
+
+
+```r
+miscl_k1&lt;-mean(test_y==yhat_k1)
+print(miscl_k1)
+```
+
+```
+## [1] 0.68
+```
+
+Overall, 68% of the training sample is correctly predicted
+--
+
+Now you obtain the misclassification rate with `\(k=5\)`
+
+---
+# Answer
+
+
+```r
+knn(train_x_std,
+    test_x_std,
+    train_y,k=5)-&gt;yhat_k5
+print(yhat_k5)
+```
+
+```
+##   [1] No Default Default    No Default No Default Default    No Default
+##   [7] No Default No Default No Default Default    No Default No Default
+##  [13] No Default No Default No Default No Default No Default No Default
+##  [19] No Default No Default Default    No Default No Default No Default
+##  [25] No Default No Default No Default No Default Default    Default   
+##  [31] No Default No Default No Default Default    Default    No Default
+##  [37] No Default No Default No Default No Default No Default No Default
+##  [43] No Default No Default No Default No Default No Default No Default
+##  [49] No Default No Default No Default Default    Default    No Default
+##  [55] No Default Default    Default    Default    No Default Default   
+##  [61] Default    No Default Default    Default    No Default No Default
+##  [67] No Default No Default No Default No Default No Default No Default
+##  [73] No Default No Default No Default No Default No Default No Default
+##  [79] No Default No Default No Default No Default No Default No Default
+##  [85] No Default No Default No Default No Default No Default No Default
+##  [91] No Default No Default No Default No Default Default    No Default
+##  [97] No Default No Default No Default No Default No Default No Default
+## [103] No Default Default    No Default Default    No Default No Default
+## [109] No Default No Default No Default No Default No Default No Default
+## [115] No Default No Default No Default Default    No Default No Default
+## [121] No Default No Default No Default No Default No Default No Default
+## [127] No Default Default    No Default No Default No Default No Default
+## [133] No Default No Default No Default No Default No Default No Default
+## [139] No Default No Default No Default Default    No Default No Default
+## [145] No Default No Default No Default No Default No Default No Default
+## [151] No Default No Default No Default No Default No Default No Default
+## [157] No Default No Default No Default No Default No Default No Default
+## [163] No Default No Default Default    No Default No Default No Default
+## [169] No Default No Default No Default No Default No Default No Default
+## [175] Default    No Default No Default No Default Default    No Default
+## [181] No Default No Default No Default No Default No Default No Default
+## [187] No Default No Default No Default No Default No Default No Default
+## [193] No Default No Default No Default No Default No Default No Default
+## [199] No Default No Default No Default No Default Default    No Default
+## [205] No Default No Default No Default No Default No Default No Default
+## [211] No Default No Default No Default No Default No Default No Default
+## [217] No Default No Default No Default No Default No Default No Default
+## [223] No Default No Default No Default No Default No Default No Default
+## [229] No Default No Default No Default No Default No Default No Default
+## [235] No Default No Default Default    No Default No Default No Default
+## [241] No Default No Default No Default Default    No Default No Default
+## [247] No Default No Default No Default No Default
+## Levels: Default No Default
+```
+
+There are also mutliple options for handling ties (for the nearest neighbours)
+
+---
+
+# Additional features
+
+- If the argument `prob=TRUE` is included then the function returns probabilities.
+
+
+```r
+knn(train_x_std,
+    test_x_std,
+    train_y,k=5,prob = TRUE)-&gt;prob_k5
+print(attr(prob_k5,"prob"))
+```
+
+```
+##   [1] 1.0000000 0.5714286 0.6666667 0.6000000 0.6000000 0.8000000 1.0000000
+##   [8] 1.0000000 0.6666667 0.6000000 0.8333333 0.8000000 1.0000000 0.5714286
+##  [15] 1.0000000 0.6666667 1.0000000 1.0000000 0.6000000 1.0000000 0.6000000
+##  [22] 0.8333333 0.6666667 0.6000000 1.0000000 1.0000000 0.5714286 1.0000000
+##  [29] 0.6000000 0.5000000 0.6666667 0.8571429 1.0000000 0.6000000 0.6000000
+##  [36] 0.8000000 0.6666667 0.6000000 0.6000000 0.5000000 0.6000000 0.6666667
+##  [43] 0.6000000 0.6000000 0.8333333 1.0000000 0.6666667 0.8000000 1.0000000
+##  [50] 1.0000000 0.8000000 0.6000000 0.6000000 1.0000000 1.0000000 0.6000000
+##  [57] 0.6666667 0.8000000 1.0000000 0.6000000 0.8000000 1.0000000 0.6000000
+##  [64] 0.6000000 0.6666667 0.8000000 0.5714286 0.5714286 1.0000000 1.0000000
+##  [71] 0.6666667 0.6000000 1.0000000 0.6666667 0.8000000 0.8000000 1.0000000
+##  [78] 0.8000000 0.8000000 1.0000000 0.6666667 0.6000000 1.0000000 0.8000000
+##  [85] 0.5714286 1.0000000 0.8000000 0.6666667 1.0000000 0.8750000 1.0000000
+##  [92] 1.0000000 0.8000000 0.7142857 0.6000000 0.7142857 1.0000000 0.8571429
+##  [99] 0.8000000 0.8000000 0.8333333 0.8000000 0.5714286 0.6000000 0.8333333
+## [106] 0.6000000 0.8000000 1.0000000 1.0000000 0.6666667 1.0000000 1.0000000
+## [113] 1.0000000 0.6000000 0.8750000 0.6000000 1.0000000 0.6666667 1.0000000
+## [120] 1.0000000 0.6000000 0.8333333 0.5000000 0.6000000 0.6000000 0.6666667
+## [127] 1.0000000 0.6000000 0.7142857 1.0000000 0.8000000 0.8333333 1.0000000
+## [134] 0.6000000 0.7142857 1.0000000 0.6000000 0.8000000 0.6666667 0.7142857
+## [141] 0.6000000 0.6666667 0.8000000 0.8000000 0.8000000 1.0000000 1.0000000
+## [148] 1.0000000 0.8000000 1.0000000 0.8750000 1.0000000 1.0000000 0.6000000
+## [155] 1.0000000 0.8000000 0.6666667 1.0000000 0.5714286 0.8000000 0.6000000
+## [162] 0.6000000 1.0000000 0.6000000 0.6000000 0.8000000 1.0000000 1.0000000
+## [169] 1.0000000 0.5714286 1.0000000 0.5000000 0.8000000 0.7142857 0.6000000
+## [176] 0.6666667 1.0000000 0.8750000 0.6666667 1.0000000 1.0000000 0.8000000
+## [183] 0.8000000 0.6666667 0.6000000 0.8000000 0.8000000 0.8000000 0.6000000
+## [190] 0.8000000 0.8000000 0.8333333 0.8000000 0.6000000 1.0000000 0.6666667
+## [197] 0.8000000 0.8000000 0.8750000 0.8333333 0.7142857 0.7500000 0.6000000
+## [204] 1.0000000 1.0000000 1.0000000 0.8000000 1.0000000 0.8000000 1.0000000
+## [211] 0.7142857 1.0000000 1.0000000 0.6666667 0.6000000 1.0000000 1.0000000
+## [218] 0.8000000 0.8333333 0.6666667 1.0000000 0.7500000 0.8000000 0.5714286
+## [225] 0.8000000 1.0000000 0.8000000 1.0000000 0.8000000 1.0000000 1.0000000
+## [232] 1.0000000 1.0000000 0.8333333 0.6000000 1.0000000 0.6000000 0.8000000
+## [239] 1.0000000 0.6000000 0.8000000 1.0000000 1.0000000 0.6000000 0.8333333
+## [246] 0.6666667 1.0000000 0.8000000 0.8000000 1.0000000
+```
+---
+
+# Regression 
+
+- The same principal can be used for regression.
+--
+
+- The predicted value is simply the average value of `\(y\)` for the `\(k\)`-nearest neighbours.
+--
+
+- This leads to a highly non-linear regression function.
+
+Choosing `\(k=5\)` leads to better results.
+
+---
+
+# Conclusion
+
+- Using k-NN is a simple but often effective method for classification.
+--
+
+- There are limitations
+--
+
+  - Complicated decision boundaries.
+  - High variance.
+  - Also it works poorly when there is a large number of predictors.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
