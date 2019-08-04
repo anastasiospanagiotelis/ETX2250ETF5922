@@ -1,0 +1,415 @@
+---
+title: "Nearest Neighbour Classification"
+subtitle: "Data Visualisation and Analytics"
+author: "Anastasios Panagiotelis"
+date: "Lecture 9"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"css/mtheme.css","css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+
+---
+
+class: inverse, center, middle
+
+# Love Thy Neighbour
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
+require(magrittr)
+require(tidyverse)
+require(plotly)
+require(widgetframe)
+require(animation)
+require(DT)
+require(PoEdata)
+require(kableExtra)
+require(gridExtra)
+require(ggmosaic)
+require(ggthemes)
+```
+
+---
+
+# Nearest Neighbours 
+
+- Recall that we discussed nearest neigbours during the topic on LOESS.
+--
+
+- Now we will use nearest neighbours in the context of classification.
+--
+
+- Illustration with 2 predictors since these are easy to understand.
+--
+
+- Data is a subsample of 100 observations from the Credit default data.
+
+---
+
+# Credit Data
+
+```{r,echo=F,eval=T}
+set.seed(1)
+Credit<-readRDS('Credit.rds')%>%sample_n(100)
+g<-ggplot(Credit,aes(x=LIMIT_BAL,y=AGE,col=default))+geom_point()+scale_color_colorblind()
+g
+```
+
+---
+
+# Default or not?
+
+```{r,echo=F,eval=T}
+g+geom_point(aes(x=350000,50),color='#339966',shape=4,size=10)
+
+```
+
+---
+
+# Default or not?
+
+```{r,echo=F,eval=T}
+g+geom_point(aes(x=50000,45),color='#339966',shape=4,size=10)
+
+```
+
+---
+
+# Basic Idea
+
+- For the first point (limit 350000, age 50) most nearby points in the training data are not defaults (orange).
+  - Predict no default
+- For the second point (limit 50000, age 45) most nearby points in the training data are defaults (black).
+  - Predict default
+
+---
+
+# More formally
+
+- Concentrate on the $k$ nearest points, also known as the k Nearest Neighbours or k-NN.
+- Let $\mathcal{N}_{\mathbf{x},k}$ be the set of $k$ training points closest to $\mathbf{x}$.
+- The predicted probability of Default is
+
+$$\frac{1}{k}\sum\limits_{i\in\mathcal{N}_{\mathbf{x},k}}I(y_i=\mbox{Default})$$
+
+---
+
+# First example (k=4)
+
+```{r,echo=F,eval=T}
+g+geom_point(aes(x=350000,50),color='#339966',shape=4,size=10)
+
+```
+
+---
+
+# First example (k=4)
+
+```{r,echo=F,eval=T}
+g+geom_point(aes(x=350000,50),color='#339966',shape=4,size=10)+geom_point(aes(x=350000,50),color='#339966',shape=1,size=45)
+
+```
+
+---
+
+# Prediction
+
+- The four nearest neighbours are all *Non-defaults*
+--
+
+- Therefore the predicted default probability for an individual with limit of 350000 and age 50 is zero.
+--
+
+- We predict this individual does not default.
+
+---
+
+
+# Second example (k=4)
+
+```{r,echo=F,eval=T}
+g+geom_point(aes(x=50000,45),color='#339966',shape=4,size=10)
+
+```
+
+---
+
+# Second example (k=4)
+
+```{r,echo=F,eval=T}
+g+geom_point(aes(x=50000,45),color='#339966',shape=4,size=10)+geom_point(aes(x=50000,45),color='#339966',shape=1,size=25)
+
+```
+
+---
+
+# Prediction
+
+- The four nearest neighbours include three *Defaults* and one *Non-default*
+--
+
+- Therefore the predicted default probability for an individual with limit of 50000 and age 45 is 0.75.
+--
+
+- We predict this individual does default.
+
+---
+
+# Your Turn
+
+- Consider the case where $k=10$
+- What is the predicted probability of default for the first example (350000 limit 50 years age)?
+- What is the predicted probability of default for the second example (50000 limit 45 years age)?
+
+---
+
+# First example (k=10)
+
+```{r,echo=F,eval=T}
+g+geom_point(aes(x=350000,50),color='#339966',shape=4,size=10)+geom_point(aes(x=350000,50),color='#339966',shape=1,size=110)
+
+```
+
+---
+
+
+# Second example (k=10)
+
+```{r,echo=F,eval=T}
+g+geom_point(aes(x=50000,45),color='#339966',shape=4,size=10)+geom_point(aes(x=50000,45),color='#339966',shape=1,size=45)
+
+```
+
+---
+
+# Answers
+
+- What is the predicted probability of default for the first example (350000 limit 50 years age)?
+  - The predicted probability of default is 0.
+- What is the predicted probability of default for the second example (50000 limit 45 years age)?
+  - The predicted probability of default is 0.6.
+  
+---
+class: inverse, middle, center
+
+# Decision Boundary
+
+---
+
+# Data again
+
+```{r}
+
+grid<-Credit[,c(2,6)]
+colnames(grid)<-c('Limit','Age')
+grid%>%
+  as_tibble()%>%
+  add_column(Class=as.factor(pull(Credit,25)))%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point()+scale_color_colorblind()
+```
+
+---
+
+# Decision Boundaries
+
+- For the next few slides a grid of evaluation points has been created.
+- If k-NN predicts "Default" the grid point is colored black.
+- If k-NN predicts "No default" the grid point is colored yellow.
+- Plotting these gives an idea of the *decision boundaries*.
+
+---
+
+# Decision boundary (k=1)
+
+```{r, echo=FALSE,eval=TRUE}
+library(class)
+gx1<-seq(10000,500000, by=10000)
+gx2<-seq(20.5,60, by=0.5)
+grid<-expand.grid(gx1,gx2)
+colnames(grid)<-c('Limit','Age')
+#grid<-cbind(grid,rbinom(nrow(grid),1,0.5))
+select(Credit,LIMIT_BAL,AGE)%>%scale->tr
+ts<-scale(grid,center = attr(tr,"scaled:center") ,scale = attr(tr,"scaled:scale") )
+
+knn(tr, ts,cl = as.factor(pull(Credit,25)),k = 1)->out
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+# Decision boundary (k=3)
+
+```{r, echo=FALSE,eval=TRUE}
+knn(tr, ts,cl = as.factor(pull(Credit,25)),k = 3)->out
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+
+# Decision boundary (k=11)
+
+```{r, echo=FALSE,eval=TRUE}
+knn(tr, ts,cl = as.factor(pull(Credit,25)),k = 11)->out
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+# Decision boundary (k=17)
+
+```{r, echo=FALSE,eval=TRUE}
+knn(tr, ts,cl = as.factor(pull(Credit,25)),k = 17)->out
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+# Choosing $k$
+
+- Smaller values of $k$ lead to very complicated decision boundaries.
+- Larger values of $k$ provide smoother boundaries although there are still some unstable regions.
+- Larger values of $k$ also slow down computation for big datasets.
+
+---
+
+# Choosing $k$
+
+- A general rule of thumb is to choose $k\approx\sqrt{n}$
+--
+
+- Also it is advised to choose a value of $k$ that is NOT a multiple of the number of classes.
+--
+
+- This avoids ties.
+--
+
+- When ties are present, a class is chosen randomly.
+--
+
+- For the two class problem, choose odd $k$.
+
+---
+# Choosing $k$
+
+- The value of $k$ can also be chosen by trying many possible values of $k$.
+--
+
+- The optimal value can be selected so that the *test* misclassifcation error rate is minimised.
+--
+
+- Another alternative is to use cross validation.
+
+---
+class: inverse, middle, center
+
+# Instability of kNN
+
+---
+
+# High variability
+
+- A problem of k-NN classification is that it is highly variable.
+- Small changes in the training data change the decision boundaries dramatically.
+- This is much more pronounced for smaller values of $k$.
+- The next few slides show different subsamples of training data.
+
+---
+
+# Original Training Sample (k=3)
+
+```{r, echo=FALSE,eval=TRUE}
+knn(tr, ts,cl = as.factor(pull(Credit,25)),k = 3)->out
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+
+# Different Training Sample (k=3)
+
+```{r, echo=FALSE,eval=TRUE}
+set.seed(2)
+Credit2<-readRDS('Credit.rds')%>%sample_n(100)
+select(Credit2,LIMIT_BAL,AGE)%>%scale->tr2
+ts2<-scale(grid,center = attr(tr2,"scaled:center") ,scale = attr(tr2,"scaled:scale") )
+knn(tr2, ts2,cl = as.factor(pull(Credit2,25)),k = 3)->out
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+
+# Original Training Sample (k=11)
+
+```{r, echo=FALSE,eval=TRUE}
+knn(tr, ts,cl = as.factor(pull(Credit,25)),k = 11)->out
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+
+# Different Training Sample (k=11)
+
+```{r, echo=FALSE,eval=TRUE}
+knn(tr2, ts2,cl = as.factor(pull(Credit2,25)),k = 11)->out
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+class: inverse, center, middle
+
+# k-NN Classification in R
+
+---
+
+# Package
+
+- The k-NN algorithm can be implemented using the `class` package.

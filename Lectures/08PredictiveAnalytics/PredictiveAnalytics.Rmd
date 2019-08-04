@@ -371,3 +371,30 @@ $$\frac{1}{|\mathcal{N}_{0}|}\sum\limits_{i\in\mathcal{N}_{0}} I(y_i\neq\hat{y}_
 
 - In other instances an algorithm will provide probabilities.
   - The customer has a 40% chance of purchasing Gucci, a 35% of purchasing Givenchy and a 25% chance of purchasing YSL.
+
+---
+
+# Probabilistic Classification
+
+- A probabilistic prediction can be converted to a point prediction.
+--
+
+- Simply choose the class with the highest probability.
+--
+
+- In the example on the previous slide the choice would be Gucci.
+
+---
+
+# Two class case
+
+- In the two class case, choosing the class with highest probability is simple.
+--
+
+- Assign to a class if the probability is greater than 0.5
+--
+
+- In some applications a different threshold may be used.
+--
+
+- This is particularly the case if there are asymmetric costs involved with different types of misclassification.
