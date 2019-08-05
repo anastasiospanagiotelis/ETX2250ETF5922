@@ -125,7 +125,10 @@ class: inverse, center, middle
 - Therefore the predicted default probability for an individual with limit of 50000 and age 45 is 0.75.
 --
 
-- We predict this individual does default.
+- Using a threshold of 0.5, we predict this individual does default.
+--
+
+- In practice a different threshold can be used.
 
 ---
 
@@ -230,10 +233,13 @@ class: inverse, middle, center
 ---
 # Choosing `\(k\)`
 
-- The value of `\(k\)` can also be chosen by trying many possible values of `\(k\)`.
+- Finally, data can be split into a training sample and test sample.
 --
 
-- The optimal value can be selected so that the *test* misclassifcation error rate is minimised.
+- We can then try many possible values of `\(k\)`.
+--
+
+- The optimal value can be selected so that the *test* misclassification error rate is minimised.
 --
 
 - Another alternative is to use cross validation.
@@ -248,8 +254,17 @@ class: inverse, middle, center
 # High variability
 
 - A problem of k-NN classification is that it is highly variable.
-- Small changes in the training data change the decision boundaries dramatically.
+--
+
+- Now assume we use a fixed value of `\(k\)` but make small changes in the training data
+--
+
+- This change the decision boundaries dramatically.
+--
+
 - This is much more pronounced for smaller values of `\(k\)`.
+--
+
 - The next few slides show different subsamples of training data.
 
 ---
@@ -307,7 +322,11 @@ class: inverse, center, middle
 # Package
 
 - The k-NN algorithm can be implemented using the `class` package.
+--
+
 - We will go through an example using the data that has already been cleaned and is in the file *knnexample.RData*
+--
+
 - Load this file using
 
 ```r
@@ -319,15 +338,23 @@ load('knnexample.RData')
 # Data
 
 - A data frame of 250 randomly selected training observations for the predictors LIMIT_BAL and AGE (`train_x`)
+--
+
 - The values of the target variable for the training data stored as a factor (`train_y`)
+--
+
 - A data frame of 250 randomly selected test observations for the predictors LIMIT_BAL and AGE (`test_x`)
+--
+
 - The values of the target variable for the test data stored as a factor (`test_y`)
 
 ---
 
 # Standardisation
 
-- An important issue with k-NN is that distances can be sensitive to units of messurement.
+- An important issue with k-NN is that distances can be sensitive to units of measurement.
+--
+
 - For this reason we should standardise so that all predictors have a standard deviation of 1. 
 
 
@@ -360,8 +387,7 @@ With k=1
 
 
 ```r
-knn(train_x_std,
-    test_x_std,
+knn(train_x_std,test_x_std,
     train_y,k=1)-&gt;yhat_k1
 print(yhat_k1)
 ```
@@ -420,18 +446,18 @@ To compute test misclassification
 
 
 ```r
-miscl_k1&lt;-mean(test_y==yhat_k1)
+miscl_k1&lt;-mean(test_y!=yhat_k1)
 print(miscl_k1)
 ```
 
 ```
-## [1] 0.68
+## [1] 0.32
 ```
 
-Overall, 68% of the training sample is correctly predicted
+Overall, 32% of the training sample is incorrectly predicted
 --
 
-Now you obtain the misclassification rate with `\(k=5\)`
+- As an exercise, you can now try to obtain the misclassification rate with `\(k=5\)`
 
 ---
 # Answer
@@ -441,56 +467,35 @@ Now you obtain the misclassification rate with `\(k=5\)`
 knn(train_x_std,
     test_x_std,
     train_y,k=5)-&gt;yhat_k5
-print(yhat_k5)
+miscl_k5&lt;-mean(test_y!=yhat_k5)
+print(miscl_k5)
 ```
 
 ```
-##   [1] No Default Default    No Default No Default Default    No Default
-##   [7] No Default No Default No Default Default    No Default No Default
-##  [13] No Default No Default No Default No Default No Default No Default
-##  [19] No Default No Default Default    No Default No Default No Default
-##  [25] No Default No Default No Default No Default Default    Default   
-##  [31] No Default No Default No Default Default    Default    No Default
-##  [37] No Default No Default No Default No Default No Default No Default
-##  [43] No Default No Default No Default No Default No Default No Default
-##  [49] No Default No Default No Default Default    Default    No Default
-##  [55] No Default Default    Default    Default    No Default Default   
-##  [61] Default    No Default Default    Default    No Default No Default
-##  [67] No Default No Default No Default No Default No Default No Default
-##  [73] No Default No Default No Default No Default No Default No Default
-##  [79] No Default No Default No Default No Default No Default No Default
-##  [85] No Default No Default No Default No Default No Default No Default
-##  [91] No Default No Default No Default No Default Default    No Default
-##  [97] No Default No Default No Default No Default No Default No Default
-## [103] No Default Default    No Default Default    No Default No Default
-## [109] No Default No Default No Default No Default No Default No Default
-## [115] No Default No Default No Default Default    No Default No Default
-## [121] No Default No Default No Default No Default No Default No Default
-## [127] No Default Default    No Default No Default No Default No Default
-## [133] No Default No Default No Default No Default No Default No Default
-## [139] No Default No Default No Default Default    No Default No Default
-## [145] No Default No Default No Default No Default No Default No Default
-## [151] No Default No Default No Default No Default No Default No Default
-## [157] No Default No Default No Default No Default No Default No Default
-## [163] No Default No Default Default    No Default No Default No Default
-## [169] No Default No Default No Default No Default No Default No Default
-## [175] Default    No Default No Default No Default Default    No Default
-## [181] No Default No Default No Default No Default No Default No Default
-## [187] No Default No Default No Default No Default No Default No Default
-## [193] No Default No Default No Default No Default No Default No Default
-## [199] No Default No Default No Default No Default Default    No Default
-## [205] No Default No Default No Default No Default No Default No Default
-## [211] No Default No Default No Default No Default No Default No Default
-## [217] No Default No Default No Default No Default No Default No Default
-## [223] No Default No Default No Default No Default No Default No Default
-## [229] No Default No Default No Default No Default No Default No Default
-## [235] No Default No Default Default    No Default No Default No Default
-## [241] No Default No Default No Default Default    No Default No Default
-## [247] No Default No Default No Default No Default
-## Levels: Default No Default
+## [1] 0.292
 ```
 
-There are also mutliple options for handling ties (for the nearest neighbours)
+The misclassification rate when `\(k=5\)` is 0.292.
+
+---
+
+#Sensitivity and specificity
+
+- It is also worth reporting results in a cross tabulation
+
+
+```r
+table(train_y,yhat_k5)
+```
+
+```
+##             yhat_k5
+## train_y      Default No Default
+##   Default          9         53
+##   No Default      20        168
+```
+
+Letting "default" be the "positive" class, sensitivity is 9/(9+53) or 0.145, and specificity is 168/(20+168) or 0.894
 
 ---
 
@@ -544,6 +549,26 @@ print(attr(prob_k5,"prob"))
 ## [239] 1.0000000 0.6000000 0.8000000 1.0000000 1.0000000 0.6000000 0.8333333
 ## [246] 0.6666667 1.0000000 0.8000000 0.8000000 1.0000000
 ```
+
+---
+
+
+# Ties in neighbours
+
+- If there are only 5 neighbours all probabilities should be either 0, 0.2, 0.4, 0.6, 0.8 or 1.
+--
+
+- This is not true.  Why?
+--
+
+- There can be ties in finding the nearest neighbours.
+--
+
+- Two (or more) observations may tied as equally fifth closest.
+--
+
+- In this case both are used.
+
 ---
 
 # Regression 
@@ -555,10 +580,8 @@ print(attr(prob_k5,"prob"))
 --
 
 - This leads to a highly non-linear regression function.
-
-Choosing `\(k=5\)` leads to better results.
-
 ---
+
 
 # Conclusion
 
