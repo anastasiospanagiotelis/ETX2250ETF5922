@@ -36,7 +36,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
   4. How are outliers defined in a boxplot?
   
-`r if(sols) "*An upper and lower fence are set to the median plus and minus 1.5 times the interquartile range.  If there are points either above the upper fence, or below the lower fence these are considered to be outliers and drawn as a point.*"`   
+`r if(sols) "*An upper and lower fence are set to the the third quartile plus 1.5 times the interquartile range and the first quartile minus 1.5 times the interquartile range respectively.  If the minimum value is greater than the first quartile minus 1.5 of the interquartile range, then the a line is drawn at the mimimum value rather than the lower fence.  If the maximum value is less than the third quartile plus 1.5 of the interquartile range, then the upper fence is drawn at the maximum value rather than the upper fence.  If there are points either above the upper fence, or below the lower fence these are considered to be outliers and drawn as a point.*"`   
 
 ## Data Analysis
 

@@ -1,0 +1,674 @@
+---
+title: "Discriminant Analysis"
+subtitle: "Data Visualisation and Analytics"
+author: "Anastasios Panagiotelis"
+date: "Lecture 10"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"css/mtheme.css","css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+
+---
+
+class: inverse, center, middle
+
+# The power of Bayes
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
+require(magrittr)
+require(tidyverse)
+require(plotly)
+require(widgetframe)
+require(animation)
+require(DT)
+require(PoEdata)
+require(kableExtra)
+require(gridExtra)
+require(ggmosaic)
+require(ggthemes)
+require(MASS)
+require(class)
+```
+
+---
+
+# Credit Data
+
+```{r,echo=F,eval=T}
+set.seed(1)
+Credit<-readRDS('Credit.rds')%>%sample_n(100)
+g<-ggplot(Credit,aes(x=LIMIT_BAL,y=AGE,col=default))+geom_point()+scale_color_colorblind()
+g
+```
+
+---
+
+# Default or not?
+
+```{r,echo=F,eval=T}
+g+geom_point(aes(x=350000,50),color='#339966',shape=4,size=10)
+
+```
+
+---
+
+# Default or not?
+
+```{r,echo=F,eval=T}
+g+geom_point(aes(x=50000,45),color='#339966',shape=4,size=10)
+
+```
+
+---
+
+# Notation
+
+- In general $y$ is the target.  In this example it can take two values, let $y=1$ in case of default and $y=0$ in case of non-default.
+--
+
+- In general ${\mathbf x}$ are the predictors.  In this example they are age and limit balance.
+--
+
+- We would like to find
+
+$$p(y=1|{\mathbf x})\quad\mbox{and}\quad p(y=0|{\mathbf x})$$
+- If $p(y=1|{\mathbf x})>p(y=0|{\mathbf x})$ we predict default otherwise predict no default.
+
+---
+
+# A perfect world
+
+- Ideally we would know three distributions.
+  - $p({\mathbf x}|y=1)$
+  - $p({\mathbf x}|y=0)$
+  - $p(y)$
+--
+
+- If we know these three distributions the we can use Bayes Rule to find $p(y=1|{\mathbf x})$
+
+$$\frac {p({\mathbf x}|y=1)p(y=1)}{p({\mathbf x}|y=0)p(y=0)+p({\mathbf x}|y=1)p(y=1)} $$
+
+---
+
+# The real world
+
+- This classifier theoretically minimises misclassifiation rate. However...
+--
+
+- $p({\mathbf x}|y=0)$ is unknown
+--
+
+  - Estimate using the $y=0$ cases in the training data.
+--
+
+- $p({\mathbf x}|y=1)$ is unknown
+--
+
+  - Estimate using the $y=1$ cases in the training data.
+--
+
+- $p(y=1)$ and $p(y=0)$ are unknown
+--
+
+  - Estimate using the proportions of $y=1$ and $y=0$ cases in the training data.
+
+---
+
+# Assumptions
+
+Some commonly made assumptions are:
+--
+
+- **Normality**: The data follow normal distributions for the $y=1$ group and $y=0$ group.
+--
+
+- **Homogeneity of Variances and Covariances**: The variances and covariances are the same for the $y=1$ group and $y=0$ group.
+--
+
+- **Independence**: Observations are independent from one another
+  
+
+---
+
+# Linear DA
+
+- Under these assumptions, the prediction depends on a linear combination of ${\mathbf x}$.
+--
+
+- This is known as Linear Discriminant Analysis or LDA.
+--
+
+- If *Homogeneity of Variances and Covariances* assumption is dropped then the prediction depends on a quadratic function of ${\mathbf x}$
+--
+
+- This is known as Quadratic Discriminant Analysis or QDA.
+
+---
+
+class: inverse, middle, center
+
+# Decision Boundary
+
+---
+
+# Data again
+
+```{r}
+
+grid<-Credit[,c(2,6)]
+colnames(grid)<-c('Limit','Age')
+grid%>%
+  as_tibble()%>%
+  add_column(Class=as.factor(pull(Credit,25)))%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point()+scale_color_colorblind()
+```
+
+---
+
+# Decision Boundaries
+
+- For the next few slides the same grid of points that was used for kNN is presented again.
+--
+
+- If LDA or QDA predicts "Default" the grid point is colored black.
+--
+
+- If LDA or QDA predicts "No default" the grid point is colored yellow.
+--
+
+- Think about how these decision boundaries compare to kNN.
+
+---
+
+# Decision Boundary: LDA
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+library(class)
+gx1<-seq(5000,500000, by=1000)
+gx2<-seq(20.1,60, by=0.1)
+grid<-expand.grid(gx1,gx2)
+colnames(grid)<-c('Limit','Age')
+#grid<-cbind(grid,rbinom(nrow(grid),1,0.5))
+dplyr::select(Credit,LIMIT_BAL,AGE,default)%>%
+  rename(Limit=LIMIT_BAL,Age=AGE)->tr
+
+lda(default~Limit+Age,data = tr)->ldaout
+
+predict(ldaout,grid)->out
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out$class)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+# Coefficients: LDA
+
+- The coefficient of Limit is $`r ldaout$scaling[1]`$ 
+--
+
+- The coefficient of Age is $`r ldaout$scaling[2]`$
+--
+
+- It can clearly be explained to a customer that their application was declined since
+--
+
+  - Limit that was too low 
+  - Age that was too high.
+
+
+---
+
+# Decision Boundary: QDA
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+
+#grid<-expand.grid(gx1,gx2)
+#colnames(grid)<-c('Limit','Age')
+#grid<-cbind(grid,rbinom(nrow(grid),1,0.5))
+dplyr::select(Credit,LIMIT_BAL,AGE,default)%>%
+  rename(Limit=LIMIT_BAL,Age=AGE)->tr
+
+qda(default~Limit+Age,data = tr)->qdaout
+
+predict(qdaout,grid)->out
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out$class)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+# Multiclass Example
+
+- On the next few slides we will consider a different dataset where the target variable can take three values.
+--
+
+- Using the `mpg` dataset we will predict whether a car is a 4wd, a rear wheel drive or a front wheel drive.
+--
+
+- The predictors will be fuel efficiency on the highway (`hwy`) and engine size (`displ`)
+
+---
+
+#Multiclass Example: Data
+
+```{r, echo=FALSE,eval=TRUE}
+mpg%>%
+  ggplot(aes(x=displ,y=hwy,col=drv))+geom_point(size=2)+scale_color_colorblind()
+
+```
+
+---
+
+#Multiclass Example: LDA
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+gx1<-seq(1.01,7, by=0.01)
+gx2<-seq(10.1,50, by=0.1)
+gridcars<-expand.grid(gx1,gx2)
+colnames(gridcars)<-c('displ','hwy')
+#grid<-cbind(grid,rbinom(nrow(grid),1,0.5))
+dplyr::select(mpg,displ,hwy,drv)->trcars
+
+lda(drv~displ+hwy,data = trcars)->ldaout
+
+predict(ldaout,gridcars)->out
+
+gridcars%>%
+  as_tibble%>%
+  add_column(Class=out$class)%>%
+  ggplot(aes(x=displ,y=hwy,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+#Multiclass Example: QDA
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+
+gridcars<-expand.grid(gx1,gx2)
+colnames(gridcars)<-c('displ','hwy')
+#grid<-cbind(grid,rbinom(nrow(grid),1,0.5))
+dplyr::select(mpg,displ,hwy,drv)->trcars
+
+qda(drv~displ+hwy,data = trcars)->qdaout
+
+predict(qdaout,gridcars)->out
+
+gridcars%>%
+  as_tibble%>%
+  add_column(Class=out$class)%>%
+  ggplot(aes(x=displ,y=hwy,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+
+---
+class: inverse, middle, center
+
+#Are the assumptions valid?
+
+---
+
+# Data again
+
+```{r,echo=F,eval=T}
+g<-ggplot(Credit,aes(x=LIMIT_BAL,y=AGE,col=default))+geom_point()+scale_color_colorblind()
+ggplotly(g)%>%frameWidget(width='100%',height = '100%')
+```
+
+---
+
+#As density
+
+```{r,echo=F,eval=T}
+g<-ggplot(Credit,aes(x=LIMIT_BAL,y=AGE,col=default))+geom_density2d()+scale_color_colorblind()
+ggplotly(g)%>%frameWidget(width='100%',height = '100%')
+
+```
+---
+
+# All assumptions hold
+
+```{r,echo=F,eval=T,message=F,warning=F}
+library(mvtnorm)
+filter(Credit,default=='Default')->Creditd
+meand<-c(mean(Creditd$LIMIT_BAL),mean(Creditd$AGE))
+varcovd<-cov(cbind(Creditd$LIMIT_BAL,Creditd$AGE))
+
+filter(Credit,default=='No Default')->Creditnd
+meannd<-c(mean(Creditnd$LIMIT_BAL),mean(Creditnd$AGE))
+varcovnd<-cov(cbind(Creditnd$LIMIT_BAL,Creditnd$AGE))
+
+varcov<-cov(cbind(Credit$LIMIT_BAL,Credit$AGE))
+
+xd<-rmvnorm(10000,meand,varcov)%>%as_tibble()%>%add_column(default='Default')
+
+xnd<-rmvnorm(10000,meannd,varcov)%>%as_tibble()%>%add_column(default='No Default')
+x<-rbind(xd,xnd)%>%rename(LIMIT_BAL=V1,AGE=V2)
+
+g<-ggplot(x,aes(x=LIMIT_BAL,y=AGE,col=default))+geom_density2d(h=c(200000,20))+scale_color_colorblind()
+
+ggplotly(g)%>%frameWidget(width='100%',height = '100%')
+
+
+```
+
+---
+
+# Different Variances Covariances
+
+```{r,echo=F,eval=T,message=F,warning=F}
+
+
+xd<-rmvnorm(10000,meand,varcovd)%>%as_tibble()%>%add_column(default='Default')
+
+xnd<-rmvnorm(10000,meannd,varcovnd)%>%as_tibble()%>%add_column(default='No Default')
+x<-rbind(xd,xnd)%>%rename(LIMIT_BAL=V1,AGE=V2)
+
+g<-ggplot(x,aes(x=LIMIT_BAL,y=AGE,col=default))+geom_density2d(h=c(200000,20))+scale_color_colorblind()
+
+ggplotly(g)%>%frameWidget(width='100%',height = '100%')
+
+```
+
+---
+
+# Assumptions
+
+- With more predictors we cannot visualise in this way.
+--
+
+- There are formal hypothesis tests than can be used.
+--
+
+- Non normal data can be transformed to be closer to normal.
+--
+
+- Despite all of this, LDA and QDA often perform well in practice even when assumptions are violated.
+
+---
+
+class: inverse, middle, center
+
+# Stability of LDA
+
+---
+
+# Low variability
+
+- Compared to k-NN classification LDA and QDA have lower variability across different training data sets.
+--
+
+- The next few slides show the decision boundaries of LDA and QDA for different subsamples of training data.
+
+---
+
+# Original Training Sample: LDA
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+lda(default~Limit+Age,data = tr)->ldaout
+predict(ldaout,grid)->out
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out$class)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+
+# Different Training Sample LDA
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+set.seed(5)
+Credit2<-readRDS('Credit.rds')%>%sample_n(100)
+dplyr::select(Credit2,LIMIT_BAL,AGE,default)%>%
+  rename(Limit=LIMIT_BAL,Age=AGE)->tr2
+
+lda(default~Limit+Age,data = tr2)->ldaout
+predict(ldaout,grid)->out
+
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out$class)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+# Original Training Sample: QDA
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+qda(default~Limit+Age,data = tr)->qdaout
+predict(qdaout,grid)->out
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out$class)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+
+# Different Training Sample QDA
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+set.seed(5)
+Credit2<-readRDS('Credit.rds')%>%sample_n(100)
+dplyr::select(Credit2,LIMIT_BAL,AGE,default)%>%
+  rename(Limit=LIMIT_BAL,Age=AGE)->tr2
+
+qda(default~Limit+Age,data = tr2)->qdaout
+predict(qdaout,grid)->out
+
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out$class)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+class: inverse, center, middle
+
+# LDA and QDA in R
+
+---
+
+# Package
+
+- Discriminant Analysis can be implemented using the `MASS` package.
+--
+
+- We will demonstrate using the `mpg` data.
+--
+
+- We can split the data into training and test.
+--
+
+- Carry out LDA and QDA on training data and form predictions for test data
+
+---
+
+# Split Sample
+
+```{r, echo=TRUE,eval=TRUE,cache=TRUE}
+#Find total number of observations
+n<-NROW(mpg) 
+#Create a vector allocating each observation to train 
+#or test
+train_or_test<-ifelse(runif(n)<0.7,'Train','Test')
+#Add to mpg data frame
+mpg_exp<-add_column(mpg,Sample=train_or_test)
+#Isolate Training Data 
+mpg_train<-filter(mpg_exp,Sample=='Train')
+#Isolate Test Data 
+mpg_test<-filter(mpg_exp,Sample=='Test')
+
+```
+
+---
+
+# Formulas in R
+
+- To carry out discriminant Analysis we use the functions `lda` and `qda`.
+--
+
+- These use the *formula interface*, the dependent variable is separated from the predictors using a `~`.  Between each dependent variable a `+` is included.
+--
+
+- The same syntax is used to do linear regression models in R.
+--
+
+- Predictions for the test data can be obtained using the `predict` function
+
+---
+
+# LDA and QDA
+
+```{r, echo=TRUE,eval=TRUE,cache=TRUE}
+#Linear Discriminant Analysis
+lda_out<-lda(drv~displ+hwy,data = mpg_train)
+ldapred<-predict(lda_out,mpg_test)
+
+#Quadratic Discriminant Analysis
+qda_out<-qda(drv~displ+hwy,data = mpg_train)
+qdapred<-predict(qda_out,mpg_test)
+
+```
+
+---
+
+# Missclasification Rate
+
+The output of `predict` is a list and the element required is `class`.  To compute test misclassification
+
+```{r,echo=T}
+mean(ldapred$class!=mpg_test$drv)
+mean(qdapred$class!=mpg_test$drv)
+```
+
+---
+
+#Cross Tab
+
+- It is also worth reporting results in a cross tabulation. For LDA
+
+```{r,echo=T,eval=T}
+table(ldapred$class,mpg_test$drv)
+```
+
+---
+
+# Additional features
+
+- The probabilities are return in the `posterior` element of the list returned by the `predict` function.
+
+```{r, eval=T,echo=T}
+ldapred$posterior
+```
+
+---
+
+class: inverse, middle, center
+
+#Other Linear Classifiers
+
+---
+
+# Problem with LDA
+
+- In LDA, the prediction is determined by some linear combination of the predictors
+
+$$
+w_0+w_1x_1+w_0+\ldots+w_px_p
+$$
+- The weights $w$ depend in some complicated way on the variances and covariances of the predictors.
+- All up there are $p$ variances and $(p^2-p)/2$ covariances that need to be estimated.
+
+---
+
+# Large number of predictors
+
+- Estimation is particularly difficult when $p$ is large since the number of covariances that need to be estimated grows rapidly.
+--
+
+- A number of alternative methods exist to compute the weights.
+--
+
+- The weights can be estimated using *least squares* for a two-class problem.
+--
+
+- The weights can be estimated by assuming a *probit* or *logit model* and using *maximum likelihood*.
+
+---
+
+# DA v Logistic Regression
+
+- If the classes are well separated estimates from logistic regression tend to be unstable.
+--
+
+- If there are a small number of observations, estimates from logistic regression tend to be unstable.
+--
+
+- Logistic regression is covered in detail in ETF3600.
+
+---
+
+# Naive Bayes
+
+- Another alternative is to apply Bayes method but to assume the predictors are independent.
+--
+
+- In this case there is no need to estimate covariances.
+--
+
+- Since the assumption of independence rarely holds this is known as *naive Bayes*.
+--
+
+- For naive Bayes it is easier to move away from the assumption of normality
+--
+
+- Doing so may lead to a non linear classifier.
+
+
+---
+
+# Conclusion
+
+- The Bayesian method gives a theoretically optimal solution to the classification problem.
+--
+
+- In practice however assumptions need to be made that may not hold in reality.
+--
+
+- An advantage of LDA (and QDA) is that they are more stable and will not vary too much when different training samples are used.
+--
+
+- Another advantage of LDA is interpretability.
+--
+
+-  A disadvantage of LDA and QDA is that they are too simple for complicated decision boundaries.
