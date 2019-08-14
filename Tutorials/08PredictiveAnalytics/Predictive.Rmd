@@ -8,7 +8,7 @@ date: "Tutorial 8"
 ```{r, echo = FALSE}
 #rmarkdown::render('Predictive.Rmd',output_file='Predictive.pdf')
 #rmarkdown::render('Predictive.Rmd',output_file='PredictiveSols.pdf')
-sols<-FALSE
+sols<-TRUE
 title<-ifelse(sols, 'DataVizA Tutorial: Predictive Analytics: Solutions','DataVizA Tutorial: Predictive Analytics')
 ```
 
@@ -44,7 +44,6 @@ Last year, the National Wine Institute commisioned a large scale survey to deter
 - OD280/OD315 of diluted wines
 - Proline 
 
-The units of measurement of all chemical features are standardised.
 The data are available in the file *ExistingWines.rds* which can be found on Moodle.
 
 This year's wines have already been produced and you need to determine which region each wine should be sold in.  For this year's wines, it is relatively inexpensive to collect data on chemical attributes of the wine.  These are available in the file *NewWines.rds* which is available on Moodle.  However, the National Wine Institute is unable to conduct a similar survey for this year to determine the best market for each new wine.

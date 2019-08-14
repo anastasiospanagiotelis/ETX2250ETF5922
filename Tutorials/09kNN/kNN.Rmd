@@ -34,12 +34,21 @@ library(dplyr)
 library(class)
 #Load in data
 ExistingWines<-readRDS('ExistingWines.rds')
-#Split x and y variables
-old_x<-select(ExistingWines,-BestMarket)
+#Split x and y variables and standardise
+old_x<-select(ExistingWines,-BestMarket)%>%scale()
+
+#Keep mean and standard deviation
+mean_old_x<-attr(old_x,"scaled:center")
+std_old_x<-attr(old_x,"scaled:scale")
+
 old_y<-pull(ExistingWines,BestMarket)
 
 #Load in New Wine Data
-new_x<-readRDS('NewWines.rds')
+
+new_x<-readRDS('NewWines.rds')%>%
+  scale(center = mean_old_x,scale = std_old_x)
+
+
 yhat_k1<-knn(old_x,new_x,old_y,k=1)
 
 ```
@@ -53,22 +62,22 @@ yhat_k1<-knn(old_x,new_x,old_y,k=1)
 head(yhat_k1,10)
 ```
 
-3. Repeat the analyis with $k=11$
+3. Repeat the analyis with $k=5$
 
 ```{r,echo=sols,eval=sols,message=F}
 
 #Same code as before different k argument
-yhat_k11<-knn(old_x,new_x,old_y,k=11)
-head(yhat_k11,10)
+yhat_k5<-knn(old_x,new_x,old_y,k=5)
+head(yhat_k5,10)
 ```
 
-4. What are the predicted probabilities for the first ten wines in the *NewWines.rds* when k=11
+4. What are the predicted probabilities for the first ten wines in the *NewWines.rds* when k=5
 
 ```{r,echo=sols,eval=sols,message=F}
 #Same as before but set prob to T
-yhat_k11<-knn(old_x,new_x,old_y,k=11,prob = T)
+yhat_k5<-knn(old_x,new_x,old_y,k=5,prob = T)
 #Use attr function to get probabilities
-head(attr(yhat_k11,"prob"),10)
+head(attr(yhat_k5,"prob"),10)
 
 #Notice that only the probability of the highest probabilty class is available.
 
@@ -95,7 +104,7 @@ test_x<-old_x[ind=="Test Sample",]
 
 ```
 
-6. Is $k=1$ a better choice than $k=11$ according to the misclassification rate?
+6. Is $k=1$ a better choice than $k=5$ according to the misclassification rate?
 
 
 ```{r,echo=sols,eval=sols,message=F}
@@ -103,9 +112,9 @@ test_x<-old_x[ind=="Test Sample",]
 yhat_k1<-knn(train_x,test_x,train_y,k=1)
 mean(yhat_k1!=test_y)
 
-yhat_k11<-knn(train_x,test_x,train_y,k=11)
-mean(yhat_k11!=test_y)
+yhat_k5<-knn(train_x,test_x,train_y,k=5)
+mean(yhat_k5!=test_y)
 
-#For this particular example k=1 has a lower missclassification rate
+#For this particular example k=5 has a lower missclassification rate
 ```
 
