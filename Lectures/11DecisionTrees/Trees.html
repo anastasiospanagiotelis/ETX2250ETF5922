@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Decision Trees</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Anastasios Panagiotelis" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/mtheme.css" type="text/css" />
+    <link rel="stylesheet" href="css/mod.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Decision Trees
+## Data Visualisation and Analytics
+### Anastasios Panagiotelis
+### Lecture 11
+
+---
+
+
+class: inverse, center, middle
+
+# Trees
+
+
+
+---
+
+# Credit Data
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-1-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Default or not?
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Default or not?
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# A tree
+
+Predict default or no default for
+--
+
+- 45 year old with a limit of 100000
+- 45 year old with a limit of 50000
+- 35 year old with a limit of 50000
+--
+
+
+Using the information on the next slide
+
+---
+
+# Decision tree
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+
+# Basic terminology 
+
+- Every line is called an *edge* or a *branch*. They are connected to *nodes*.
+--
+
+- At the nodes a rule determines which branch to take to the next node.
+--
+
+- Nodes at the bottom are called *terminal nodes* or *leaves*.
+--
+
+- At the leaves a decision is made on how to classify the variable.
+--
+
+- Note that the tree is upside down!
+
+---
+
+# Partitioning
+
+If `\(x_j\)` is a single predictor, then rules that determine each decision have the following form
+
+`$$\begin{align}\mbox{If } x_j&amp;&gt;c \mbox{ then go to one node} \\ \mbox{If } x_j&amp;\le c \mbox{ then go to the other node}\end{align}$$`
+
+This is called *binary splitting*
+
+---
+
+#Partition
+
+- Each leaf corresponds to a box of values for the predictors.
+--
+
+- Each of these boxes contains a few training observations.
+--
+
+- Within each box find the most frequent class amongst these training observations.
+--
+
+- This yields the predicted class for each box.
+--
+
+- This will be clearer when we look at decision boundaries.
+
+---
+
+# How to split?
+
+- The challenge is to find an `\(x_j\)` and `\(c\)` to make each split.
+--
+
+- One way is to define some criteria of *best split*
+--
+
+- Then try all combinations of `\(x_j\)` and `\(c\)`.
+--
+
+- For continuous `\(x_j\)`, simply rank the `\(x_j\)` from smallest to largest. 
+- Then consider the midpoints between consecutive values of `\(x_j\)`
+
+---
+
+#Simple example first split
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# What is a good split?
+
+- There are multiple ways of thinking about a good split.
+--
+
+- One is to think in terms of misclassification error.
+--
+
+- Another set of measures aim for the partition to be *pure*.
+--
+
+- By purity we mean than as most observations within a partition belong to the same class.
+
+---
+
+# Gini Impurity
+
+- Let `\(p_{mk}\)` be the proportion of training observations in partition `\(m\)` in class `\(k\)` and `\(K\)` be the total number of classes.
+
+`$$G=\sum\limits_{k=1}^Kp_{mk}(1-p_{mk})$$`
+- In the two class case maximised when half of the observations are in each class
+- Minimised when all observations are in a single class.
+
+---
+
+# Perfect split
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Worst split
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Not best or worst
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Exercise
+
+- In the last plot calculate the Gini impurity for both partitions.
+--
+
+- For the bottom, Gini Impurity is 0
+--
+
+- For the top `\(\frac{1}{3}\frac{2}{3}+\frac{2}{3}\frac{1}{3}=\frac{4}{9}\)`
+
+---
+
+class: inverse, middle, center
+
+# Stopping
+
+---
+
+# When to stop
+
+- In principle a tree can be grown so that every training observation is in its own partition.
+--
+
+- In this case the in sample fit will be perfect
+--
+
+- This does not work well for out of sample prediction.
+
+---
+
+# Control
+
+- The complexity of the tree can be controlled in a number of ways:
+--
+
+  - Set a maximum depth of tree.
+  - Set a minimum number of training observations in each partition.
+  - Only accept a split that improves the criterion by a fixed amount.
+  - Pruning
+  
+---
+
+# Pruning
+
+- The idea behind pruning is to start with a large tree.
+--
+
+- A new objective function is defined that penalises larger trees.
+--
+
+- Consider different sub trees of the large tree that optimise the penalised objective.
+--
+
+- There is a tuning parameter that can be set by CV.
+
+---
+
+class: inverse, middle, center
+
+# Decision Boundary
+
+---
+
+# Data again
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Decision Boundaries
+
+- For the next few slides the same grid of points that was used for kNN and DA is presented again.
+--
+
+- If the tree predicts "Default" the grid point is colored black.
+--
+
+- If the tree predicts "No default" the grid point is colored yellow.
+--
+
+- Think about how these decision boundaries compare to kNN and DA.
+
+---
+
+# Decision Boundary: Biggest Tree
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Decision Tree: Biggest Tree
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Controls
+
+- This tree is too complicated and will *overfit* the data.
+--
+
+- Build a smaller tree using defaults of the R function.
+--
+
+- There must be at least 7 observations in a partition.
+--
+
+- If a split does not improve Gini Impurity by more than 0.01 the algorithm stops.
+
+
+
+---
+
+# Decision Boundary: Smaller Tree
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Multiclass Example
+
+- On the next few slides we will consider a different dataset where the target variable can take three values.
+--
+
+- Using the `mpg` dataset we will predict whether a car is a 4wd, a rear wheel drive or a front wheel drive.
+--
+
+- The predictors will be fuel efficiency on the highway (`hwy`) and engine size (`displ`)
+
+---
+
+#Multiclass Example: Data
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Multiclass Example: Tree
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Decision Tree: Multiclass
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+class: inverse, middle, center
+
+# Stability of Trees
+
+---
+
+# Low variability
+
+- Compared to LDA and QDA, trees have higher variability across different training data sets.
+--
+
+- This can be mitigated by choosing smaller trees.
+--
+
+- The next few slides show the decision boundaries of trees for different subsamples of training data.
+
+---
+
+# Train Sample 1: Big Tree
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-16-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+# Train Sample 2: Big Tree
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Train Sample 1: Small Tree
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-18-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+# Train Sample 2: Small Tree
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+class: inverse, center, middle
+
+# Trees in R
+
+---
+
+# Package
+
+- Classification trees can be implemented using the `rpart` package.
+--
+
+- We will demonstrate using the `mpg` data.
+--
+
+- Like last week split the data into training and test.
+--
+
+- Find a decision tree on the training data and form predictions for test data
+
+---
+
+# Split Sample
+
+
+```r
+#Find total number of observations
+n&lt;-NROW(mpg) 
+#Create a vector allocating each observation to train 
+#or test
+train_or_test&lt;-ifelse(runif(n)&lt;0.7,'Train','Test')
+#Add to mpg data frame
+mpg_exp&lt;-add_column(mpg,Sample=train_or_test)
+#Isolate Training Data 
+mpg_train&lt;-filter(mpg_exp,Sample=='Train')
+#Isolate Test Data 
+mpg_test&lt;-filter(mpg_exp,Sample=='Test')
+```
+
+
+---
+
+# Tree
+
+
+```r
+#Default Settings
+rpart_small&lt;-rpart(drv~displ+hwy,data = mpg_train)
+
+#Bigger tree
+#Allow for partitions with as few as two 
+#training observations
+#Accept any split that improves fit
+rpart_big&lt;-rpart(drv~displ+hwy,data = mpg_train,
+                 control = rpart.control(minbucket=2,
+                                         cp=0))
+
+#Make predictions
+pred_small&lt;-predict(rpart_small,mpg_test,type='class')
+pred_big&lt;-predict(rpart_big,mpg_test,type='class')
+```
+
+---
+
+# Missclasification Rate
+
+To compute test misclassification
+
+
+```r
+mean(pred_small!=mpg_test$drv)
+```
+
+```
+## [1] 0.15625
+```
+
+```r
+mean(pred_big!=mpg_test$drv)
+```
+
+```
+## [1] 0.140625
+```
+--
+
+In the bigger tree perform better out-of-sample (this is rare).
+
+---
+
+# Probabilities
+
+- By leaving out the `type='class'` option probabilities are returned
+--
+
+- These probabilities are simply the proportions of the classes within each partition.
+--
+
+
+```r
+pred_small&lt;-predict(rpart_small,mpg_test)
+pred_small 
+```
+
+```
+##            4          f          r
+## 1  0.0000000 1.00000000 0.00000000
+## 2  0.1315789 0.81578947 0.05263158
+## 3  0.1315789 0.81578947 0.05263158
+## 4  0.1315789 0.81578947 0.05263158
+## 5  0.1315789 0.81578947 0.05263158
+## 6  0.0000000 0.00000000 1.00000000
+## 7  0.0000000 1.00000000 0.00000000
+## 8  0.0000000 1.00000000 0.00000000
+## 9  0.1315789 0.81578947 0.05263158
+## 10 0.9743590 0.02564103 0.00000000
+## 11 0.9743590 0.02564103 0.00000000
+## 12 0.9743590 0.02564103 0.00000000
+## 13 0.9743590 0.02564103 0.00000000
+## 14 0.9743590 0.02564103 0.00000000
+## 15 0.9743590 0.02564103 0.00000000
+## 16 0.7777778 0.00000000 0.22222222
+## 17 0.9743590 0.02564103 0.00000000
+## 18 0.9743590 0.02564103 0.00000000
+## 19 0.9743590 0.02564103 0.00000000
+## 20 0.9743590 0.02564103 0.00000000
+## 21 0.9743590 0.02564103 0.00000000
+## 22 0.3333333 0.00000000 0.66666667
+## 23 0.9743590 0.02564103 0.00000000
+## 24 0.9743590 0.02564103 0.00000000
+## 25 0.9743590 0.02564103 0.00000000
+## 26 0.1315789 0.81578947 0.05263158
+## 27 0.1315789 0.81578947 0.05263158
+## 28 0.0000000 0.00000000 1.00000000
+## 29 0.0000000 1.00000000 0.00000000
+## 30 0.0000000 1.00000000 0.00000000
+## 31 0.3125000 0.68750000 0.00000000
+## 32 0.8571429 0.14285714 0.00000000
+## 33 0.1315789 0.81578947 0.05263158
+## 34 0.3125000 0.68750000 0.00000000
+## 35 0.3125000 0.68750000 0.00000000
+## 36 0.1315789 0.81578947 0.05263158
+## 37 0.9743590 0.02564103 0.00000000
+## 38 0.7777778 0.00000000 0.22222222
+## 39 0.9743590 0.02564103 0.00000000
+## 40 0.9743590 0.02564103 0.00000000
+## 41 0.9743590 0.02564103 0.00000000
+## 42 0.9743590 0.02564103 0.00000000
+## 43 0.0000000 1.00000000 0.00000000
+## 44 0.1315789 0.81578947 0.05263158
+## 45 0.9743590 0.02564103 0.00000000
+## 46 0.0000000 0.00000000 1.00000000
+## 47 0.3125000 0.68750000 0.00000000
+## 48 0.9743590 0.02564103 0.00000000
+## 49 0.9743590 0.02564103 0.00000000
+## 50 0.9743590 0.02564103 0.00000000
+## 51 0.0000000 1.00000000 0.00000000
+## 52 0.0000000 1.00000000 0.00000000
+## 53 0.1315789 0.81578947 0.05263158
+## 54 0.1315789 0.81578947 0.05263158
+## 55 0.0000000 1.00000000 0.00000000
+## 56 0.0000000 1.00000000 0.00000000
+## 57 0.7777778 0.00000000 0.22222222
+## 58 0.9743590 0.02564103 0.00000000
+## 59 0.9743590 0.02564103 0.00000000
+## 60 0.1315789 0.81578947 0.05263158
+## 61 0.0000000 1.00000000 0.00000000
+## 62 0.0000000 1.00000000 0.00000000
+## 63 0.1315789 0.81578947 0.05263158
+## 64 0.0000000 1.00000000 0.00000000
+```
+---
+
+#Plotting the trees
+
+- The pacakge `rpart.plot` is good for plotting trees themselves.
+- The trees we have plot so far use code such as that below.
+
+```r
+rpart.plot(rpart_small,extra = 0,type = 0)
+rpart.plot(rpart_small,extra = 0,type = 0)
+```
+
+---
+
+#Small Tree
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Big Tree
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-26-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# More detail
+
+- By default, the function `rpart.plot` actually provides more information.  Try the following
+--
+
+
+```r
+rpart.plot(rpart_small)
+```
+--
+
+- This provides
+--
+
+  - The most frequent class in each split
+  - The proportion of all classes in each split
+  - The proportion of data in each split
+
+---
+
+#Small Tree
+
+&lt;img src="Trees_files/figure-html/unnamed-chunk-28-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Regression Trees
+
+- The same ideas can be applied to regression.
+--
+
+- The prediction is the average value of the dependent variable for all training observations in the same partition.
+--
+
+- Splits can be chosen to minimise sum of squared errors rather than Gini impurity.
+
+---
+
+# Ensemble methods
+
+- Due to their high variablity ensemble methods are often used together with trees.
+--
+
+- One way to do this is to resample the data many times and fit a new tree each time (bagging).
+--
+
+- When the number of predictors is large these can also be randomly sampled (random forest).
+--
+
+- A prediction is obtained from each tree, and the prediction will be the most frequent class across trees.
+
+
+---
+
+# Conclusion
+
+- Classification trees are a very intuitive and interpretable way that allow for data to guide decision making.
+--
+
+- In practice much care must be taken to prevent overfitting.
+--
+
+- Even so, trees are very sensitive to small changes in training data.
+--
+
+- As such, trees are usually combined in more sophisticated ensemble learning methods.
+--
+
+- This does come at the cost of interpretability.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

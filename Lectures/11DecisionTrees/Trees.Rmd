@@ -1,0 +1,746 @@
+---
+title: "Decision Trees"
+subtitle: "Data Visualisation and Analytics"
+author: "Anastasios Panagiotelis"
+date: "Lecture 11"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"css/mtheme.css","css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+
+---
+
+class: inverse, center, middle
+
+# Trees
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
+require(magrittr)
+require(tidyverse)
+require(plotly)
+require(widgetframe)
+require(animation)
+require(DT)
+require(PoEdata)
+require(kableExtra)
+require(gridExtra)
+require(ggmosaic)
+require(ggthemes)
+require(MASS)
+require(class)
+require(tree)
+require(rpart)
+require(rpart.plot)
+```
+
+---
+
+# Credit Data
+
+```{r,echo=F,eval=T}
+set.seed(1)
+Credit<-readRDS('Credit.rds')%>%sample_n(100)
+g<-ggplot(Credit,aes(x=LIMIT_BAL,y=AGE,col=default))+geom_point()+scale_color_colorblind()
+g
+```
+
+---
+
+# Default or not?
+
+```{r,echo=F,eval=T}
+g+geom_point(aes(x=350000,50),color='#339966',shape=4,size=10)
+
+```
+
+---
+
+# Default or not?
+
+```{r,echo=F,eval=T}
+g+geom_point(aes(x=50000,45),color='#339966',shape=4,size=10)
+
+```
+
+---
+
+# A tree
+
+Predict default or no default for
+--
+
+- 45 year old with a limit of 100000
+- 45 year old with a limit of 50000
+- 35 year old with a limit of 50000
+--
+
+
+Using the information on the next slide
+
+---
+
+# Decision tree
+
+```{r,echo=F,eval=T,fig.height=6}
+dplyr::select(Credit,LIMIT_BAL,AGE,default)%>%
+  rename(Limit=LIMIT_BAL,Age=AGE)%>%
+  mutate(default=as.factor(default))->tr
+rpart(default~Limit+Age,data = tr)->treeout
+
+rpart.plot(treeout,extra = 0,type = 0)
+``` 
+
+
+
+---
+
+# Basic terminology 
+
+- Every line is called an *edge* or a *branch*. They are connected to *nodes*.
+--
+
+- At the nodes a rule determines which branch to take to the next node.
+--
+
+- Nodes at the bottom are called *terminal nodes* or *leaves*.
+--
+
+- At the leaves a decision is made on how to classify the variable.
+--
+
+- Note that the tree is upside down!
+
+---
+
+# Partitioning
+
+If $x_j$ is a single predictor, then rules that determine each decision have the following form
+
+$$\begin{align}\mbox{If } x_j&>c \mbox{ then go to one node} \\ \mbox{If } x_j&\le c \mbox{ then go to the other node}\end{align}$$
+
+This is called *binary splitting*
+
+---
+
+#Partition
+
+- Each leaf corresponds to a box of values for the predictors.
+--
+
+- Each of these boxes contains a few training observations.
+--
+
+- Within each box find the most frequent class amongst these training observations.
+--
+
+- This yields the predicted class for each box.
+--
+
+- This will be clearer when we look at decision boundaries.
+
+---
+
+# How to split?
+
+- The challenge is to find an $x_j$ and $c$ to make each split.
+--
+
+- One way is to define some criteria of *best split*
+--
+
+- Then try all combinations of $x_j$ and $c$.
+--
+
+- For continuous $x_j$, simply rank the $x_j$ from smallest to largest. 
+- Then consider the midpoints between consecutive values of $x_j$
+
+---
+
+#Simple example first split
+
+```{r,echo=F}
+Credit_sub<-tibble(AGE=c(25,29,56,47),LIMIT_BAL=c(70000,130000,80000,160000),default=c('Default','No Default','Default','No Default'))
+r_y<-sort(unique(Credit_sub$AGE))
+r_x<-sort(unique(Credit_sub$LIMIT_BAL))
+glines_y<-(r_y[2:length(r_y)]+r_y[1:(length(r_y)-1)])/2
+glines_x<-(r_x[2:length(r_x)]+r_x[1:(length(r_x)-1)])/2
+g<-ggplot(Credit_sub,aes(x=LIMIT_BAL,y=AGE,col=default))+geom_point(size=3)+scale_color_colorblind()+scale_y_continuous(breaks = glines_y)+scale_x_continuous(breaks = glines_x)+theme_bw()+theme(panel.grid.major = element_line(colour = "#32a5cf"))
+g
+```
+
+---
+
+# What is a good split?
+
+- There are multiple ways of thinking about a good split.
+--
+
+- One is to think in terms of misclassification error.
+--
+
+- Another set of measures aim for the partition to be *pure*.
+--
+
+- By purity we mean than as most observations within a partition belong to the same class.
+
+---
+
+# Gini Impurity
+
+- Let $p_{mk}$ be the proportion of training observations in partition $m$ in class $k$ and $K$ be the total number of classes.
+
+$$G=\sum\limits_{k=1}^Kp_{mk}(1-p_{mk})$$
+- In the two class case maximised when half of the observations are in each class
+- Minimised when all observations are in a single class.
+
+---
+
+# Perfect split
+
+```{r,echo=F}
+g<-ggplot(Credit_sub,aes(x=LIMIT_BAL,y=AGE,col=default))+geom_point(size=3)+scale_color_colorblind()+scale_y_continuous(breaks = glines_y)+scale_x_continuous(breaks = glines_x)+theme_bw()+theme(panel.grid.major = element_line(colour = "#32a5cf"))+geom_vline(xintercept = 105000,color='#446e27',size=3)
+
+g
+```
+
+---
+
+# Worst split
+
+```{r,echo=F}
+g<-ggplot(Credit_sub,aes(x=LIMIT_BAL,y=AGE,col=default))+geom_point(size=3)+scale_color_colorblind()+scale_y_continuous(breaks = glines_y)+scale_x_continuous(breaks = glines_x)+theme_bw()+theme(panel.grid.major = element_line(colour = "#32a5cf"))+geom_hline(yintercept = 38,color='#446e27',size=3)
+
+g
+```
+
+---
+
+# Not best or worst
+
+```{r,echo=F}
+g<-ggplot(Credit_sub,aes(x=LIMIT_BAL,y=AGE,col=default))+geom_point(size=3)+scale_color_colorblind()+scale_y_continuous(breaks = glines_y)+scale_x_continuous(breaks = glines_x)+theme_bw()+theme(panel.grid.major = element_line(colour = "#32a5cf"))+geom_hline(yintercept = 27,color='#446e27',size=3)
+
+g
+```
+
+---
+
+# Exercise
+
+- In the last plot calculate the Gini impurity for both partitions.
+--
+
+- For the bottom, Gini Impurity is 0
+--
+
+- For the top $\frac{1}{3}\frac{2}{3}+\frac{2}{3}\frac{1}{3}=\frac{4}{9}$
+
+---
+
+class: inverse, middle, center
+
+# Stopping
+
+---
+
+# When to stop
+
+- In principle a tree can be grown so that every training observation is in its own partition.
+--
+
+- In this case the in sample fit will be perfect
+--
+
+- This does not work well for out of sample prediction.
+
+---
+
+# Control
+
+- The complexity of the tree can be controlled in a number of ways:
+--
+
+  - Set a maximum depth of tree.
+  - Set a minimum number of training observations in each partition.
+  - Only accept a split that improves the criterion by a fixed amount.
+  - Pruning
+  
+---
+
+# Pruning
+
+- The idea behind pruning is to start with a large tree.
+--
+
+- A new objective function is defined that penalises larger trees.
+--
+
+- Consider different sub trees of the large tree that optimise the penalised objective.
+--
+
+- There is a tuning parameter that can be set by CV.
+
+---
+
+class: inverse, middle, center
+
+# Decision Boundary
+
+---
+
+# Data again
+
+```{r}
+
+grid<-Credit[,c(2,6)]
+colnames(grid)<-c('Limit','Age')
+grid%>%
+  as_tibble()%>%
+  add_column(Class=as.factor(pull(Credit,25)))%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point()+scale_color_colorblind()
+```
+
+---
+
+# Decision Boundaries
+
+- For the next few slides the same grid of points that was used for kNN and DA is presented again.
+--
+
+- If the tree predicts "Default" the grid point is colored black.
+--
+
+- If the tree predicts "No default" the grid point is colored yellow.
+--
+
+- Think about how these decision boundaries compare to kNN and DA.
+
+---
+
+# Decision Boundary: Biggest Tree
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+gx1<-seq(5000,500000, by=5000)
+gx2<-seq(20.5,60, by=0.5)
+grid<-expand.grid(gx1,gx2)
+colnames(grid)<-c('Limit','Age')
+#grid<-cbind(grid,rbinom(nrow(grid),1,0.5))
+dplyr::select(Credit,LIMIT_BAL,AGE,default)%>%
+  rename(Limit=LIMIT_BAL,Age=AGE)%>%
+  mutate(default=as.factor(default))->tr
+
+#tree(default~Limit+Age,data = tr,split =  'gini',control = tree.control(nrow(tr),mindev=0,minsize = 2))->treeout
+
+rpart(default~Limit+Age,
+      data = tr,
+      control = rpart.control(minbucket = 1,cp=0),
+      parms = list(split =  'gini'))->treecout
+
+predict(treecout,grid,type = 'class')->out
+  
+#out<-ifelse((probs[,1]>probs[,2]),'Default','No Default')
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+#Decision Tree: Biggest Tree
+
+```{r, echo=FALSE}
+rpart.plot(treecout,extra = 0,type = 0)
+```
+
+---
+# Controls
+
+- This tree is too complicated and will *overfit* the data.
+--
+
+- Build a smaller tree using defaults of the R function.
+--
+
+- There must be at least 7 observations in a partition.
+--
+
+- If a split does not improve Gini Impurity by more than 0.01 the algorithm stops.
+
+
+
+---
+
+# Decision Boundary: Smaller Tree
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+
+rpart(default~Limit+Age,data = tr)->treeout
+predict(treeout,grid,type='class')->out
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+# Multiclass Example
+
+- On the next few slides we will consider a different dataset where the target variable can take three values.
+--
+
+- Using the `mpg` dataset we will predict whether a car is a 4wd, a rear wheel drive or a front wheel drive.
+--
+
+- The predictors will be fuel efficiency on the highway (`hwy`) and engine size (`displ`)
+
+---
+
+#Multiclass Example: Data
+
+```{r, echo=FALSE,eval=TRUE}
+mpg%>%
+  ggplot(aes(x=displ,y=hwy,col=drv))+geom_point(size=2)+scale_color_colorblind()
+
+```
+
+---
+
+#Multiclass Example: Tree
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+gx1<-seq(1.05,7, by=0.05)
+gx2<-seq(10.5,50, by=0.5)
+gridcars<-expand.grid(gx1,gx2)
+colnames(gridcars)<-c('displ','hwy')
+#grid<-cbind(grid,rbinom(nrow(grid),1,0.5))
+dplyr::select(mpg,displ,hwy,drv)->trcars
+
+rpart(drv~displ+hwy,data = trcars)->treeoutcars
+
+predict(treeoutcars,gridcars,type = 'class')->out
+
+gridcars%>%
+  as_tibble%>%
+  add_column(Class=out)%>%
+  ggplot(aes(x=displ,y=hwy,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+#Decision Tree: Multiclass
+
+```{r, echo=FALSE}
+rpart.plot(treeoutcars,extra = 0,type = 0)
+```
+
+
+---
+
+class: inverse, middle, center
+
+# Stability of Trees
+
+---
+
+# Low variability
+
+- Compared to LDA and QDA, trees have higher variability across different training data sets.
+--
+
+- This can be mitigated by choosing smaller trees.
+--
+
+- The next few slides show the decision boundaries of trees for different subsamples of training data.
+
+---
+
+# Train Sample 1: Big Tree
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+rpart(default~Limit+Age,
+      data = tr,
+      control = rpart.control(minbucket = 1,cp=0),
+      parms = list(split =  'gini'))->treecout
+
+predict(treecout,grid,type = 'class')->out
+  
+#out<-ifelse((probs[,1]>probs[,2]),'Default','No Default')
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+
+```
+
+---
+
+
+# Train Sample 2: Big Tree
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+set.seed(5)
+Credit2<-readRDS('Credit.rds')%>%sample_n(100)
+dplyr::select(Credit2,LIMIT_BAL,AGE,default)%>%
+  rename(Limit=LIMIT_BAL,Age=AGE)%>%
+  mutate(default=as.factor(default))->tr2
+
+rpart(default~Limit+Age,
+      data = tr2,
+      control = rpart.control(minbucket = 1,cp=0),
+      parms = list(split =  'gini'))->treecout2
+
+predict(treecout2,grid,type = 'class')->out2
+  
+#out<-ifelse((probs[,1]>probs[,2]),'Default','No Default')
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out2)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+
+```
+
+---
+
+# Train Sample 1: Small Tree
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+rpart(default~Limit+Age,data = tr)->treeout
+predict(treeout,grid,type='class')->out
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+
+
+# Train Sample 2: Small Tree
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+set.seed(5)
+Credit2<-readRDS('Credit.rds')%>%sample_n(100)
+dplyr::select(Credit2,LIMIT_BAL,AGE,default)%>%
+  rename(Limit=LIMIT_BAL,Age=AGE)->tr2
+
+rpart(default~Limit+Age,data = tr2)->treeout
+predict(treeout,grid,type='class')->out
+
+
+grid%>%
+  as_tibble%>%
+  add_column(Class=out)%>%
+  ggplot(aes(x=Limit,y=Age,col=Class))+geom_point(size=1)+scale_color_colorblind()
+
+```
+
+---
+class: inverse, center, middle
+
+# Trees in R
+
+---
+
+# Package
+
+- Classification trees can be implemented using the `rpart` package.
+--
+
+- We will demonstrate using the `mpg` data.
+--
+
+- Like last week split the data into training and test.
+--
+
+- Find a decision tree on the training data and form predictions for test data
+
+---
+
+# Split Sample
+
+```{r, echo=TRUE,eval=TRUE,cache=TRUE}
+#Find total number of observations
+n<-NROW(mpg) 
+#Create a vector allocating each observation to train 
+#or test
+train_or_test<-ifelse(runif(n)<0.7,'Train','Test')
+#Add to mpg data frame
+mpg_exp<-add_column(mpg,Sample=train_or_test)
+#Isolate Training Data 
+mpg_train<-filter(mpg_exp,Sample=='Train')
+#Isolate Test Data 
+mpg_test<-filter(mpg_exp,Sample=='Test')
+
+```
+
+
+---
+
+# Tree
+
+```{r, echo=TRUE,eval=TRUE,cache=TRUE}
+#Default Settings
+rpart_small<-rpart(drv~displ+hwy,data = mpg_train)
+
+#Bigger tree
+#Allow for partitions with as few as two 
+#training observations
+#Accept any split that improves fit
+rpart_big<-rpart(drv~displ+hwy,data = mpg_train,
+                 control = rpart.control(minbucket=2,
+                                         cp=0))
+
+#Make predictions
+pred_small<-predict(rpart_small,mpg_test,type='class')
+pred_big<-predict(rpart_big,mpg_test,type='class')
+
+```
+
+---
+
+# Missclasification Rate
+
+To compute test misclassification
+
+```{r,echo=T}
+mean(pred_small!=mpg_test$drv)
+mean(pred_big!=mpg_test$drv)
+```
+--
+
+In the bigger tree perform better out-of-sample (this is rare).
+
+---
+
+# Probabilities
+
+- By leaving out the `type='class'` option probabilities are returned
+--
+
+- These probabilities are simply the proportions of the classes within each partition.
+--
+
+```{r, echo=T,eval=T}
+pred_small<-predict(rpart_small,mpg_test)
+pred_small 
+```
+---
+
+#Plotting the trees
+
+- The pacakge `rpart.plot` is good for plotting trees themselves.
+- The trees we have plot so far use code such as that below.
+```{r, echo=T,eval=F}
+rpart.plot(rpart_small,extra = 0,type = 0)
+rpart.plot(rpart_small,extra = 0,type = 0)
+```
+
+---
+
+#Small Tree
+
+```{r,echo=F,eval=T}
+rpart.plot(rpart_small,extra = 0,type = 0)
+```
+
+---
+
+#Big Tree
+
+```{r,echo=F,eval=T}
+rpart.plot(rpart_big,extra = 0,type = 0)
+```
+
+---
+
+# More detail
+
+- By default, the function `rpart.plot` actually provides more information.  Try the following
+--
+
+```{r,echo=T,eval=F}
+rpart.plot(rpart_small)
+```
+--
+
+- This provides
+--
+
+  - The most frequent class in each split
+  - The proportion of all classes in each split
+  - The proportion of data in each split
+
+---
+
+#Small Tree
+
+```{r,echo=F,eval=T}
+rpart.plot(rpart_small)
+```
+
+---
+
+# Regression Trees
+
+- The same ideas can be applied to regression.
+--
+
+- The prediction is the average value of the dependent variable for all training observations in the same partition.
+--
+
+- Splits can be chosen to minimise sum of squared errors rather than Gini impurity.
+
+---
+
+# Ensemble methods
+
+- Due to their high variablity ensemble methods are often used together with trees.
+--
+
+- One way to do this is to resample the data many times and fit a new tree each time (bagging).
+--
+
+- When the number of predictors is large these can also be randomly sampled (random forest).
+--
+
+- A prediction is obtained from each tree, and the prediction will be the most frequent class across trees.
+
+
+---
+
+# Conclusion
+
+- Classification trees are a very intuitive and interpretable way that allow for data to guide decision making.
+--
+
+- In practice much care must be taken to prevent overfitting.
+--
+
+- Even so, trees are very sensitive to small changes in training data.
+--
+
+- As such, trees are usually combined in more sophisticated ensemble learning methods.
+--
+
+- This does come at the cost of interpretability.

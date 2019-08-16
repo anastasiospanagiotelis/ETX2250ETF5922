@@ -38,7 +38,7 @@ require(ggmosaic)
 
 # Visualising two variables
 
-- Two non-Metric variables
+- Two Metric variables
   - Scatter plot
 - One non-metric one metric
   - Boxplots
@@ -493,6 +493,41 @@ ggplot(data = diamonds,
 
 ---
 
+# With notches
+
+- Recall that the notches provide a confidence interval around the median.
+--
+
+- These are particularly useful when comparing boxplots to one another.
+--
+
+- In general, if the confidence intervals overlap then the medians are not signficantly different.
+--
+
+- This is NOT a formal test, but still gives a useful indication.
+
+---
+
+# Boxplots (no overlap)
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(data = mpg,
+       mapping = aes(x=drv,y=hwy))+
+  geom_boxplot(notch=T)
+  
+```
+
+---
+# Boxplots (some overlap)
+
+```{r, echo=FALSE,fig.height=5}
+filter(mpg,!(class%in%c('2seater','subcompact')))%>%
+  ggplot(mapping = aes(x=class,y=hwy))+
+  geom_boxplot(notch=T)
+  
+```
+
+---
 # Violin plot
 
 - A violin plot is a newer visualisation.
