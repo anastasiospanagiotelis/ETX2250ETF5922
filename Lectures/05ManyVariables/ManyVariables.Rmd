@@ -265,7 +265,7 @@ class: inverse, middle, center
 ```{r,echo=TRUE,eval=FALSE}
 ggplot(data = txhousing, 
        mapping = aes(x=date, y=sales))+
-  geom_point()+
+  geom_line()+
   facet_wrap(~city)
 ```
 
@@ -298,7 +298,7 @@ ggplot(data = txhousing,
 ```{r,echo=TRUE,eval=FALSE}
 ggplot(data = txhousing, 
        mapping = aes(x=date, y=sales))+
-  geom_point()+
+  geom_line()+
   facet_wrap(~city,scales = 'free_y')
 ```
 ---
@@ -348,7 +348,7 @@ ggplot(data = txhousing,
 ggplot(data = diamonds, 
        mapping = aes(x=carat, y=price))+
   geom_point()+
-  facet_grid(rows = ~cut, cols = ~color)
+  facet_grid(rows = vars(cut), cols = vars(color))
 
 ```
 
@@ -364,6 +364,29 @@ ggplot(data = diamonds,
 
 ```
 ---
+
+#Your Turn
+
+- Plot a histogram with
+  + Sales on the x axis
+  + Median on the y axis
+  + Facet by year on the rows
+  + Facet by month in the columns
+  
+---
+
+# Solution
+
+```{r, echo=T,eval=F}
+ggplot(data = txhousing, 
+       mapping = aes(x=sales, y=median))+
+  geom_point()+
+  facet_grid(rows = vars(year), cols = vars(month))
+
+```
+
+---
+
 class: inverse, middle, center
 
 # Higher Dimensions

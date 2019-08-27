@@ -414,8 +414,8 @@ ggplotly(g)%>%
 ```{r,message=FALSE}
 
 dd<-seq.Date(as.Date('1960/3/1'),
-             as.Date('1986/11/1'),
-             length.out = 108)
+             as.Date('1986/12/1'),
+             by = 'quarter')
 tibble(UKgas)%>%
   add_column(Time=dd)%>%
   ggplot(aes(x=Time,y=UKgas))+geom_line()->g
@@ -429,11 +429,12 @@ ggplotly(g)%>%
 # DAX
 
 ```{r, message=FALSE}
+require(lubridate)
 EuStockMarkets%>%
   log%>%
   diff%>%
   as_tibble()%>%
-  add_column(Time=time(EuStockMarkets)[2:1860])%>%
+  add_column(Time=date_decimal(as.numeric(time(EuStockMarkets)[2:1860])))%>%
   ggplot(aes(x=Time,y=DAX))+geom_line()->g
 ggplotly(g)%>%
   frameWidget(width = '100%',height = '100%')

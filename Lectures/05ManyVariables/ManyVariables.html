@@ -266,7 +266,7 @@ class: inverse, middle, center
 ```r
 ggplot(data = txhousing, 
        mapping = aes(x=date, y=sales))+
-  geom_point()+
+  geom_line()+
   facet_wrap(~city)
 ```
 
@@ -295,7 +295,7 @@ Note the tilde (`~`) in `~city`
 ```r
 ggplot(data = txhousing, 
        mapping = aes(x=date, y=sales))+
-  geom_point()+
+  geom_line()+
   facet_wrap(~city,scales = 'free_y')
 ```
 ---
@@ -337,7 +337,7 @@ ggplot(data = txhousing,
 ggplot(data = diamonds, 
        mapping = aes(x=carat, y=price))+
   geom_point()+
-  facet_grid(rows = ~cut, cols = ~color)
+  facet_grid(rows = vars(cut), cols = vars(color))
 ```
 
 ---
@@ -346,6 +346,29 @@ ggplot(data = diamonds,
 
 &lt;img src="ManyVariables_files/figure-html/unnamed-chunk-21-1.png" style="display: block; margin: auto;" /&gt;
 ---
+
+#Your Turn
+
+- Plot a histogram with
+  + Sales on the x axis
+  + Median on the y axis
+  + Facet by year on the rows
+  + Facet by month in the columns
+  
+---
+
+# Solution
+
+
+```r
+ggplot(data = txhousing, 
+       mapping = aes(x=sales, y=median))+
+  geom_point()+
+  facet_grid(rows = vars(year), cols = vars(month))
+```
+
+---
+
 class: inverse, middle, center
 
 # Higher Dimensions
@@ -369,7 +392,7 @@ class: inverse, middle, center
 ggpairs(economics)
 ```
 
-&lt;img src="ManyVariables_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="ManyVariables_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -389,7 +412,7 @@ ggpairs(economics)
 ggpairs(iris)
 ```
 
-&lt;img src="ManyVariables_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="ManyVariables_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -409,7 +432,7 @@ ggpairs(iris)
 ggparcoord(iris)
 ```
 
-&lt;img src="ManyVariables_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="ManyVariables_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
 ---
 
 # Summary
