@@ -367,7 +367,7 @@ ggplot(data = diamonds,
 
 #Your Turn
 
-- Plot a histogram with
+- Plot a scatterplot with
   + Sales on the x axis
   + Median on the y axis
   + Facet by year on the rows

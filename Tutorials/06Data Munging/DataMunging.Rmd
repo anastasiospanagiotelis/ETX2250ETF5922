@@ -32,7 +32,7 @@ Database A:
 ```{r, echo=FALSE}  
 eg<-tibble(Name=c('Jane Smith','Kamaru Usman','Li Xiao'),
            `Social Media Username`=c('Facebook: jsChampion',
-                    'Twitter: kusman, LinkedIn: lx99',
+                    'Twitter: kusman, LinkedIn: ku87',
                     'WeChat: lx99'))  
 kable(eg,format = 'latex')
   
@@ -43,7 +43,7 @@ Database B:
 ```{r, echo=FALSE}  
 eg<-tibble(Name=c('Jane Smith','Kamaru Usman','Kamaru Usman','Li Xiao'),
            `Social Media Username`=c('Facebook: jsChampion',
-                    'Twitter: kusman', 'LinkedIn: lx99',
+                    'Twitter: kusman', 'LinkedIn: ku87',
                     'WeChat: lx99'))  
 kable(eg,format = 'latex')
 ```
