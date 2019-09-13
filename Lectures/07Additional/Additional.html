@@ -36,7 +36,7 @@ class: inverse, center, middle
 - Sometimes we would like to add a title to a plot or change the labels.
   - This is achieved by `labs`
 - Sometimes we may wish to change the general look
-  - This is achieved by the `theme` function and functions in the `ggtheme` package.
+  - This is achieved by the `theme` function and functions in the `ggthemes` package.
 
 ---
 
@@ -287,11 +287,17 @@ class: middle, center inverse
 
 # With fitted curve
 
+
+```r
+ggplot(mpg,aes(x=displ,y=cty))+
+  geom_point()+geom_smooth()
+```
+
 &lt;img src="Additional_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" /&gt;
 
 
----
 
+---
 # Smooth fit
 
 - The fitted line by default comes from the LOcal Estimated Scatterplot Smoothing (LOESS) method.
@@ -328,7 +334,7 @@ class: middle, center inverse
 #Details
 
 - In the LOESS algorithm, the smoothing parameter `\(\alpha\)` is defined as the proportion of observations used as nearest neigbours.
-  - If `\(\alpha=0.2\)` and `\(n=20\)` then use `\(k=4\)` nearest neighbours.
+  - If `\(\alpha=0.2\)` and `\(n=20\)` then `\(k=4\)` nearest neighbours are used.
   - By default `\(\alpha=0.75\)` in R.
 - It is common to use weighted regression whereby closer neighbours are given more influence.
 - LOESS is not ideal for large datasets.
@@ -392,7 +398,7 @@ class: middle, center inverse
 ```r
 houston_sales_listings%&gt;%
   ggplot(aes(x=listings,y=sales, col=date))+
-  geom_path()+scale_color_viridis_c()-&gt;g
+  geom_point()+scale_color_viridis_c()-&gt;g
 ggplotly(g)
 ```
 
@@ -411,6 +417,20 @@ ggplotly(g)
 <script type="application/json" data-for="htmlwidget-b32d5e6172bf5c75cfed">{"x":{"url":"Additional_files/figure-html//widgets/widget_unnamed-chunk-26.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 
 ---
+# Code
+
+
+```r
+houston_sales_listings%&gt;%
+  mutate(Era=ifelse(date&gt;2014,
+                    'Post 2014',
+                    'Pre 2014'))%&gt;%
+  ggplot(aes(x=listings,y=sales, col=Era))+
+  geom_point()-&gt;g
+ggplotly(g)
+```
+
+---
 
 # Summary
 
@@ -419,6 +439,34 @@ ggplotly(g)
 - Also the `shiny` package 
   - This allows for the design of interactive web apps.
 - You now have a strong base in R to teach yourself these how to use the tools.
+  
+---
+
+# Final Exercise
+
+Create this plot
+
+&lt;img src="Additional_files/figure-html/unnamed-chunk-28-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+  
+# Solution  
+
+
+```r
+txhousing%&gt;%
+  filter(month==4,city%in%c('Houston','San Antonio',
+                            'Dallas','Austin'))%&gt;%
+  ggplot(aes(x=sales,y=median,col=year,label=year))+
+  geom_path()+
+  geom_text(size=2,color='black')+
+  scale_color_viridis_c()+
+  labs(title = 'Median Price v Number of Sales in 
+       April for four Texan Cities')+
+  xlab('Sales (Number of Houses)')+
+  ylab('Median House Price ($US)')+
+  facet_wrap(~city,scales = 'free')
+```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>

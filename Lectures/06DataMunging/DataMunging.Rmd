@@ -50,8 +50,8 @@ require(GGally)
 # A few simple functions
 
 - Much can be done with a few simple functions from the `dplyr` package:
-  - Choose variables with `filter`
-  - Choose observations with `select`
+  - Choose variables with `select`
+  - Choose observations with `filter`
   - Transform variables with `mutate`
 - In all cases both input and output is a data frame.
 
@@ -210,7 +210,7 @@ mpgMet
 
 - The fact that the input and output are always data frames makes the pipe operator useful.
 - Simply use `%>%` to chain commands together.
-- Somtimes it is clearer to use `->` rather than use `<-` for assignment.
+- Sometimes it is clearer to use `->` rather than use `<-` for assignment.
 ```{r, echo=TRUE}
 c(1,12,4)%>%
   mean%>%
@@ -246,7 +246,7 @@ class: inverse, middle, center
 
 # Group by function
 
-- A powerful function in dplyr is the `group_by` function.
+- A powerful function in `dplyr` is the `group_by` function.
 - Used in combination with `summarise`, it can construct  new datasets.
 - Consider the `txhousing` dataset.  There is monthly data for each city.
 - Suppose the aim is to find total number of sales for all cities in a year.
@@ -276,7 +276,7 @@ TotSales
 
 - In earlier years, data for some cities is unavailable and is filled in as `NA`.
 - The option `na.rm=TRUE` removes missing data before taking the sum.
-- Next, suppose we want to get the yearly total for each city
+- Next, suppose we want to get the yearly total for each city.
 - Need to group by `city` and `year`.
 
 
@@ -295,11 +295,15 @@ TotSales
 #Your turn
 
 - In the `diamonds` dataset, find the average price for each cut of diamond.
+--
+
 - In the `diamonds` dataset, find the average price for each cut of diamond given that price in above 2000.
+--
+
 - In the `mpg` dataset find the average fuel efficiency in the city of in each year.
+--
+
 - In the `mpg` dataset, consider Toyota, Nissan and Honda. Find the value of `hwy` for each of these manufacturer's most fuel efficient cars on the highway.
-
-
 
 ---
 
@@ -311,8 +315,14 @@ class: inverse, center middle
 # Codd's Model
 
 - Many of the functions in `dplyr` are built on similar functions in the SQL language that is used to query databases.
+--
+
 - SQL is itself built upon (but not exactly the same) as a theoretical model known as Codd's model.
+--
+
 - An important aspect of this model is the first normal form.
+--
+
 - This also provide some guidelines for good data management.
 
 ---
@@ -362,10 +372,14 @@ kable(eg)%>%
 #Problems
 
 - This solution forces an ordering between Email1 and Email2 that may be arbitrary.
+--
+
 - Also, a new entry into the database may be: 
-  - Name: Deepal
-  - DoB: 1987/04/23
-  - Email: deepal@work.com; deepal@me.com; coolgirl87@me.com
+  + Name: Deepal
+  + DoB: 1987/04/23
+  + Email: deepal@work.com; deepal@me.com; coolgirl87@me.com
+--
+
 - The entire database needs to be changed to allow for three email addresses
 ---
 
@@ -399,8 +413,14 @@ kable(eg)%>%
 # First Normal Form
 
 - This is only a very very superficial treatment of *database normalization*.
+--
+
 - The emphasis here is getting data into a form that is easily workable and minimises the chance for mistakes.
+--
+
 - It should be noted that the concept of *atomicity* is itself controversial and can be ambiguous.
+--
+
 - The main message is to think carefully about how you get data into an easily workable and robust form.
 
 ---
@@ -414,8 +434,14 @@ class: inverse, middle, center
 # Long v wide format
 
 - Generally attempt to have one column per variable.
+--
+
 - Sometimes the meaning of a *variable* is ambiguous.
+--
+
 - In many cases it is easier to use `ggplot2` if the data are reshaped into a different form.
+--
+
 - We investigate using the `economics` data
 
 ---

@@ -43,7 +43,7 @@ require(ggthemes)
 - Sometimes we would like to add a title to a plot or change the labels.
   - This is achieved by `labs`
 - Sometimes we may wish to change the general look
-  - This is achieved by the `theme` function and functions in the `ggtheme` package.
+  - This is achieved by the `theme` function and functions in the `ggthemes` package.
 
 ---
 
@@ -289,15 +289,15 @@ ggplot(mpg,aes(x=displ,y=cty))+
 
 # With fitted curve
 
-```{r, message=FALSE}
+```{r, message=FALSE,echo=TRUE,fig.height=6}
 ggplot(mpg,aes(x=displ,y=cty))+
   geom_point()+geom_smooth()
 
 ```
 
 
----
 
+---
 # Smooth fit
 
 - The fitted line by default comes from the LOcal Estimated Scatterplot Smoothing (LOESS) method.
@@ -362,7 +362,7 @@ ggplot(df,aes(x=x,col=nn))+geom_rug(size=1.5)+theme(legend.position = 'none')+ge
 #Details
 
 - In the LOESS algorithm, the smoothing parameter $\alpha$ is defined as the proportion of observations used as nearest neigbours.
-  - If $\alpha=0.2$ and $n=20$ then use $k=4$ nearest neighbours.
+  - If $\alpha=0.2$ and $n=20$ then $k=4$ nearest neighbours are used.
   - By default $\alpha=0.75$ in R.
 - It is common to use weighted regression whereby closer neighbours are given more influence.
 - LOESS is not ideal for large datasets.
@@ -419,7 +419,7 @@ class: middle, center inverse
 ```{r, echo=TRUE,eval=FALSE}
 houston_sales_listings%>%
   ggplot(aes(x=listings,y=sales, col=date))+
-  geom_path()+scale_color_viridis_c()->g
+  geom_point()+scale_color_viridis_c()->g
 ggplotly(g)
 ```
 
@@ -449,6 +449,19 @@ ggplotly(g)%>%
 ```
 
 ---
+# Code
+
+```{r, echo=TRUE,eval=FALSE}
+houston_sales_listings%>%
+  mutate(Era=ifelse(date>2014,
+                    'Post 2014',
+                    'Pre 2014'))%>%
+  ggplot(aes(x=listings,y=sales, col=Era))+
+  geom_point()->g
+ggplotly(g)
+```
+
+---
 
 # Summary
 
@@ -458,3 +471,40 @@ ggplotly(g)%>%
   - This allows for the design of interactive web apps.
 - You now have a strong base in R to teach yourself these how to use the tools.
   
+---
+
+# Final Exercise
+
+Create this plot
+
+```{r, echo=FALSE, eval=TRUE,fig.height=6}
+txhousing%>%
+  filter(month==4,city%in%c('Houston','San Antonio','Dallas','Austin'))%>%
+  ggplot(aes(x=sales,y=median,col=year,label=year))+
+  geom_path()+
+  geom_text(size=2,color='black')+
+  scale_color_viridis_c()+
+  labs(title = 'Median Price v Number of Sales in April for four Texan Cities')+
+  xlab('Sales (Number of Houses)')+
+  ylab('Median House Price ($US)')+
+  facet_wrap(~city,scales = 'free')
+```
+
+---
+  
+# Solution  
+
+```{r, echo=TRUE, eval=FALSE}
+txhousing%>%
+  filter(month==4,city%in%c('Houston','San Antonio',
+                            'Dallas','Austin'))%>%
+  ggplot(aes(x=sales,y=median,col=year,label=year))+
+  geom_path()+
+  geom_text(size=2,color='black')+
+  scale_color_viridis_c()+
+  labs(title = 'Median Price v Number of Sales in 
+       April for four Texan Cities')+
+  xlab('Sales (Number of Houses)')+
+  ylab('Median House Price ($US)')+
+  facet_wrap(~city,scales = 'free')
+```
