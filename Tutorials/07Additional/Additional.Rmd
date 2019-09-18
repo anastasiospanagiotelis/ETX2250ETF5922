@@ -8,7 +8,7 @@ date: "Tutorial 7"
 ```{r, echo = FALSE}
 #rmarkdown::render('Additional.Rmd',output_file='Additional.pdf')
 #rmarkdown::render('Additional.Rmd',output_file='AdditionalSols.pdf')
-sols<-FALSE
+sols<-TRUE
 title<-ifelse(sols, 'DataVizA Tutorial: Additional Issues: Solutions','DataVizA Tutorial: Additional Issues')
 ```
 
@@ -37,7 +37,7 @@ ggplot(elec,aes(x=MaxTemp,y=Demand,col=Wend))+geom_point()
 ```
 
 
-2. Add smooth lines obtained by a LOWESS estimate. 
+2. Add smooth lines obtained by a LOESS estimate. 
 
 ```{r, echo = sols, eval=sols, message=FALSE}
 

@@ -268,7 +268,7 @@ $$\frac{1}{|\mathcal{N}_{0}|}\sum\limits_{i\in\mathcal{N}_{0}} I(y_i\neq\hat{y}_
 - This phenomenon is called *overfitting*.
 --
 
-- Generally achieving a low training error rate (also called out-of-sample or generalisation error) is more important.
+- Generally achieving a low **test** error rate (also called out-of-sample or generalisation error) is more important.
 
 ---
 
