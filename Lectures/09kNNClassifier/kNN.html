@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Anastasios Panagiotelis" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <script src="libs/kePrint/kePrint.js"></script>
     <link rel="stylesheet" href="css/mtheme.css" type="text/css" />
     <link rel="stylesheet" href="css/mod.css" type="text/css" />
   </head>
@@ -368,7 +369,8 @@ std_train_x&lt;-attr(train_x_std,"scaled:scale")
 
 # Standardise training data
 
-- The test data should also be standardised but using the same mean and standard deviation
+- The test data should also be standardised 
+- This tranformation should be identical for training and test data so using the mean and standard deviation of the training data.
 
 
 ```r
@@ -454,7 +456,7 @@ print(miscl_k1)
 ## [1] 0.32
 ```
 
-Overall, 32% of the training sample is incorrectly predicted
+Overall, 32% of the test sample is incorrectly predicted
 --
 
 - As an exercise, you can now try to obtain the misclassification rate with `\(k=5\)`
@@ -485,17 +487,17 @@ The misclassification rate when `\(k=5\)` is 0.292.
 
 
 ```r
-table(train_y,yhat_k5)
+table(test_y,yhat_k5)
 ```
 
 ```
 ##             yhat_k5
-## train_y      Default No Default
-##   Default          9         53
-##   No Default      20        168
+## test_y       Default No Default
+##   Default          8         52
+##   No Default      21        169
 ```
 
-Letting "default" be the "positive" class, sensitivity is 9/(9+53) or 0.145, and specificity is 168/(20+168) or 0.894
+Letting "default" be the "positive" class, sensitivity is 8/(8+52) or 0.133, and specificity is 169/(21+169) or 0.889
 
 ---
 
@@ -508,7 +510,111 @@ Letting "default" be the "positive" class, sensitivity is 9/(9+53) or 0.145, and
 knn(train_x_std,
     test_x_std,
     train_y,k=5,prob = TRUE)-&gt;prob_k5
-print(attr(prob_k5,"prob"))
+```
+
+---
+
+#Predictions
+
+- The output still contains predictions
+
+
+```r
+  print(prob_k5)
+```
+
+```
+##   [1] No Default Default    No Default No Default Default    No Default
+##   [7] No Default No Default No Default Default    No Default No Default
+##  [13] No Default No Default No Default No Default No Default No Default
+##  [19] No Default No Default Default    No Default No Default No Default
+##  [25] No Default No Default No Default No Default Default    No Default
+##  [31] No Default No Default No Default Default    Default    No Default
+##  [37] No Default No Default No Default No Default No Default No Default
+##  [43] No Default No Default No Default No Default No Default No Default
+##  [49] No Default No Default No Default Default    Default    No Default
+##  [55] No Default Default    Default    Default    No Default Default   
+##  [61] Default    No Default Default    Default    No Default No Default
+##  [67] No Default No Default No Default No Default No Default No Default
+##  [73] No Default No Default No Default No Default No Default No Default
+##  [79] No Default No Default No Default No Default No Default No Default
+##  [85] No Default No Default No Default No Default No Default No Default
+##  [91] No Default No Default No Default No Default Default    No Default
+##  [97] No Default No Default No Default No Default No Default No Default
+## [103] No Default Default    No Default Default    No Default No Default
+## [109] No Default No Default No Default No Default No Default No Default
+## [115] No Default No Default No Default Default    No Default No Default
+## [121] No Default No Default No Default No Default No Default No Default
+## [127] No Default Default    No Default No Default No Default No Default
+## [133] No Default No Default No Default No Default No Default No Default
+## [139] No Default No Default No Default Default    No Default No Default
+## [145] No Default No Default No Default No Default No Default No Default
+## [151] No Default No Default No Default No Default No Default No Default
+## [157] No Default No Default No Default No Default No Default No Default
+## [163] No Default No Default Default    No Default No Default No Default
+## [169] No Default No Default No Default No Default No Default No Default
+## [175] Default    No Default No Default No Default Default    No Default
+## [181] No Default No Default No Default No Default No Default No Default
+## [187] No Default No Default No Default No Default No Default No Default
+## [193] No Default No Default No Default No Default No Default No Default
+## [199] No Default No Default No Default No Default Default    No Default
+## [205] No Default No Default No Default No Default No Default No Default
+## [211] No Default No Default No Default No Default No Default No Default
+## [217] No Default No Default No Default No Default No Default No Default
+## [223] No Default No Default No Default No Default No Default No Default
+## [229] No Default No Default No Default No Default No Default No Default
+## [235] No Default No Default Default    No Default No Default No Default
+## [241] No Default No Default No Default Default    No Default No Default
+## [247] No Default No Default No Default No Default
+## attr(,"prob")
+##   [1] 1.0000000 0.5714286 0.6666667 0.6000000 0.6000000 0.8000000 1.0000000
+##   [8] 1.0000000 0.6666667 0.6000000 0.8333333 0.8000000 1.0000000 0.5714286
+##  [15] 1.0000000 0.6666667 1.0000000 1.0000000 0.6000000 1.0000000 0.6000000
+##  [22] 0.8333333 0.6666667 0.6000000 1.0000000 1.0000000 0.5714286 1.0000000
+##  [29] 0.6000000 0.5000000 0.6666667 0.8571429 1.0000000 0.6000000 0.6000000
+##  [36] 0.8000000 0.6666667 0.6000000 0.6000000 0.5000000 0.6000000 0.6666667
+##  [43] 0.6000000 0.6000000 0.8333333 1.0000000 0.6666667 0.8000000 1.0000000
+##  [50] 1.0000000 0.8000000 0.6000000 0.6000000 1.0000000 1.0000000 0.6000000
+##  [57] 0.6666667 0.8000000 1.0000000 0.6000000 0.8000000 1.0000000 0.6000000
+##  [64] 0.6000000 0.6666667 0.8000000 0.5714286 0.5714286 1.0000000 1.0000000
+##  [71] 0.6666667 0.6000000 1.0000000 0.6666667 0.8000000 0.8000000 1.0000000
+##  [78] 0.8000000 0.8000000 1.0000000 0.6666667 0.6000000 1.0000000 0.8000000
+##  [85] 0.5714286 1.0000000 0.8000000 0.6666667 1.0000000 0.8750000 1.0000000
+##  [92] 1.0000000 0.8000000 0.7142857 0.6000000 0.7142857 1.0000000 0.8571429
+##  [99] 0.8000000 0.8000000 0.8333333 0.8000000 0.5714286 0.6000000 0.8333333
+## [106] 0.6000000 0.8000000 1.0000000 1.0000000 0.6666667 1.0000000 1.0000000
+## [113] 1.0000000 0.6000000 0.8750000 0.6000000 1.0000000 0.6666667 1.0000000
+## [120] 1.0000000 0.6000000 0.8333333 0.5000000 0.6000000 0.6000000 0.6666667
+## [127] 1.0000000 0.6000000 0.7142857 1.0000000 0.8000000 0.8333333 1.0000000
+## [134] 0.6000000 0.7142857 1.0000000 0.6000000 0.8000000 0.6666667 0.7142857
+## [141] 0.6000000 0.6666667 0.8000000 0.8000000 0.8000000 1.0000000 1.0000000
+## [148] 1.0000000 0.8000000 1.0000000 0.8750000 1.0000000 1.0000000 0.6000000
+## [155] 1.0000000 0.8000000 0.6666667 1.0000000 0.5714286 0.8000000 0.6000000
+## [162] 0.6000000 1.0000000 0.6000000 0.6000000 0.8000000 1.0000000 1.0000000
+## [169] 1.0000000 0.5714286 1.0000000 0.5000000 0.8000000 0.7142857 0.6000000
+## [176] 0.6666667 1.0000000 0.8750000 0.6666667 1.0000000 1.0000000 0.8000000
+## [183] 0.8000000 0.6666667 0.6000000 0.8000000 0.8000000 0.8000000 0.6000000
+## [190] 0.8000000 0.8000000 0.8333333 0.8000000 0.6000000 1.0000000 0.6666667
+## [197] 0.8000000 0.8000000 0.8750000 0.8333333 0.7142857 0.7500000 0.6000000
+## [204] 1.0000000 1.0000000 1.0000000 0.8000000 1.0000000 0.8000000 1.0000000
+## [211] 0.7142857 1.0000000 1.0000000 0.6666667 0.6000000 1.0000000 1.0000000
+## [218] 0.8000000 0.8333333 0.6666667 1.0000000 0.7500000 0.8000000 0.5714286
+## [225] 0.8000000 1.0000000 0.8000000 1.0000000 0.8000000 1.0000000 1.0000000
+## [232] 1.0000000 1.0000000 0.8333333 0.6000000 1.0000000 0.6000000 0.8000000
+## [239] 1.0000000 0.6000000 0.8000000 1.0000000 1.0000000 0.6000000 0.8333333
+## [246] 0.6666667 1.0000000 0.8000000 0.8000000 1.0000000
+## Levels: Default No Default
+```
+
+---
+
+#Probabilities
+
+- Probabilities can be stripped out using the `attr` function
+
+
+```r
+  print(attr(prob_k5,"prob"))
 ```
 
 ```
@@ -550,12 +656,47 @@ print(attr(prob_k5,"prob"))
 ## [246] 0.6666667 1.0000000 0.8000000 0.8000000 1.0000000
 ```
 
+
 ---
 
+#Prediction and Probabilities
+&lt;table class="table" style="margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Prediction &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Probability &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; No Default &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.0000000 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Default &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.5714286 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; No Default &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6666667 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; No Default &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6000000 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+- For the first observation the probability of **No Default** is 1, but for the second observation the probablity of **Default** is 0.5714.
+--
+
+- The probability is relative to the prediction.
+
+---
 
 # Ties in neighbours
 
-- If there are only 5 neighbours all probabilities should be either 0, 0.2, 0.4, 0.6, 0.8 or 1.
+- If there are only 5 neighbours all probabilities should be either 0.6, 0.8 or 1.
 --
 
 - This is not true.  Why?
@@ -573,7 +714,7 @@ print(attr(prob_k5,"prob"))
 
 # Regression 
 
-- The same principal can be used for regression.
+- The same principle can be used for regression.
 --
 
 - The predicted value is simply the average value of `\(y\)` for the `\(k\)`-nearest neighbours.

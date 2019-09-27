@@ -462,6 +462,95 @@ class:inverse,middle,center
 
 ---
 
+#Example
+
+|Person  |Pred. Pr. Guilty |Truth              |
+|--------|-----------------|-------------------|
+|A       |0.3              |Not Guilty         |
+|B       |0.4              |Guilty             |
+|C       |0.6              |Guilty             |
+|D       |0.7              |Guilty             |
+
+---
+
+# Questions
+
+- For a threshold of 0.5
+  - What is your prediction for each individual?
+  - What is the misclassification error?
+  - What is the sensitivity?
+  - What is the specificity?
+  - What is the cost?
+
+---
+
+# Answer
+
+|Person  |Pred. Pr. Guilty |Prediction |Truth              |
+|--------|-----------------|-----------|-------------------|
+|A       |0.3              |Not Guilty |Not Guilty         |
+|B       |0.4              |Not Guilty |Guilty             |
+|C       |0.6              |Guilty     |Guilty             |
+|D       |0.7              |Guilty     |Guilty             |
+
+---
+
+# Answers
+
+- Misclassification error is 0.25.
+- Sensitivity is 0.6667
+- Specificity is 1
+- Cost is $500
+
+---
+
+# Your turn
+
+- How do the answers change when the threshold is 0.2?
+- How do the answers change when the threshold is 0.65?
+
+---
+
+# Answer (Threshold 0.2)
+
+|Person  |Pred. Pr. Guilty |Prediction |Truth              |
+|--------|-----------------|-----------|-------------------|
+|A       |0.3              |Guilty     |Not Guilty         |
+|B       |0.4              |Guilty     |Guilty             |
+|C       |0.6              |Guilty     |Guilty             |
+|D       |0.7              |Guilty     |Guilty             |
+
+---
+
+# Answers
+
+- Misclassification error is 0.25.
+- Sensitivity is 1
+- Specificity is 0
+- Cost is $100
+
+---
+
+# Answer (Threshold 0.65)
+
+|Person  |Pred. Pr. Guilty |Prediction |Truth              |
+|--------|-----------------|-----------|-------------------|
+|A       |0.3              |Not Guilty |Not Guilty         |
+|B       |0.4              |Not Guilty |Guilty             |
+|C       |0.6              |Not Guilty |Guilty             |
+|D       |0.7              |Guilty     |Guilty             |
+
+---
+
+# Answers
+
+- Misclassification error is 0.5.
+- Sensitivity is 0.333
+- Specificity is 1
+- Cost is $1000
+
+---
+
 # Conclusion
 
 - For the remainder of the unit the focus is on different ways to do classification.
@@ -469,7 +558,7 @@ class:inverse,middle,center
 
 - In a business (and any other setting) be aware that
   - Correlation does not imply causation
-  - Prediction should be thought about probabilisitcally.
+  - Prediction should be thought about probabilistically.
   - Cost should be taken into account when classification is used in decision making.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

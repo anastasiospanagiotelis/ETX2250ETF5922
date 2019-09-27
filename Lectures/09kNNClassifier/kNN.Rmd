@@ -492,7 +492,8 @@ std_train_x<-attr(train_x_std,"scaled:scale")
 
 # Standardise training data
 
-- The test data should also be standardised but using the same mean and standard deviation
+- The test data should also be standardised 
+- This tranformation should be identical for training and test data so using the mean and standard deviation of the training data.
 
 ```{r,echo=T, evel=T}
 test_x_std<-scale(test_x,
@@ -530,7 +531,7 @@ print(miscl_k1)
 
 ```
 
-Overall, 32% of the training sample is incorrectly predicted
+Overall, 32% of the test sample is incorrectly predicted
 --
 
 - As an exercise, you can now try to obtain the misclassification rate with $k=5$
@@ -558,10 +559,10 @@ The misclassification rate when $k=5$ is `r round(miscl_k5,3)`.
 - It is also worth reporting results in a cross tabulation
 
 ```{r,echo=T,eval=T}
-table(train_y,yhat_k5)
+table(test_y,yhat_k5)
 ```
 
-Letting "default" be the "positive" class, sensitivity is 9/(9+53) or `r round(9/(9+53),3)`, and specificity is 168/(20+168) or `r round(168/(20+168),3)`
+Letting "default" be the "positive" class, sensitivity is 8/(8+52) or `r round(8/(8+52),3)`, and specificity is 169/(21+169) or `r round(169/(21+169),3)`
 
 ---
 
@@ -574,16 +575,49 @@ Letting "default" be the "positive" class, sensitivity is 9/(9+53) or `r round(9
 knn(train_x_std,
     test_x_std,
     train_y,k=5,prob = TRUE)->prob_k5
-print(attr(prob_k5,"prob"))
+
 
 ```
 
 ---
 
+#Predictions
+
+- The output still contains predictions
+
+```{r, echo=TRUE, eval=TRUE}
+  print(prob_k5)
+```
+
+---
+
+#Probabilities
+
+- Probabilities can be stripped out using the `attr` function
+
+```{r, echo=TRUE,eval=TRUE}
+  print(attr(prob_k5,"prob"))
+```
+
+
+---
+
+#Prediction and Probabilities
+```{r, echo=FALSE,eval=TRUE}
+
+tibble(Prediction=head(prob_k5,4),Probability=head(attr(prob_k5,"prob"),4))%>%kable%>%kable_styling()
+```
+
+- For the first observation the probability of **No Default** is 1, but for the second observation the probablity of **Default** is 0.5714.
+--
+
+- The probability is relative to the prediction.
+
+---
 
 # Ties in neighbours
 
-- If there are only 5 neighbours all probabilities should be either 0, 0.2, 0.4, 0.6, 0.8 or 1.
+- If there are only 5 neighbours all probabilities should be either 0.6, 0.8 or 1.
 --
 
 - This is not true.  Why?
