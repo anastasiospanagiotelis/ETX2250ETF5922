@@ -8,6 +8,7 @@
     <script src="libs/htmlwidgets/htmlwidgets.js"></script>
     <script src="libs/pymjs/pym.v1.js"></script>
     <script src="libs/widgetframe-binding/widgetframe.js"></script>
+    <script src="libs/kePrint/kePrint.js"></script>
     <link rel="stylesheet" href="css/mtheme.css" type="text/css" />
     <link rel="stylesheet" href="css/mod.css" type="text/css" />
   </head>
@@ -107,7 +108,7 @@ $$\frac {p({\mathbf x}|y=1)p(y=1)}{p({\mathbf x}|y=0)p(y=0)+p({\mathbf x}|y=1)p(
 Some commonly made assumptions are:
 --
 
-- **Normality**: The data follow normal distributions for the `\(y=1\)` group and `\(y=0\)` group.
+- **Normality**: The predictors follow normal distributions for the `\(y=1\)` group and `\(y=0\)` group.
 --
 
 - **Homogeneity of Variances and Covariances**: The variances and covariances are the same for the `\(y=1\)` group and `\(y=0\)` group.
@@ -497,6 +498,75 @@ ldapred$posterior
 
 ---
 
+# Exercises for you
+
+- Evaluate whether the assumptions of multivariate normality and homogenous variances and covariances hold.
+--
+
+- Hints:
+  + For homogenous variances and covariances use `group_by`, `summarise`, `var` and `cov`
+  + For normality plot the data using `geom_density_2d()`
+
+---
+
+
+#Homogeneous Var-Cov
+
+
+```r
+mpg_train%&gt;%
+  group_by(drv)%&gt;%
+  summarise(VarDispl=var(displ),
+            VarHwy=var(hwy),
+            covDisplHwy=cov(displ,hwy))-&gt;varcov
+```
+
+
+&lt;table class="table" style="margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; drv &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; VarDispl &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; VarHwy &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; covDisplHwy &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.3713478 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18.36957 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -4.0528986 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; f &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.5217152 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18.47453 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -1.8201582 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; r &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.5125263 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12.58947 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.2810526 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+# Normality
+
+
+```r
+mpg_train%&gt;%
+  ggplot(aes(x=displ,y=hwy,col=drv))+geom_density2d()+
+  scale_color_colorblind()
+```
+
+&lt;img src="DA_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
+
+---
 class: inverse, middle, center
 
 #Other Linear Classifiers
