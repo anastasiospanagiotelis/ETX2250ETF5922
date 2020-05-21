@@ -19,7 +19,7 @@ output:
 
 class: inverse, center, middle
 
-# Housekeeping
+# Telling stories with data
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
@@ -36,151 +36,77 @@ require(gridExtra)
 rm(list=ls())
 ```
 
----
-
-# Welcome
-
-- Lecturer: Anastasios Panagiotelis
-- Email:
-    + <a href="mailto:anastasios.panagiotelis@monash.edu">anastasios.panagiotelis@monash.edu</a>
-- Lecture slides and tutorial exercises.
-- <a href="https://socviz.co/">Data Visualisation: A practical introduction by Kieran Healey</a>
 
 ---
 
-# My Slides
+# What is DVA?
 
-- My slides are designed to be interactive.  
-- They are best viewed in a web browser 
-    + Google Chrome and Firefox work best.
-- Sometimes interactive plots won't look right or you will get stuck. 
-    + Just refresh (press F5).
-- For a pdf version of the slides, from within Google Chrome simply print.  There will be an option to print to pdf.    
+- Data visualisation and analytics
+  + Gain insights from data.
+  + Communicate.
+  + Make informed decisions
+- This unit is about telling stories with data.
+--
 
----
-
-class: inverse, center, middle
-
-# A History Lesson
+- For a good example see [this talk](https://www.youtube.com/watch?v=jbkSRLYSojo) by Hans Rosling.
 
 ---
 
-# Cholera
+# Good workflow
 
-- In 1854 there was a breakout of the cholera disease in London killing 616 people.
-- At the time it was speculated that the disease was carried in the air.
-- A physician called John Snow was sceptical and began to collect data.
-
----
-
-# Snow's map
-
-
-```{r snow,eval=TRUE}
-  knitr::include_graphics('img/Snow-cholera-map.jpg',dpi = 40)
+```{r workflow,eval=TRUE}
+knitr::include_graphics('img/worklfow.png',dpi=40)
 ```
 
----
-
-# Snow's map
-
-```{r snowres,eval=TRUE}
-  knitr::include_graphics('img/Snow_Cholera.svg')
-```
+From Grolemund and Wickham, *R for Data Science*
 
 ---
 
-# Consequences
+# A way to do data analysis
 
-- The map showed that cholera was more prevalent around a water pump on Broad Street.
-- The pump was closed down.
-- Eventually it was established that cholera is a water-borne disease.
-- Data visualisation saves lives!
+- In the past you may have done data anlysis using the following steps.
+--
 
----
+  + Download data from a website.
+--
 
-# Crimean War
+  + Manipulate data in Excel, save as a new file.
+--
 
-- At the same time Great Britain was at war against Russia in the Crimean peninsula.
-- Florence Nightingale is famous as a nurse who treated the wounded soldiers.
-- She also advocated British Parliament for more sanitary conditions in military hospitals.
-- She knew the power of using data visualisation.
+  + Open this file in Stata, create some plots and fit some models.
+--
 
----
-
-# Nightingale's Rose chart
-
-```{r nightingale,eval=TRUE}
-knitr::include_graphics('img/florose.jpg',dpi=40)
-```
-
----
-# Nightingale's Rose chart 
-
-```{r nightingaleres,eval=TRUE}
-knitr::include_graphics('img/nightingale_rose_chart.svg')
-```
-
-- Blue areas: Preventible deaths.
-- Red areas: Deaths from battle wounds.
-- Black areas: Other causes.
+  + Cut and paste figures and tables into a word file.
+  
 
 ---
 
-# Aftermath
+# An alternative
 
-- The improved sanitation at military hospitals was eventually implemented in civilian hospitals.
-- Data visualisation saves lives.
-- Florence Nightingale became the first female member of the Royal Statistical Society.
----
+- Using R brings that whole pipleline into one place.
+--
 
-# Napoleon
+  + Easier to *update* analysis,
+--
 
-- In 1812 Napoleon thought it was a good idea to invade Russia.
-- This campaign was a disaster for the French.
-- Engineer Charles Joseph Minard captured the extent of this catastrophe using visualisation.
+  + Easier to *reproduce* analysis,
+--
 
----
+  + Easier to *collaborate* with others,
+--
 
-# Minard's plot
+  + Easier to *automate* analysis. 
 
-```{r minard}
-knitr::include_graphics('img/Minard_Map.svg')
-```
-
----
-
-# Minard's plot
-
-- This visualisation provides information on 6 variables in one chart.
-  - Number of troops.
-  - Whether troops advance or retreat.
-  - Temperature and time.
-  - Longitude and latitude.
-- Despite the clear message that invading Russia in winter is a bad idea, some people did not learn this lesson.
-
----
-
-# Why visualisation?
-
-- Gain insights from data.
-- Overview of large datasets.
-- Search for: 
-    + Trends
-    + Relationships
-    + Irregularites
-- In business data visualisation is a crucial tool to support decision making.
 ---
 class: inverse, center, middle
 
-# Modern Times
+# Intro to R
 
 ---
 
 # The R language
 
-- Modern software tools make visualisation easily accessible.
-- In this unit we will use the **R programming language** which  can be downloaded [here](http://cloud.r-project.org/).
+- The **R programming language** which  can be downloaded [here](http://cloud.r-project.org/).
 - Exact details of installing R will depend on whether you use Windows, Mac or Linux.
 - A great tool for both new and experienced users of R is **RStudio** which can be downloaded [here](https://www.rstudio.com/products/RStudio/).
 
@@ -193,8 +119,22 @@ class: inverse, center, middle
   - You can run a single line of code by pressing Ctrl+Enter
   - You can run a whole script by pressing Ctrl+Shift+S or Ctrl+Shift+Enter
 - You can save scripts to run them anytime.
-- Scripts allow you to keep analysis **replicable** which is important in research and business.
-  
+
+---
+
+# R Markdown
+
+- If you want to embed your analysis within a written document then [R Markdown](https://rmarkdown.rstudio.com/) is an excellent tool.
+--
+
+- Enclose any R code within three tick marks.
+--
+
+- By setting `echo=TRUE` to present the code or `echo=FALSE` to hide it.
+--
+
+- If you are completely new to R, then use scripts at first.
+
 ---
 
 # Variables in R

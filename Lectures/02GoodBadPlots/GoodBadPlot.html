@@ -22,9 +22,142 @@ class: center, middle, inverse, title-slide
 
 class: inverse, center, middle
 
+# A History Lesson
+
+
+
+---
+
+# Cholera
+
+- In 1854 there was a breakout of the cholera disease in London killing 616 people.
+- At the time it was speculated that the disease was carried in the air.
+- A physician called John Snow was sceptical and began to collect data.
+
+---
+
+# Snow's map
+
+
+&lt;img src="img/Snow-cholera-map.jpg" width="3120" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Snow's map
+
+&lt;img src="img/Snow_Cholera.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Consequences
+
+- The map showed that cholera was more prevalent around a water pump on Broad Street.
+- The pump was closed down.
+- Eventually it was established that cholera is a water-borne disease.
+- Data visualisation saves lives!
+
+---
+
+# Crimean War
+
+- At the same time Great Britain was at war against Russia in the Crimean peninsula.
+- Florence Nightingale is famous as a nurse who treated the wounded soldiers.
+- She also advocated British Parliament for more sanitary conditions in military hospitals.
+- She knew the power of using data visualisation.
+
+---
+
+# Nightingale's Rose chart
+
+&lt;img src="img/florose.jpg" width="2880" style="display: block; margin: auto;" /&gt;
+
+---
+# Nightingale's Rose chart 
+
+&lt;img src="img/nightingale_rose_chart.svg" style="display: block; margin: auto;" /&gt;
+
+- Blue areas: Preventible deaths.
+- Red areas: Deaths from battle wounds.
+- Black areas: Other causes.
+
+---
+
+# Aftermath
+
+- The improved sanitation at military hospitals was eventually implemented in civilian hospitals.
+- Data visualisation saves lives.
+- Florence Nightingale became the first female member of the Royal Statistical Society.
+---
+
+# Napoleon
+
+- In 1812 Napoleon thought it was a good idea to invade Russia.
+- This campaign was a disaster for the French.
+- Engineer Charles Joseph Minard captured the extent of this catastrophe using visualisation.
+
+---
+
+# Minard's plot
+
+&lt;img src="img/Minard_Map.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Minard's plot
+
+- This visualisation provides information on 6 variables in one chart.
+  - Number of troops.
+  - Whether troops advance or retreat.
+  - Temperature and time.
+  - Longitude and latitude.
+- Despite the clear message that invading Russia in winter is a bad idea, some people did not learn this lesson.
+
+---
+
+# Why visualisation?
+
+- Gain insights from data.
+- Overview of large datasets.
+- Search for: 
+    + Trends
+    + Relationships
+    + Irregularites
+- In business data visualisation is a crucial tool to support decision making.
+
+---
+
+# Tesla Motors
+
+- Tesla vehicles collect a large number of data from sensors.
+--
+
+- The plot on the next slide shows tye pressure over time
+--
+
+- This visualisation was used to
+--
+
+  + Check pressure when vehicles left factory,
+--
+
+  + See how long customers take to respond to a low pressure alert,
+--
+
+  + Do predictive modelling on when tyres go flat.
+
+---
+
+# Tesla Motors
+
+&lt;img src="img/tesla.png" width="1600" style="display: block; margin: auto;" /&gt;
+
+You can read more about the case study [here](https://hbr.org/2016/06/visualizations-that-really-work).
+
+---
+
+class: inverse, center, middle
+
 # Plotting Principles
-
-
 
 ---
 
@@ -44,12 +177,12 @@ class: inverse, center, middle
 - What makes these plots *bad* can be put into three categories.
   - Taste (Aesthetic)
   - Perceptual
-  - Substantive
+  - Data
 
 ---
 class: inverse, center, middle
 
-# Errors of taste
+# Bad Taste
 ---
 
 # An ugly plot
@@ -103,7 +236,7 @@ If data density is small, perhaps use a table
 ---
 # ggplot2
 
-&lt;img src="GoodBadPlot_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="GoodBadPlot_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -116,7 +249,7 @@ ggplot2: Elegant Graphics for Data Analyis
 ---
 class: inverse, center, middle
 
-# Errors of Perception
+# Bad Perception
 
 ---
 
@@ -202,28 +335,11 @@ The lie factor is given by
 - The lie factor is `\(783/53\approx 14\)`
 
 ---
-
-# The y-axis
-
-&lt;video width="640" height="480" controls&gt;
-  &lt;source src="img/voxyaxis.webm" type="video/webm"&gt;
-&lt;/video&gt; 
-
----
-
-# The y-axis
-
-- Are we interested in the size of the variable rather than changes in the variable?
-- Is zero a reasonable value for the variable to take?
-- Are we using a bar chart?
-- Answering yes to these questions means we should give more consideration to including zero on the y-axis.
-
----
 class: inverse, middle, center
-# Errors of Substance
+# Bad Data
 
 ---
-# Errors of Substance
+# Bad Data
 
 - Sometimes there is nothing wrong with the plot but with the data.
 - On the following slide is a plot comparing the cost of going to college in the US against the salaries of college graduates.
@@ -243,8 +359,41 @@ class: inverse, middle, center
 - However the message is misleading.
 - The income is a yearly income while the cost of college is over four years (and only paid once).
 - Also it does not show the income of people who are not college graduates.
+- Think carefully about comparisons on a plot.
+- Make sure your conclusions align with what is in the plot.
 
 ---
+class: inverse, center, middle
+
+# The x and y axis
+
+---
+
+# The y-axis
+
+- Watch this [video](https://www.youtube.com/watch?v=14VYnFhBKcY).
+- Are we interested in the size of the variable rather than changes in the variable?
+- Is zero a reasonable value for the variable to take?
+- Are we using a bar chart?
+- Answering yes to these questions means we should give more consideration to including zero on the y-axis.
+
+---
+
+# Stock Prices
+
+&lt;img src="img/twitter_short.png" width="468" style="display: block; margin: auto;" /&gt;
+
+From this graph we conclude that Twitter stock prices increased **dramatically** on April 26. 
+---
+
+# A longer term view
+
+&lt;img src="img/twitter_long.png" width="468" style="display: block; margin: auto;" /&gt;
+
+Not that dramatic anymore.
+
+---
+
 class: inverse, middle center
 
 # More bad plots
