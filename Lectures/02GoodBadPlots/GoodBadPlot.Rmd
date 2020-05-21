@@ -1,7 +1,7 @@
 ---
 title: "Plots: The Good, the Bad and the Ugly"
 subtitle: "Data Visualisation and Analytics"
-author: "Anastasios Panagiotelis"
+author: "Anastasios Panagiotelis and Lauren Kennedy"
 date: "Lecture 2"
 output:
   xaringan::moon_reader:
