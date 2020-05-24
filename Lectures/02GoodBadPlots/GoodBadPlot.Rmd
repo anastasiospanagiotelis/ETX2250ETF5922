@@ -1,5 +1,4 @@
 ---
-title: "Plots: The Good, the Bad and the Ugly"
 subtitle: "Data Visualisation and Analytics"
 author: "Anastasios Panagiotelis and Lauren Kennedy"
 date: "Lecture 2"
@@ -150,7 +149,7 @@ knitr::include_graphics('img/Minard_Map.svg')
 - Tesla vehicles collect a large number of data from sensors.
 --
 
-- The plot on the next slide shows tye pressure over time
+- The plot on the next slide shows tyre pressure over time
 --
 
 - This visualisation was used to
