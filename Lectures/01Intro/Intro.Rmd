@@ -42,9 +42,9 @@ rm(list=ls())
 # What is DVA?
 
 - Data visualisation and analytics
-  + Gain insights from data.
-  + Communicate.
-  + Make informed decisions
+  + Gain insights from data,
+  + Communicate,
+  + Make informed decisions.
 - This unit is about telling stories with data.
 --
 
@@ -64,7 +64,7 @@ From Grolemund and Wickham, *R for Data Science*
 
 # A way to do data analysis
 
-- In the past you may have done data anlysis using the following steps.
+- In the past you may have done data analysis using the following steps.
 --
 
   + Download data from a website.

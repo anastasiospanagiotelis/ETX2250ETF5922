@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Basic Visualisation in R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Anastasios Panagiotelis and Lauren Kennedy" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets/htmlwidgets.js"></script>
+    <script src="libs/pymjs/pym.v1.js"></script>
+    <script src="libs/widgetframe-binding/widgetframe.js"></script>
+    <link rel="stylesheet" href="css/mtheme.css" type="text/css" />
+    <link rel="stylesheet" href="css/mod.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Basic Visualisation in R
+## Data Visualisation and Analytics
+### Anastasios Panagiotelis and Lauren Kennedy
+### Lecture 3
+
+---
+
+
+class: inverse, center, middle
+
+# The Grammar of Graphics
+
+
+
+---
+
+# The grammar of graphics
+
+- At first using `ggplot2` can seem too complicated.
+- Once mastered it can be used to very easily create detailed plots.
+- It is built on the ideas of *Grammar of Graphics* a text by Leland Wilkinson.
+- The objective is to find an abstract set of rules for creating almost any graphic.
+
+---
+
+# Data
+
+- The starting point for all visualisation is a dataset.
+--
+
+- In these slides, we will consider the datasets `diamonds`,  `mpg` and `economics` which come built in with the `ggplot2` package.
+--
+
+- Later on we learn how to read in data.
+--
+
+- The `diamonds` data contains data on the price, size and quality of over 50000 diamonds.
+
+---
+
+# Aes and Geom
+
+- Think of an *aesthetic* (or aes) as a way of perceiving a variable:
+  + Position on x or y axis
+  + Color
+  + Size
+- Think of a *geometry* (or geom) as a way of representing a variable:
+  + Points
+  + Lines
+- `ggplot` maps aesthetics to geometries  
+
+---
+class: inverse, center, middle
+
+#Histogram
+
+---
+# Histogram
+
+- Consider a histogram of the variable price
+--
+
+- In a histogram, values of the variable we are interested in lie along the horizontal (x) axis.
+--
+
+- The histogram creates bins then counts the number of observations in each bin.
+--
+
+- To get started type
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))
+```
+
+---
+
+# What do we see?
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# What do we see?
+
+- We do have an x axis with a label price and some values.
+--
+
+- Otherwise we see nothing.
+--
+
+- We need to **add** a geometry to the plot.
+--
+
+- We do this with the `geom_histogram` function.
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram()
+```
+
+---
+
+# What do we see?
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Modification
+
+- Suppose want to use a different number of bins or change the color of the bins?
+--
+
+- These are not features of the data or the aes
+--
+
+- These are features of the *geom*.  
+--
+
+- So these are controlled by arguments in the `geom_histogram` function.
+
+---
+
+# Change bins
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram(bins = 5)
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Change boundary
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram(bins =  5, boundary=0)
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+---
+
+# Change binwidth
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram(binwidth =  500)
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Change color
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram(binwidth =  500,fill = 'red')
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Change border color
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram(binwidth =  500,color='white',
+                 fill = 'blue')
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+class:inverse, middle center
+
+# An aside on colour
+
+---
+
+# Customise colour
+
+- Many colours come built in to R.
+--
+
+- In some cases you may wish to select your own color.
+--
+
+- Customising colour requires appreciating how a computer understands color.
+--
+
+- We will do this by looking at RGB hex codes.
+--
+
+- Using this system, to a computer *#ff0000* is red.
+
+---
+
+# The RGB system
+
+- One color model used by computers encodes every colour by the amount of *red*, *green* and *blue* light mixed to make that colour.
+--
+
+- This is called the RGB color model.
+--
+
+- A value between 0 and 255  indicates the strength of red, green and blue.
+--
+
+- These values between 0 and 255 are represented in two hexadecimal digits.
+
+---
+
+# Hexadecimal
+
+- In hexadecimal: 
+  - **a** is ten,
+  - **b** is eleven,
+  - **c** is twelve... 
+  - **f** is fifteen.
+- Take the first digit and multiply by 16 and add the second digit
+- Hexadecimal is used since each digit corresponds to 4 bits in  computer memory.
+---
+
+#Examples
+
+- **10** in hexadecimal is `\(1\times 16+0=16\)` in decimal
+- **1a** in hexadecimal is `\(1\times 16+10=26\)` in decimal
+- **2b** in hexadecimal is `\(2\times 16+11=42\)` in decimal
+- What is e4 in decimal?
+---
+
+# Color picker 
+
+- One online tool to find the hex code of a color is &lt;a href ="https://www.w3schools.com/colors/colors_picker.asp"&gt;here&lt;/a&gt;.
+--
+
+- Suppose we want to the histogram to be &lt;font color=#b35900&gt; this brown&lt;/font&gt; color.
+--
+
+- The hex code is #b35900 which is 179/256 red, 89/256 green and no blue.
+--
+
+- This can be provided as a string, to the `fill` or `color` argument of `geom_histogram`.
+
+---
+
+# Brown histogram
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram(binwidth =  500,color='white',
+                 fill = '#b35900')
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
+---
+
+# Finding hex codes
+
+- It is useful to know hex codes since at times you may want to match colors for a specific purpose.
+--
+
+- For instance you may want the colors to match the brand colors of a client.
+--
+
+- For example a simple online search tells us that Coca Color red is &lt;font color="#f40000"&gt;#f40000&lt;/font&gt;
+--
+
+- The green color worn by NBA team the Milwaukee Bucks is &lt;font color="#00471b"&gt;#00471b&lt;/font&gt;.
+
+---
+# Histograms (Bucks Colors)
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram(fill='#00471b',color='#eee1c6')
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+---
+
+# An exercise
+
+- Find the hex codes for a color(s) associated with:
+  - A brand you like, or
+  - A sports team you like, or
+  - Your country's flag,
+  - Anything else
+- Construct a histogram of the variable *carat* with these colors.
+
+---
+class: inverse, middle, center
+
+# Density plot
+
+---
+
+# Density
+
+- For a smoother version of a histogram we can use a different geom called `geom_density`.
+--
+
+- This in fact computes a kernel density estimate of the variable.
+--
+
+- The level of smoothness is controlled by a *bandwidth* parameter
+--
+
+- All the computation is done by `ggplot2`.
+
+---
+
+# Density plot
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_density()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Density plot (thicker)
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_density(size=3)
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# How is density calculated?
+
+- The kernel density estimate is a popular *nonparametric* technique that estimates a density as
+
+`$$\hat{f}(x)=\frac{1}{n}\sum\limits_{i=1}^{n}K_h(x-x_i)$$`
+
+- Here, `\(K_h()\)` is a kernel function that depends on a bandwidth `\(h\)`.
+
+---
+
+# Uniform kernel
+
+- The simplest kernel function is the uniform kernel
+  + `\(K_h(u)=1/h\)` if `\(|u|&lt;h\)`
+  + `\(K_h(u)=0\)` otherwise
+--
+
+- At a point `\(x\)`, the estimated density is proportional to the number of points that are *close* to `\(x\)`.
+--
+
+- By *close*, we mean within `\(h\)` units of `\(x\)`.
+
+---
+# Extremes
+
+- If the bandwidth gets extremely large then for any `\(x\)`, all sample points are considered close.
+--
+
+- The formula for the kernel density becomes a flat line.
+--
+
+- If the bandwidth gets extremely small then for any `\(x\)` we choose, the density is just the number of points in the sample equal to `\(x\)`.
+--
+
+- The kernel density is made up of spikes at the sample points.
+
+---
+# Defaults
+
+- By default, `geom_density` 
+  - Uses a Gaussian kernel 
+  - Selects the bandwidth using *Silverman's rule of thumb*
+--
+
+- The same principles apply:
+  - Large bandwidth leads to more smoothness
+  - Small bandwidth leads to more bumpiness
+
+---
+
+# Density plot: Low bandwidth
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_density(bw=100)
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Density plot: High bandwidth
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_density(bw=2000)
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" /&gt;
+---
+# Density plot: Low bandwidth
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_density(bw=0.0001)
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-16-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Density plot: High bandwidth
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_density(bw=80000)
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" /&gt;
+---
+
+# Summary
+
+- With both histograms and density plots
+  - If the bin width or bandwidth is too small the plot may look bumpy.  This can exaggerate features that are not significant.
+  - If the bin width or bandwidth is too large the plot may smooth over important features like local modes.
+- Always try a few different values of bin width or bandwidth.
+
+---
+class: inverse, middle, center
+
+# Finding outliers
+
+---
+
+# Outliers
+
+- Histograms and density plots give a good idea of shape and local modes.
+--
+
+- Sometimes they can obscure outliers.
+--
+
+- For finding outliers a rug plot can be useful
+--
+
+- For finding outliers while still getting a good idea of skew, boxplots can be useful.
+--
+
+- We can investigate using the variable *carat*
+
+---
+
+# Carat: Histogram
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=carat))+
+  geom_histogram()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-18-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Carat: Rug plot
+
+
+```r
+ggplot(data = diamonds,mapping = aes(x=carat))+
+  geom_rug()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Box plot
+
+- The box plot summarises 5 numbers
+  - Median
+  - First quartile `\(Q1\)`
+  - Third quartile `\(Q3\)`
+  - Upper Fence `\(U = Q3+1.5\times(Q3-Q1)\)`
+  - Lower Fence `\(L = Q1-1.5\times(Q3-Q1)\)`
+- Anything lying outside the fences represented as dots.
+- When no points lie outside the fence, the fence is set to the maximum or minimum.
+
+---
+
+# Carat: Boxplot
+
+
+```r
+ggplot(data = diamonds,mapping = aes(y=carat))+
+  geom_boxplot()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-20-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Change of aesthetic
+
+- Notice that the aesthetic changed!
+--
+
+- In the boxplot, the value of the variable is represented by the vertical (or y axis).
+--
+
+- We can change the definition of the upper and lower fence by passing the `coef` argument to `geom_boxplot`.  
+--
+
+- This changes the 1.5 used in calculating the fence to whatever you specify
+
+---
+
+# Changing fences
+
+
+```r
+ggplot(data = diamonds,mapping = aes(y=carat))+
+  geom_boxplot(coef=4)
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-21-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+
+# Notches
+
+- Notches can be added to a boxplot
+--
+
+- These are set to `\(\frac{1.58\times(Q3-Q1)}{\sqrt{n}}\)`
+--
+
+- This roughly gives a 95% confidence interval for the median.
+--
+
+- We will use a smaller dataset on the mileage of cars for this example to clearly illustrate the notches.
+
+---
+
+# Notches
+
+
+```r
+ggplot(data = mpg,mapping = aes(y=cty))+
+  geom_boxplot(notch = T)
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+class: inverse, middle, center
+
+# One Non-Metric Variable
+
+---
+
+# Nominal v Ordinal
+
+- Non-metric variables are made up of **nominal** and **ordinal** variables.
+--
+
+- Nominal variables have no ordering in the categories of data:
+  - Manufacturer of car (Audi, Toyota, etc).
+--
+
+- Ordinal variables do have an ordering in the categories:
+  - Quality of diamonds (Fair, Good, etc).
+  
+---
+
+# Non-metric variables in R
+
+- Non-metric variables can be stored in R as
+  - Character variables (nominal data)
+  - Factors (nominal data)
+  - Ordered factors (ordinal data)
+- You can check with the `str` function
+
+---
+
+# Diamonds data
+
+
+```r
+str(diamonds)
+```
+
+```
+## tibble [53,940 × 10] (S3: tbl_df/tbl/data.frame)
+##  $ carat  : num [1:53940] 0.23 0.21 0.23 0.29 0.31 0.24 0.24 0.26 0.22 0.23 ...
+##  $ cut    : Ord.factor w/ 5 levels "Fair"&lt;"Good"&lt;..: 5 4 2 4 2 3 3 3 1 3 ...
+##  $ color  : Ord.factor w/ 7 levels "D"&lt;"E"&lt;"F"&lt;"G"&lt;..: 2 2 2 6 7 7 6 5 2 5 ...
+##  $ clarity: Ord.factor w/ 8 levels "I1"&lt;"SI2"&lt;"SI1"&lt;..: 2 3 5 4 2 6 7 3 4 5 ...
+##  $ depth  : num [1:53940] 61.5 59.8 56.9 62.4 63.3 62.8 62.3 61.9 65.1 59.4 ...
+##  $ table  : num [1:53940] 55 61 65 58 58 57 57 55 61 61 ...
+##  $ price  : int [1:53940] 326 326 327 334 335 336 336 337 337 338 ...
+##  $ x      : num [1:53940] 3.95 3.89 4.05 4.2 4.34 3.94 3.95 4.07 3.87 4 ...
+##  $ y      : num [1:53940] 3.98 3.84 4.07 4.23 4.35 3.96 3.98 4.11 3.78 4.05 ...
+##  $ z      : num [1:53940] 2.43 2.31 2.31 2.63 2.75 2.48 2.47 2.53 2.49 2.39 ...
+```
+
+---
+
+# Mpg data
+
+
+```r
+str(mpg)
+```
+
+```
+## tibble [234 × 11] (S3: tbl_df/tbl/data.frame)
+##  $ manufacturer: chr [1:234] "audi" "audi" "audi" "audi" ...
+##  $ model       : chr [1:234] "a4" "a4" "a4" "a4" ...
+##  $ displ       : num [1:234] 1.8 1.8 2 2 2.8 2.8 3.1 1.8 1.8 2 ...
+##  $ year        : int [1:234] 1999 1999 2008 2008 1999 1999 2008 1999 1999 2008 ...
+##  $ cyl         : int [1:234] 4 4 4 4 6 6 6 4 4 4 ...
+##  $ trans       : chr [1:234] "auto(l5)" "manual(m5)" "manual(m6)" "auto(av)" ...
+##  $ drv         : chr [1:234] "f" "f" "f" "f" ...
+##  $ cty         : int [1:234] 18 21 20 21 16 18 18 18 16 20 ...
+##  $ hwy         : int [1:234] 29 29 31 30 26 26 27 26 25 28 ...
+##  $ fl          : chr [1:234] "p" "p" "p" "p" ...
+##  $ class       : chr [1:234] "compact" "compact" "compact" "compact" ...
+```
+
+---
+
+#Bar plot
+
+- A common plot for non-metric data is the bar plot for the frequency of observations for each level of the factor.
+--
+
+- The height of each bar indicates the number of observations in a particular category.
+--
+
+- This can be done using `geom_bar`
+
+---
+
+#Bar plot
+
+
+```r
+ggplot(data = diamonds, mapping = aes(x=cut))+
+  geom_bar()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Bar plot
+
+
+```r
+ggplot(data = mpg, mapping = aes(x=manufacturer))+
+  geom_bar()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-26-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+class: inverse, center, middle
+
+# Two Continuous Variables
+
+---
+
+# What to look for
+
+- Outliers
+--
+
+- Dependence or correlation
+--
+
+- Remember that correlation does not imply causation!
+--
+
+- Non linear relationships.
+
+---
+
+# Scatter plot
+
+- For two metric variables use a scatter plot
+  - One variable is represented by the `x` aesthetic
+  - The other is represented by the `y` aesthetic
+  - The geometry we use is `geom_point`.
+- We will continue to use the `diamonds` dataset
+  
+---
+
+# Scatterplot
+
+
+```r
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+geom_point()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-27-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Overplotting
+
+- When using big datasets, sometimes the points cover one another or are too close.
+--
+
+- This is sometimes called **overplotting**.
+--
+
+- Some solutions:
+  - Try smaller points (size)
+  - Try more transparent points (alpha)
+  - Try a different geom
+  
+---
+
+# Changing size
+
+
+```r
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+
+  geom_point(size=0.1)
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-28-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Changing alpha
+
+
+```r
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+
+  geom_point(alpha=0.2)
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-29-1.png" style="display: block; margin: auto;" /&gt;
+---
+
+# Changing geom
+
+
+```r
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+
+  geom_bin2d()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-30-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Hexagonal bins
+
+
+```r
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+
+  geom_hex()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-31-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Changing geom
+
+
+```r
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+
+  geom_density2d()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-32-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Time series plots
+
+- When the x variable is time, it often makes more sense to join dots with a line.
+--
+
+- This way we can see 
+  - Trend 
+  - Seasonality 
+  - Outliers
+  - Structural break
+
+---
+
+# Economics dataset
+
+- We will use the economics dataset (comes with ggplot2)
+
+
+```r
+str(economics)
+```
+
+```
+## tibble [574 × 6] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+##  $ date    : Date[1:574], format: "1967-07-01" "1967-08-01" ...
+##  $ pce     : num [1:574] 507 510 516 512 517 ...
+##  $ pop     : num [1:574] 198712 198911 199113 199311 199498 ...
+##  $ psavert : num [1:574] 12.6 12.6 11.9 12.9 12.8 11.8 11.7 12.3 11.7 12.3 ...
+##  $ uempmed : num [1:574] 4.5 4.7 4.6 4.9 4.7 4.8 5.1 4.5 4.1 4.6 ...
+##  $ unemploy: num [1:574] 2944 2945 2958 3143 3066 ...
+```
+- Notice date is its own type of variable
+
+---
+
+# Unemployed persons
+
+
+```r
+ggplot(economics, aes(x=date, y=unemploy))+
+  geom_line()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-34-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+class:inverse, middle, center
+
+# An aside on log scales
+---
+# Scale
+
+- For variables that are heavily skewed it can be better to look at a log scale.
+--
+
+- For a regular scale you *add* as you move up the scale.
+--
+
+- For a log scale you *multiply* as you move up the scale.
+--
+
+- The log scale has the effect of putting more distance between smaller values and compressing higher values.
+
+---
+
+
+# Regular scale
+
+
+```r
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+
+  geom_point()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-35-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+# Log scale
+
+
+
+```r
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+
+  geom_point()+scale_x_log10()+scale_y_log10()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-36-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Zipf's Law
+
+- In text mining, a well known empirical result is that the occurence of words in a document often follows Zipf's law
+
+`$$\mbox{Prob}(r)=\frac{r^{-s}}{K}$$`
+
+- Here `\(r\)` is the rank of the word (1 is the most frequent, `\(N\)` the least frequent).
+- `\(K=\sum\limits^{N}_{x=1}x^{-s}\)` is constant with respect to `\(r\)`.
+
+---
+
+# Three documents
+
+- We will look at three documents:
+  - The Australian Constitution
+  - The script of Avengers Endgame
+  - The homepage of online retailer Tao Bao.
+
+---
+
+# Australian Constitution
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-37-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Australian Constitution
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-38-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Zipf Law
+
+- Zipf's law predicts that
+
+`$$\mbox{Pr}(r)\approx r^{-s}/K$$`
+
+- Taking logs on both sides
+
+`$$log(f(r))\approx -slog(r)-log(K)$$`
+
+- Look at the plot on the log scale.
+
+---
+
+#Australian Constitution
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-39-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Avengers Endgame
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-40-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Avengers Endgame
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-41-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Avengers Endgame
+
+<div id="htmlwidget-a3a5e9586cb780730bc7" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a3a5e9586cb780730bc7">{"x":{"url":"BasicViz_files/figure-html//widgets/widget_unnamed-chunk-42.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+---
+# Tao Bao
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-43-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Tao Bao
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-44-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Tao Bao
+
+<div id="htmlwidget-929bdb9969a2381d7352" style="width:100%;height:100%;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-929bdb9969a2381d7352">{"x":{"url":"BasicViz_files/figure-html//widgets/widget_unnamed-chunk-45.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+---
+
+# Other applications
+
+- A similar observation is also made for the size of companies.
+- Gibrat's Law claims that the growth rate of a company is independent of its size.
+- This implies that the distribution of company size will be similar to the distribution of word frequency.
+- Gibrat's law has also been applied to city populations.
+
+
+---
+class: inverse, middle, center
+
+# Metric and Non-Metric Data
+
+---
+
+# Side by side plots
+
+- When one variable is metric and the other non-metric we can easily put plots next to one another side by side.
+- Simply map the non-metric variable to the x aesthetic and the metric variable to the y aesthetic.
+
+---
+
+# Boxplots
+
+
+```r
+ggplot(data = diamonds,
+       mapping = aes(x=cut,y=price))+
+  geom_boxplot()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-46-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Change axes
+
+
+```r
+ggplot(data = diamonds,
+       mapping = aes(x=price,y=cut))+
+  geom_boxplot()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-47-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# With notches
+
+- Recall that the notches provide a confidence interval around the median.
+--
+
+- These are particularly useful when comparing boxplots to one another.
+--
+
+- In general, if the confidence intervals overlap then the medians are not signficantly different.
+--
+
+- This is NOT a formal test, but still gives a useful indication.
+
+---
+
+# Boxplots (no overlap)
+
+
+```r
+ggplot(data = mpg,
+       mapping = aes(x=drv,y=hwy))+
+  geom_boxplot(notch=T)
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-48-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Boxplots (some overlap)
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-49-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Violin plot
+
+- A violin plot is a newer visualisation.
+- A kernel density is mirrored then arranged vertically.
+- Specify the same way but use *geom_violin*
+---
+
+# Violin plot
+
+
+```r
+ggplot(data = diamonds,
+       mapping = aes(x=cut,y=price))+
+  geom_violin()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-50-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Violin plot
+
+
+```r
+ggplot(data = diamonds,
+       mapping = aes(x=cut,y=price))+
+  geom_violin()+coord_flip()
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-51-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Jittering
+
+- A scatter plot can be used for non-metric data but can easily suffer from overplotting (one point on another). 
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-52-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Jittering
+
+- Add random noise by jittering
+
+
+```r
+ggplot(data = mpg,
+       mapping = aes(x=cyl,y=cty))+
+  geom_point(position = 'jitter')
+```
+
+&lt;img src="BasicViz_files/figure-html/unnamed-chunk-53-1.png" style="display: block; margin: auto;" /&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,1085 @@
+---
+title: "Basic Visualisation in R"
+subtitle: "Data Visualisation and Analytics"
+author: "Anastasios Panagiotelis and Lauren Kennedy"
+date: "Lecture 3"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"css/mtheme.css","css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      
+---
+
+class: inverse, center, middle
+
+# The Grammar of Graphics
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
+require(magrittr)
+require(tidyverse)
+require(plotly)
+require(widgetframe)
+require(animation)
+require(DT)
+require(PoEdata)
+require(kableExtra)
+require(gridExtra)
+require(ggmosaic)
+```
+
+---
+
+# The grammar of graphics
+
+- At first using `ggplot2` can seem too complicated.
+- Once mastered it can be used to very easily create detailed plots.
+- It is built on the ideas of *Grammar of Graphics* a text by Leland Wilkinson.
+- The objective is to find an abstract set of rules for creating almost any graphic.
+
+---
+
+# Data
+
+- The starting point for all visualisation is a dataset.
+--
+
+- In these slides, we will consider the datasets `diamonds`,  `mpg` and `economics` which come built in with the `ggplot2` package.
+--
+
+- Later on we learn how to read in data.
+--
+
+- The `diamonds` data contains data on the price, size and quality of over 50000 diamonds.
+
+---
+
+# Aes and Geom
+
+- Think of an *aesthetic* (or aes) as a way of perceiving a variable:
+  + Position on x or y axis
+  + Color
+  + Size
+- Think of a *geometry* (or geom) as a way of representing a variable:
+  + Points
+  + Lines
+- `ggplot` maps aesthetics to geometries  
+
+---
+class: inverse, center, middle
+
+#Histogram
+
+---
+# Histogram
+
+- Consider a histogram of the variable price
+--
+
+- In a histogram, values of the variable we are interested in lie along the horizontal (x) axis.
+--
+
+- The histogram creates bins then counts the number of observations in each bin.
+--
+
+- To get started type
+
+```{r, echo=T, eval=F}
+ggplot(data = diamonds,mapping = aes(x=price))
+```
+
+---
+
+# What do we see?
+
+```{r, echo=F, eval=T}
+ggplot(data = diamonds,mapping = aes(x=price))
+```
+
+---
+
+# What do we see?
+
+- We do have an x axis with a label price and some values.
+--
+
+- Otherwise we see nothing.
+--
+
+- We need to **add** a geometry to the plot.
+--
+
+- We do this with the `geom_histogram` function.
+```{r, echo=T, eval=F}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram()
+```
+
+---
+
+# What do we see?
+
+```{r, echo=F, eval=T,message=FALSE}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram()
+```
+
+---
+
+# Modification
+
+- Suppose want to use a different number of bins or change the color of the bins?
+--
+
+- These are not features of the data or the aes
+--
+
+- These are features of the *geom*.  
+--
+
+- So these are controlled by arguments in the `geom_histogram` function.
+
+---
+
+# Change bins
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=6}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram(bins = 5)
+```
+
+---
+
+# Change boundary
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=6}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram(bins =  5, boundary=0)
+```
+---
+
+# Change binwidth
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=6}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram(binwidth =  500)
+```
+
+---
+
+# Change color
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=6}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram(binwidth =  500,fill = 'red')
+```
+
+---
+
+# Change border color
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=5}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram(binwidth =  500,color='white',
+                 fill = 'blue')
+```
+
+---
+class:inverse, middle center
+
+# An aside on colour
+
+---
+
+# Customise colour
+
+- Many colours come built in to R.
+--
+
+- In some cases you may wish to select your own color.
+--
+
+- Customising colour requires appreciating how a computer understands color.
+--
+
+- We will do this by looking at RGB hex codes.
+--
+
+- Using this system, to a computer *#ff0000* is red.
+
+---
+
+# The RGB system
+
+- One color model used by computers encodes every colour by the amount of *red*, *green* and *blue* light mixed to make that colour.
+--
+
+- This is called the RGB color model.
+--
+
+- A value between 0 and 255  indicates the strength of red, green and blue.
+--
+
+- These values between 0 and 255 are represented in two hexadecimal digits.
+
+---
+
+# Hexadecimal
+
+- In hexadecimal: 
+  - **a** is ten,
+  - **b** is eleven,
+  - **c** is twelve... 
+  - **f** is fifteen.
+- Take the first digit and multiply by 16 and add the second digit
+- Hexadecimal is used since each digit corresponds to 4 bits in  computer memory.
+---
+
+#Examples
+
+- **10** in hexadecimal is $1\times 16+0=16$ in decimal
+- **1a** in hexadecimal is $1\times 16+10=26$ in decimal
+- **2b** in hexadecimal is $2\times 16+11=42$ in decimal
+- What is e4 in decimal?
+---
+
+# Color picker 
+
+- One online tool to find the hex code of a color is <a href ="https://www.w3schools.com/colors/colors_picker.asp">here</a>.
+--
+
+- Suppose we want to the histogram to be <font color=#b35900> this brown</font> color.
+--
+
+- The hex code is #b35900 which is 179/256 red, 89/256 green and no blue.
+--
+
+- This can be provided as a string, to the `fill` or `color` argument of `geom_histogram`.
+
+---
+
+# Brown histogram
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=5}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram(binwidth =  500,color='white',
+                 fill = '#b35900')
+```
+---
+
+# Finding hex codes
+
+- It is useful to know hex codes since at times you may want to match colors for a specific purpose.
+--
+
+- For instance you may want the colors to match the brand colors of a client.
+--
+
+- For example a simple online search tells us that Coca Color red is <font color="#f40000">#f40000</font>
+--
+
+- The green color worn by NBA team the Milwaukee Bucks is <font color="#00471b">#00471b</font>.
+
+---
+# Histograms (Bucks Colors)
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=6}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_histogram(fill='#00471b',color='#eee1c6')
+```
+---
+
+# An exercise
+
+- Find the hex codes for a color(s) associated with:
+  - A brand you like, or
+  - A sports team you like, or
+  - Your country's flag,
+  - Anything else
+- Construct a histogram of the variable *carat* with these colors.
+
+---
+class: inverse, middle, center
+
+# Density plot
+
+---
+
+# Density
+
+- For a smoother version of a histogram we can use a different geom called `geom_density`.
+--
+
+- This in fact computes a kernel density estimate of the variable.
+--
+
+- The level of smoothness is controlled by a *bandwidth* parameter
+--
+
+- All the computation is done by `ggplot2`.
+
+---
+
+# Density plot
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=6}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_density()
+```
+
+---
+# Density plot (thicker)
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=6}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_density(size=3)
+```
+
+---
+# How is density calculated?
+
+- The kernel density estimate is a popular *nonparametric* technique that estimates a density as
+
+$$\hat{f}(x)=\frac{1}{n}\sum\limits_{i=1}^{n}K_h(x-x_i)$$
+
+- Here, $K_h()$ is a kernel function that depends on a bandwidth $h$.
+
+---
+
+# Uniform kernel
+
+- The simplest kernel function is the uniform kernel
+  + $K_h(u)=1/h$ if $|u|<h$
+  + $K_h(u)=0$ otherwise
+--
+
+- At a point $x$, the estimated density is proportional to the number of points that are *close* to $x$.
+--
+
+- By *close*, we mean within $h$ units of $x$.
+
+---
+# Extremes
+
+- If the bandwidth gets extremely large then for any $x$, all sample points are considered close.
+--
+
+- The formula for the kernel density becomes a flat line.
+--
+
+- If the bandwidth gets extremely small then for any $x$ we choose, the density is just the number of points in the sample equal to $x$.
+--
+
+- The kernel density is made up of spikes at the sample points.
+
+---
+# Defaults
+
+- By default, `geom_density` 
+  - Uses a Gaussian kernel 
+  - Selects the bandwidth using *Silverman's rule of thumb*
+--
+
+- The same principles apply:
+  - Large bandwidth leads to more smoothness
+  - Small bandwidth leads to more bumpiness
+
+---
+
+# Density plot: Low bandwidth
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=6}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_density(bw=100)
+```
+
+---
+
+# Density plot: High bandwidth
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=6}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_density(bw=2000)
+```
+---
+# Density plot: Low bandwidth
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=6}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_density(bw=0.0001)
+```
+
+---
+
+# Density plot: High bandwidth
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=6}
+ggplot(data = diamonds,mapping = aes(x=price))+
+  geom_density(bw=80000)
+```
+---
+
+# Summary
+
+- With both histograms and density plots
+  - If the bin width or bandwidth is too small the plot may look bumpy.  This can exaggerate features that are not significant.
+  - If the bin width or bandwidth is too large the plot may smooth over important features like local modes.
+- Always try a few different values of bin width or bandwidth.
+
+---
+class: inverse, middle, center
+
+# Finding outliers
+
+---
+
+# Outliers
+
+- Histograms and density plots give a good idea of shape and local modes.
+--
+
+- Sometimes they can obscure outliers.
+--
+
+- For finding outliers a rug plot can be useful
+--
+
+- For finding outliers while still getting a good idea of skew, boxplots can be useful.
+--
+
+- We can investigate using the variable *carat*
+
+---
+
+# Carat: Histogram
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=6}
+ggplot(data = diamonds,mapping = aes(x=carat))+
+  geom_histogram()
+```
+
+---
+
+# Carat: Rug plot
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=6}
+ggplot(data = diamonds,mapping = aes(x=carat))+
+  geom_rug()
+```
+
+---
+
+# Box plot
+
+- The box plot summarises 5 numbers
+  - Median
+  - First quartile $Q1$
+  - Third quartile $Q3$
+  - Upper Fence $U = Q3+1.5\times(Q3-Q1)$
+  - Lower Fence $L = Q1-1.5\times(Q3-Q1)$
+- Anything lying outside the fences represented as dots.
+- When no points lie outside the fence, the fence is set to the maximum or minimum.
+
+---
+
+# Carat: Boxplot
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=5}
+ggplot(data = diamonds,mapping = aes(y=carat))+
+  geom_boxplot()
+```
+
+---
+
+# Change of aesthetic
+
+- Notice that the aesthetic changed!
+--
+
+- In the boxplot, the value of the variable is represented by the vertical (or y axis).
+--
+
+- We can change the definition of the upper and lower fence by passing the `coef` argument to `geom_boxplot`.  
+--
+
+- This changes the 1.5 used in calculating the fence to whatever you specify
+
+---
+
+# Changing fences
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=5}
+ggplot(data = diamonds,mapping = aes(y=carat))+
+  geom_boxplot(coef=4)
+```
+
+
+---
+
+
+# Notches
+
+- Notches can be added to a boxplot
+--
+
+- These are set to $\frac{1.58\times(Q3-Q1)}{\sqrt{n}}$
+--
+
+- This roughly gives a 95% confidence interval for the median.
+--
+
+- We will use a smaller dataset on the mileage of cars for this example to clearly illustrate the notches.
+
+---
+
+# Notches
+
+```{r, echo=T, eval=T,message=FALSE, fig.height=5}
+ggplot(data = mpg,mapping = aes(y=cty))+
+  geom_boxplot(notch = T)
+```
+
+---
+class: inverse, middle, center
+
+# One Non-Metric Variable
+
+---
+
+# Nominal v Ordinal
+
+- Non-metric variables are made up of **nominal** and **ordinal** variables.
+--
+
+- Nominal variables have no ordering in the categories of data:
+  - Manufacturer of car (Audi, Toyota, etc).
+--
+
+- Ordinal variables do have an ordering in the categories:
+  - Quality of diamonds (Fair, Good, etc).
+  
+---
+
+# Non-metric variables in R
+
+- Non-metric variables can be stored in R as
+  - Character variables (nominal data)
+  - Factors (nominal data)
+  - Ordered factors (ordinal data)
+- You can check with the `str` function
+
+---
+
+# Diamonds data
+
+```{r, echo=T}
+str(diamonds)
+```
+
+---
+
+# Mpg data
+
+```{r, echo=T}
+str(mpg)
+```
+
+---
+
+#Bar plot
+
+- A common plot for non-metric data is the bar plot for the frequency of observations for each level of the factor.
+--
+
+- The height of each bar indicates the number of observations in a particular category.
+--
+
+- This can be done using `geom_bar`
+
+---
+
+#Bar plot
+
+```{r, echo=T, fig.height=5}
+ggplot(data = diamonds, mapping = aes(x=cut))+
+  geom_bar()
+```
+
+---
+
+#Bar plot
+
+```{r, echo=T, fig.height=5}
+ggplot(data = mpg, mapping = aes(x=manufacturer))+
+  geom_bar()
+```
+
+---
+
+
+class: inverse, center, middle
+
+# Two Continuous Variables
+
+---
+
+# What to look for
+
+- Outliers
+--
+
+- Dependence or correlation
+--
+
+- Remember that correlation does not imply causation!
+--
+
+- Non linear relationships.
+
+---
+
+# Scatter plot
+
+- For two metric variables use a scatter plot
+  - One variable is represented by the `x` aesthetic
+  - The other is represented by the `y` aesthetic
+  - The geometry we use is `geom_point`.
+- We will continue to use the `diamonds` dataset
+  
+---
+
+# Scatterplot
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+geom_point()
+  
+```
+
+---
+
+# Overplotting
+
+- When using big datasets, sometimes the points cover one another or are too close.
+--
+
+- This is sometimes called **overplotting**.
+--
+
+- Some solutions:
+  - Try smaller points (size)
+  - Try more transparent points (alpha)
+  - Try a different geom
+  
+---
+
+# Changing size
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+
+  geom_point(size=0.1)
+  
+```
+
+---
+
+# Changing alpha
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+
+  geom_point(alpha=0.2)
+  
+```
+---
+
+# Changing geom
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+
+  geom_bin2d()
+  
+```
+
+---
+
+# Hexagonal bins
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+
+  geom_hex()
+  
+```
+
+---
+
+# Changing geom
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+
+  geom_density2d()
+  
+```
+
+---
+# Time series plots
+
+- When the x variable is time, it often makes more sense to join dots with a line.
+--
+
+- This way we can see 
+  - Trend 
+  - Seasonality 
+  - Outliers
+  - Structural break
+
+---
+
+# Economics dataset
+
+- We will use the economics dataset (comes with ggplot2)
+
+```{r, echo=TRUE}
+str(economics)
+```
+- Notice date is its own type of variable
+
+---
+
+# Unemployed persons
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(economics, aes(x=date, y=unemploy))+
+  geom_line()
+
+```
+
+---
+class:inverse, middle, center
+
+# An aside on log scales
+---
+# Scale
+
+- For variables that are heavily skewed it can be better to look at a log scale.
+--
+
+- For a regular scale you *add* as you move up the scale.
+--
+
+- For a log scale you *multiply* as you move up the scale.
+--
+
+- The log scale has the effect of putting more distance between smaller values and compressing higher values.
+
+---
+
+
+# Regular scale
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+
+  geom_point()
+  
+```
+
+---
+
+
+# Log scale
+
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(data = diamonds,
+       mapping = aes(x=carat,y=price))+
+  geom_point()+scale_x_log10()+scale_y_log10()
+  
+```
+
+---
+
+# Zipf's Law
+
+- In text mining, a well known empirical result is that the occurence of words in a document often follows Zipf's law
+
+$$\mbox{Prob}(r)=\frac{r^{-s}}{K}$$
+
+- Here $r$ is the rank of the word (1 is the most frequent, $N$ the least frequent).
+- $K=\sum\limits^{N}_{x=1}x^{-s}$ is constant with respect to $r$.
+
+---
+
+# Three documents
+
+- We will look at three documents:
+  - The Australian Constitution
+  - The script of Avengers Endgame
+  - The homepage of online retailer Tao Bao.
+
+---
+
+# Australian Constitution
+
+```{r, message=FALSE}
+AusConsFreq<-read_csv('data/AusConstitution.csv')
+AusConsFreq%>%
+  filter(Rank<51)%>%
+  ggplot(aes(x=reorder(Word,Rank),y=Freq))+
+  geom_point()+
+  labs(x='Word')+
+  theme(axis.text.x = element_text(angle=90))
+```
+
+---
+
+#Australian Constitution
+
+```{r, message=FALSE}
+AusConsFreq%>%
+  ggplot(aes(x=Rank,y=Freq))+
+  geom_point()
+```
+
+---
+
+# Zipf Law
+
+- Zipf's law predicts that
+
+$$\mbox{Pr}(r)\approx r^{-s}/K$$
+
+- Taking logs on both sides
+
+$$log(f(r))\approx -slog(r)-log(K)$$
+
+- Look at the plot on the log scale.
+
+---
+
+#Australian Constitution
+
+```{r, message=FALSE}
+AusConsFreq%>%
+  ggplot(aes(x=Rank,y=Freq))+
+  geom_point()+
+  scale_x_log10()+
+  scale_y_log10()
+```
+
+---
+# Avengers Endgame
+
+```{r, message=FALSE}
+Avengers<-read_csv('data/Avengers.csv')
+Avengers%>%
+  filter(Rank<51)%>%
+  ggplot(aes(x=reorder(Word,Rank),y=Freq))+
+  geom_point()+
+  labs(x='Word')+
+  theme(axis.text.x = element_text(angle=90))
+```
+
+---
+
+#Avengers Endgame
+
+```{r, message=FALSE}
+Avengers%>%
+  ggplot(aes(x=Rank,y=Freq))+
+  geom_point()
+```
+
+---
+
+#Avengers Endgame
+
+```{r, message=FALSE}
+Avengers%>%
+  ggplot(aes(x=Rank,y=Freq,label=Word))+
+  geom_text(size=3)+
+  scale_x_log10()+
+  scale_y_log10()->g
+ggplotly(g)%>%
+  frameWidget(width = '100%',height = '100%')
+```
+---
+# Tao Bao
+
+```{r, message=FALSE}
+TaoBao<-read_csv('data/TaoBao.csv')
+TaoBao%>%
+  filter(Rank<51)%>%
+  ggplot(aes(x=reorder(Character,Rank),y=Freq))+
+  geom_point()+
+  labs(x='Character')+
+  theme(axis.text.x = element_text(angle=90))
+```
+
+---
+
+#Tao Bao
+
+```{r, message=FALSE}
+TaoBao%>%
+  ggplot(aes(x=Rank,y=Freq))+
+  geom_point()
+```
+
+---
+
+#Tao Bao
+
+```{r, message=FALSE}
+TaoBao%>%
+  ggplot(aes(x=Rank,y=Freq,label=Character))+
+  geom_text(size=3)+
+  scale_x_log10()+
+  scale_y_log10()->g
+ggplotly(g)%>%
+  frameWidget(width = '100%',height = '100%')
+```
+---
+
+# Other applications
+
+- A similar observation is also made for the size of companies.
+- Gibrat's Law claims that the growth rate of a company is independent of its size.
+- This implies that the distribution of company size will be similar to the distribution of word frequency.
+- Gibrat's law has also been applied to city populations.
+
+
+---
+class: inverse, middle, center
+
+# Metric and Non-Metric Data
+
+---
+
+# Side by side plots
+
+- When one variable is metric and the other non-metric we can easily put plots next to one another side by side.
+- Simply map the non-metric variable to the x aesthetic and the metric variable to the y aesthetic.
+
+---
+
+# Boxplots
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(data = diamonds,
+       mapping = aes(x=cut,y=price))+
+  geom_boxplot()
+  
+```
+
+---
+
+# Change axes
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(data = diamonds,
+       mapping = aes(x=price,y=cut))+
+  geom_boxplot()
+  
+```
+
+---
+
+# With notches
+
+- Recall that the notches provide a confidence interval around the median.
+--
+
+- These are particularly useful when comparing boxplots to one another.
+--
+
+- In general, if the confidence intervals overlap then the medians are not signficantly different.
+--
+
+- This is NOT a formal test, but still gives a useful indication.
+
+---
+
+# Boxplots (no overlap)
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(data = mpg,
+       mapping = aes(x=drv,y=hwy))+
+  geom_boxplot(notch=T)
+  
+```
+
+---
+# Boxplots (some overlap)
+
+```{r, echo=FALSE,fig.height=5}
+filter(mpg,!(class%in%c('2seater','subcompact')))%>%
+  ggplot(mapping = aes(x=class,y=hwy))+
+  geom_boxplot(notch=T)
+  
+```
+
+---
+# Violin plot
+
+- A violin plot is a newer visualisation.
+- A kernel density is mirrored then arranged vertically.
+- Specify the same way but use *geom_violin*
+---
+
+# Violin plot
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(data = diamonds,
+       mapping = aes(x=cut,y=price))+
+  geom_violin()
+  
+```
+
+---
+
+# Violin plot
+
+```{r, echo=TRUE,fig.height=5}
+ggplot(data = diamonds,
+       mapping = aes(x=cut,y=price))+
+  geom_violin()+coord_flip()
+  
+```
+
+---
+
+# Jittering
+
+- A scatter plot can be used for non-metric data but can easily suffer from overplotting (one point on another). 
+
+```{r, fig.height=5}
+ggplot(data = mpg,
+       mapping = aes(x=cyl,y=cty))+
+  geom_point()
+
+```
+
+---
+
+#Jittering
+
+- Add random noise by jittering
+
+```{r, echo=TRUE, fig.height=4}
+ggplot(data = mpg,
+       mapping = aes(x=cyl,y=cty))+
+  geom_point(position = 'jitter')
+
+```
