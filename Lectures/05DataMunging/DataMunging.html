@@ -3,7 +3,7 @@
   <head>
     <title>Data Munging</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Anastasios Panagiotelis" />
+    <meta name="author" content="Anastasios Panagiotelis and Lauren Kennedy" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <script src="libs/kePrint/kePrint.js"></script>
     <link rel="stylesheet" href="css/mtheme.css" type="text/css" />
@@ -15,17 +15,206 @@ class: center, middle, inverse, title-slide
 
 # Data Munging
 ## Data Visualisation and Analytics
-### Anastasios Panagiotelis
-### Lecture 6
+### Anastasios Panagiotelis and Lauren Kennedy
+### Lecture 5
 
 ---
 
 
+class: inverse, center middle
+
+# Data Import
+
+
+
+
+---
+# Data Import
+
+- Data often stored in a single table.
+--
+
+- Columns are separated by a comma or a tab.
+--
+
+- The `readr` package is very useful for reading files into R as *data frame* objects.
+
+---
+
+#Data frame
+
+- A data frame is an object with:
+  + Each row corresponding to an observation or case,
+  + Each column corresponding to a variable.
+--
+
+- Two types of data frames in R are:
+  + The `data.frame` in base R
+  + The `tibble` in the tidyverse
+
+---
+
+# The readr package
+
+- Two of the more useful functions are `read_csv` and `read_tsv` for comma delimited and tab delimited files respectively.
+--
+
+- Generally the defaults for this function work quite well.
+--
+
+- One argument that is worth discussing a little is `col_types`
+
+---
+
+# Reading in long numbers
+
+- The largest integer that many computers will accurately store is about 19 digits long.
+--
+
+- Some identification numbers are longer than that (for instance IBAN numbers used for bank transfers).
+--
+
+- In some cases, R may try to read these numbers in as integers.
+--
+
+- To avoid errors these should be read in as characters.
+
+---
+
+# Column types
+
+- Specifying `col_types='c'` overrides the default behaviour of `readr`.
+--
+
+- You can use this to force everything to be read in as a character.
+--
+
+- If needed these can subsequently be converted to numeric variables.
+
+---
+
+# Getting Data
+
+- Although data will sometimes be provided to you, it is useful to know some ways to get data off the web.
+--
+
+- This can be integrated into you R workflow.
+--
+
+- Techniques range from commands to download files to more sophisticated *web scraping*. 
+--
+
+- Websites can change so always make sure to save data as well.
+
+---
+
+# Downloading files in R
+
+- As an example consider wholesale electricity prices which can be downloaded online.
+
+&lt;img src="img/aemo.png" width="2476" style="display: block; margin: auto;" /&gt;
+
+Hover over download, right click and obtain link location.
+
+---
+
+# Downloading files in R
+
+The `download.file` function in the `utils` package can be used to download a csv file.
+
+
+```r
+download.file('https://www.aemo.com.au/aemo/data/nem/priceanddemand/PRICE_AND_DEMAND_202006_NSW1.csv',
+              'data/data_202006_NSW.csv')
+dat&lt;-read_csv('data/data_202006_NSW.csv')
+```
+
+The first argument is the URL the second argument is the location where you want to store the data.
+
+---
+
+# Benefits
+
+- Location were data is retrieved is kept.
+--
+
+- Usually URL are created systematically.  
+  + Data for Victoria will have VIC as part of URL.
+  + Data for May 2020 will have 202005 as part of URL.
+--
+
+- A large number of files can be downloaded and combined using a loop.
+
+---
+
+# Web Scraping
+
+- Some websites do not simply include csv files in the URL.
+--
+
+- Instead the data is embedded in the html of the website itself.
+--
+
+- The R package `rvest` can be used to scrape data from websites.
+--
+
+- The example on the next slides scrape data from Yahoo Finance.
+
+---
+
+# Data from Yahoo Finance
+
+&lt;img src="img/yahoo.png" width="2471" style="display: block; margin: auto;" /&gt;
+
+---
+
+#Scrape Data
+
+
+```r
+library(rvest)
+html&lt;-read_html('https://au.finance.yahoo.com/quote/AAPL/analysis?p=AAPL')
+tab&lt;-html_table(html)
+print(tab[[1]])
+```
+
+```
+##   Earnings estimate Current qtr. (Jun 2020) Next qtr. (Sep 2020)
+## 1   No. of analysts                   31.00                30.00
+## 2     Avg. Estimate                    1.99                 2.80
+## 3      Low estimate                    1.55                 2.09
+## 4     High estimate                    2.30                 3.41
+## 5      Year ago EPS                    2.18                 3.03
+##   Current year (2020) Next year (2021)
+## 1               38.00            36.00
+## 2               12.37            14.84
+## 3               11.62            12.48
+## 4               13.29            16.75
+## 5               11.89            12.37
+```
+
+---
+
+# Web scraping
+
+- This is only the tip of the iceberg
+--
+
+- Data from many websites will not be as easy to download.
+--
+
+- Some knowledge of html can be useful when using the `html_node` and `html_attr` functions.
+--
+
+- Also useful is the [Selector Gadget](https://selectorgadget.com/) tool.
+--
+
+- Comply with a website's Terms and Conditions when web scraping especially if doing so for commercial reasons.
+---
+
 class: inverse, center, middle
 
 # Data is messy
-
-
 
 ---
 
@@ -41,23 +230,17 @@ class: inverse, center, middle
 # A few simple functions
 
 - Much can be done with a few simple functions from the `dplyr` package:
-  - Choose variables with `select`
-  - Choose observations with `filter`
-  - Transform variables with `mutate`
+--
+
+  + Choose variables with `select`
+  + Choose observations with `filter`
+  + Transform variables with `mutate`
+--
+
 - In all cases both input and output is a data frame.
 
 ---
 
-#Data frame
-
-- A data frame is an object with:
-  - Each row corresponding to an observation or case,
-  - Each column corresponding to a variable.
-- Two types of data frames in R are:
-  - The `data.frame` in base R
-  - The `tibble` in the tidyverse
-
----
 
 # Diamonds
 
@@ -175,12 +358,18 @@ filter(diamonds,(price&gt;1000))
 # Logical stamtents
 
 - The term `(price&gt;1000)` is an example of a logical statement.  It can be true or false.
+--
+
 - Other examples are
-  - Price less than 1000 `(price&lt;1000)`
-  - Price less than or equal to 1000 `(price&lt;=1000)`
-  - Price not 1000 `(price!=1000)`
-  - Price exactly 1000 `(price==1000)`
+  + Price less than 1000 `(price&lt;1000)`
+  + Price less than or equal to 1000 `(price&lt;=1000)`
+  + Price not 1000 `(price!=1000)`
+  + Price exactly 1000 `(price==1000)`
+--
+
 - Note **two** equals signs.
+--
+
 - In general `!` is the negation of a statement.
 
 ---
@@ -319,18 +508,18 @@ mpg
 
 ```
 ## # A tibble: 234 x 11
-##    manufacturer model displ  year   cyl trans drv     cty   hwy fl    class
-##    &lt;chr&gt;        &lt;chr&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt;
-##  1 audi         a4      1.8  1999     4 auto… f        18    29 p     comp…
-##  2 audi         a4      1.8  1999     4 manu… f        21    29 p     comp…
-##  3 audi         a4      2    2008     4 manu… f        20    31 p     comp…
-##  4 audi         a4      2    2008     4 auto… f        21    30 p     comp…
-##  5 audi         a4      2.8  1999     6 auto… f        16    26 p     comp…
-##  6 audi         a4      2.8  1999     6 manu… f        18    26 p     comp…
-##  7 audi         a4      3.1  2008     6 auto… f        18    27 p     comp…
-##  8 audi         a4 q…   1.8  1999     4 manu… 4        18    26 p     comp…
-##  9 audi         a4 q…   1.8  1999     4 auto… 4        16    25 p     comp…
-## 10 audi         a4 q…   2    2008     4 manu… 4        20    28 p     comp…
+##    manufacturer model    displ  year   cyl trans   drv     cty   hwy fl    class
+##    &lt;chr&gt;        &lt;chr&gt;    &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 audi         a4         1.8  1999     4 auto(l… f        18    29 p     comp…
+##  2 audi         a4         1.8  1999     4 manual… f        21    29 p     comp…
+##  3 audi         a4         2    2008     4 manual… f        20    31 p     comp…
+##  4 audi         a4         2    2008     4 auto(a… f        21    30 p     comp…
+##  5 audi         a4         2.8  1999     6 auto(l… f        16    26 p     comp…
+##  6 audi         a4         2.8  1999     6 manual… f        18    26 p     comp…
+##  7 audi         a4         3.1  2008     6 auto(a… f        18    27 p     comp…
+##  8 audi         a4 quat…   1.8  1999     4 manual… 4        18    26 p     comp…
+##  9 audi         a4 quat…   1.8  1999     4 auto(l… 4        16    25 p     comp…
+## 10 audi         a4 quat…   2    2008     4 manual… 4        20    28 p     comp…
 ## # … with 224 more rows
 ```
 
@@ -373,8 +562,14 @@ mpgMet&lt;-mutate(mpgSel,ctyMetric=0.425144*cty,
 # The pipe operator
 
 - The fact that the input and output are always data frames makes the pipe operator useful.
+--
+
 - Simply use `%&gt;%` to chain commands together.
+--
+
 - Sometimes it is clearer to use `-&gt;` rather than use `&lt;-` for assignment.
+--
+
 
 ```r
 c(1,12,4)%&gt;%
@@ -391,15 +586,17 @@ str(out)
 #Pipes and dplyr
 
 This code
-
+--
 
 ```r
 mpgSel&lt;-select(mpg,cty,hwy)
 mpgMet&lt;-mutate(mpgSel,ctyMetric=0.425144*cty,
                   hwyMetric=0.425144*hwy)
 ```
+--
 
 does the same as this code
+--
 
 
 ```r
@@ -418,8 +615,14 @@ class: inverse, middle, center
 # Group by function
 
 - A powerful function in `dplyr` is the `group_by` function.
+--
+
 - Used in combination with `summarise`, it can construct  new datasets.
+--
+
 - Consider the `txhousing` dataset.  There is monthly data for each city.
+--
+
 - Suppose the aim is to find total number of sales for all cities in a year.
 
 ---
@@ -487,8 +690,14 @@ TotSales
 #Group by two variables
 
 - In earlier years, data for some cities is unavailable and is filled in as `NA`.
+--
+
 - The option `na.rm=TRUE` removes missing data before taking the sum.
+--
+
 - Next, suppose we want to get the yearly total for each city.
+--
+
 - Need to group by `city` and `year`.
 
 
@@ -594,9 +803,13 @@ Suppose we have the following database:
 #Problems
 
 - Carol's entry not a valid email.  
-  - A function can be written to check and remove this.
+  + A function can be written to check and remove this.
+--
+
 - A bigger problem is that the email entry is not **atomic**.  There are two emails for Bin.
   - If code is written to check if the email is valid, then this code will also fail for Bin.
+--
+
 - On the next slide is a solution.
 
 ---
@@ -810,7 +1023,7 @@ ggplot(economics,aes(x=uempmed,y=psavert))+
   geom_point()
 ```
 
-&lt;img src="DataMunging_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="DataMunging_files/figure-html/unnamed-chunk-28-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -823,7 +1036,9 @@ ggplot(economics_long,aes(x=date,y=value))+
   facet_wrap(~variable, scales = 'free_y')
 ```
 
-&lt;img src="DataMunging_files/figure-html/unnamed-chunk-25-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="DataMunging_files/figure-html/unnamed-chunk-29-1.png" style="display: block; margin: auto;" /&gt;
+
+We will learn about `facet_wrap` later.
 
 ---
 
@@ -831,36 +1046,44 @@ ggplot(economics_long,aes(x=date,y=value))+
 
 
 ```r
-gather(economics,key = Variable, 
-       value = Value,-date)-&gt;long
+pivot_longer(economics,
+             cols = -date,
+             names_to = 'Variable',
+             values_to = 'Value')-&gt;long
 long
 ```
 
 ```
 ## # A tibble: 2,870 x 3
-##    date       Variable Value
-##    &lt;date&gt;     &lt;chr&gt;    &lt;dbl&gt;
-##  1 1967-07-01 pce       507.
-##  2 1967-08-01 pce       510.
-##  3 1967-09-01 pce       516.
-##  4 1967-10-01 pce       512.
-##  5 1967-11-01 pce       517.
-##  6 1967-12-01 pce       525.
-##  7 1968-01-01 pce       531.
-##  8 1968-02-01 pce       534.
-##  9 1968-03-01 pce       544.
-## 10 1968-04-01 pce       544 
+##    date       Variable    Value
+##    &lt;date&gt;     &lt;chr&gt;       &lt;dbl&gt;
+##  1 1967-07-01 pce         507. 
+##  2 1967-07-01 pop      198712  
+##  3 1967-07-01 psavert      12.6
+##  4 1967-07-01 uempmed       4.5
+##  5 1967-07-01 unemploy   2944  
+##  6 1967-08-01 pce         510. 
+##  7 1967-08-01 pop      198911  
+##  8 1967-08-01 psavert      12.6
+##  9 1967-08-01 uempmed       4.7
+## 10 1967-08-01 unemploy   2945  
 ## # … with 2,860 more rows
 ```
 
 ---
 
-# Gather function
+# Pivot Longer
 
-- The `key` will be the name of the function that stores the variable name.
-- The `value` will be the name of the variables that stores values.
-- Use `-` to exclude variable(s) from gathering.
-- Here this was done for date
+- The `names_to` will be a variable of column names.
+--
+
+- The `values_to` will be a variable that stores the body of the data frame.
+--
+
+- Use `-` in the `cols` argument to exclude variable(s).
+--
+
+- Here this was done for the `date` variable.
 
 ---
 
@@ -869,9 +1092,9 @@ long
 
 ```r
 economics_long%&gt;%
-  select(-value01)%&gt;%
-  spread(key = variable, 
-         value = value)-&gt;wide
+  pivot_wider(id_cols = date,
+              names_from = variable,
+              values_from = value)-&gt;wide
 wide
 ```
 
@@ -893,53 +1116,138 @@ wide
 ```
 
 ---
-class: inverse, center middle
 
-# Data Import
+# Pivot Wider
 
----
-# Data Import
+- The `names_from` will be a variable including column names of the new data frame.
+--
 
-- In many cases data is stored in a *flat database*.
-- This means the data is stored in a single table.
-- Columns are separated by a comma or a tab.
-- Usually this table is contained in a single file.
-- For reading in such data the `readr` package is very useful.
+- The `values_from` will be a variable that will become the body of the new data frame.
+--
+
+- The `id_cols` will be the variables used to identify the observations in the new data frame.
 
 ---
+class: inverse, center, middle
 
-# The readr package
-
-- Two of the more useful functions are `read_csv` and `read_tsv` for comma delimited and tab delimited files respectively.
-- Generally the defaults for this function work quite well.
-- One argument that is worth discussing a little is `col_types`
+# Joins
 
 ---
 
-# Reading in long numbers
+# Join
 
-- The largest integer that many computers will accurately store is about 19 digits long.
-- Some identification numbers are longer than that (for instance IBAN numbers used for bank transfers).
-- In some cases, R may try to read these numbers in as integers.
-- To avoid errors these should be read in as characters.
+- Often we work with two data tables.
+--
+
+- We will consider an example with two datasets
+--
+
+  + Electricity price, demand and export
+  + Maximum Temperature, Wind Direction and Wind Speed
+--
+
+- We want to combine these two datasets.
 
 ---
 
-# Column types
+# Energy data
 
-- Specifying `col_types='c'` overrides the default behaviour of `readr`.
-- You can use this to force everything to be read in as a string.
-- If needed these can subsequently be converted to numeric variables using `as.numeric`.
+
+```r
+energy&lt;-read_csv('data/energydata.csv')
+energy
+```
+
+```
+## # A tibble: 1,960 x 6
+##    Date       Day   State Price Demand NetExport
+##    &lt;date&gt;     &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;
+##  1 2018-07-15 Sun   NSW    51.7  7564.   -1231. 
+##  2 2018-07-16 Mon   NSW    87.9  8966.     -18.6
+##  3 2018-07-17 Tue   NSW    62.8  8050.    -643. 
+##  4 2018-07-18 Wed   NSW    54.5  7840.    -742. 
+##  5 2018-07-19 Thu   NSW    64.2  8168.     -40.6
+##  6 2018-07-20 Fri   NSW    60.9  8254.     318. 
+##  7 2018-07-21 Sat   NSW    59.1  7427.    -550. 
+##  8 2018-07-22 Sun   NSW    56.0  7492.   -2054. 
+##  9 2018-07-23 Mon   NSW    60.7  8382.    -657. 
+## 10 2018-07-24 Tue   NSW    60.5  7802.    -322. 
+## # … with 1,950 more rows
+```
 
 ---
-# Summary
 
-- With a small number of functions, much can be done
-  - `select`, `filter`, `mutate`
-  - `group_by`, `summarise`
-  - `gather`, `spread`
-- Mastering these functions takes practice.
-- Often these functions are the key to creating plots.
+
+```r
+weather&lt;-read_csv('data/weather.csv')
+weather
+```
+
+```
+## # A tibble: 1,825 x 5
+##    Date       MaxTemp WindDir WindSpeed State
+##    &lt;date&gt;       &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;
+##  1 2018-07-01    15.4 S               6 NSW  
+##  2 2018-07-02    15   SSW             8 NSW  
+##  3 2018-07-03    16.5 S              15 NSW  
+##  4 2018-07-04    19.7 NNE             6 NSW  
+##  5 2018-07-05    25.1 NNW             5 NSW  
+##  6 2018-07-06    23.9 WNW            11 NSW  
+##  7 2018-07-07    15.7 WNW             8 NSW  
+##  8 2018-07-08    16.7 W              12 NSW  
+##  9 2018-07-09    15   S               8 NSW  
+## 10 2018-07-10    16.1 ESE             3 NSW  
+## # … with 1,815 more rows
+```
+
+---
+
+# Joined data
+
+
+```r
+all_data&lt;-inner_join(energy,weather)
+```
+
+```
+## Joining, by = c("Date", "State")
+```
+
+```r
+all_data
+```
+
+```
+## # A tibble: 1,755 x 9
+##    Date       Day   State Price Demand NetExport MaxTemp WindDir WindSpeed
+##    &lt;date&gt;     &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;
+##  1 2018-07-15 Sun   NSW    51.7  7564.   -1231.     18   NW              2
+##  2 2018-07-16 Mon   NSW    87.9  8966.     -18.6    18.5 W               7
+##  3 2018-07-17 Tue   NSW    62.8  8050.    -643.     22.5 WNW             9
+##  4 2018-07-18 Wed   NSW    54.5  7840.    -742.     20.8 SSW             1
+##  5 2018-07-19 Thu   NSW    64.2  8168.     -40.6    20.8 NNW             1
+##  6 2018-07-20 Fri   NSW    60.9  8254.     318.     15.5 W              13
+##  7 2018-07-21 Sat   NSW    59.1  7427.    -550.     16.3 SE              4
+##  8 2018-07-22 Sun   NSW    56.0  7492.   -2054.     15.9 NE              6
+##  9 2018-07-23 Mon   NSW    60.7  8382.    -657.     19.9 NW              4
+## 10 2018-07-24 Tue   NSW    60.5  7802.    -322.     24.4 ENE             3
+## # … with 1,745 more rows
+```
+
+---
+
+# Types of join
+
+- Using `inner_join(x,y)` returns all rows from `x` with matching values in `y`.
+--
+
+- Using `left_join(x,y)` returns all rows from `x` with matching values in `y`, with `NA` if there is no match.
+--
+
+- Using `right_join(x,y)` returns all rows from `y` with matching values in `x`, with `NA` if there is no match.
+--
+
+- Using `right_join(x,y)` returns all rows from `x` or `y` with `NA` if there is no match.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>

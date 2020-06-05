@@ -106,7 +106,7 @@ class: inverse, center, middle
 
 # The R language
 
-- The **R programming language** which  can be downloaded [here](http://cloud.r-project.org/).
+- The **R programming language** which  can be downloaded [here](https://cloud.r-project.org/).
 - Exact details of installing R will depend on whether you use Windows, Mac or Linux.
 - A great tool for both new and experienced users of R is **RStudio** which can be downloaded [here](https://www.rstudio.com/products/RStudio/).
 

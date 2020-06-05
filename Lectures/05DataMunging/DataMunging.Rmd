@@ -1,8 +1,8 @@
 ---
 title: "Data Munging"
 subtitle: "Data Visualisation and Analytics"
-author: "Anastasios Panagiotelis"
-date: "Lecture 6"
+author: "Anastasios Panagiotelis and Lauren Kennedy"
+date: "Lecture 5"
 output:
   xaringan::moon_reader:
     chakra: libs/remark-latest.min.js
@@ -16,9 +16,9 @@ output:
 
 ---
 
-class: inverse, center, middle
+class: inverse, center middle
 
-# Data is messy
+# Data Import
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
@@ -36,6 +36,182 @@ require(ggmosaic)
 require(GGally)
 ```
 
+
+---
+# Data Import
+
+- Data often stored in a single table.
+--
+
+- Columns are separated by a comma or a tab.
+--
+
+- The `readr` package is very useful for reading files into R as *data frame* objects.
+
+---
+
+#Data frame
+
+- A data frame is an object with:
+  + Each row corresponding to an observation or case,
+  + Each column corresponding to a variable.
+--
+
+- Two types of data frames in R are:
+  + The `data.frame` in base R
+  + The `tibble` in the tidyverse
+
+---
+
+# The readr package
+
+- Two of the more useful functions are `read_csv` and `read_tsv` for comma delimited and tab delimited files respectively.
+--
+
+- Generally the defaults for this function work quite well.
+--
+
+- One argument that is worth discussing a little is `col_types`
+
+---
+
+# Reading in long numbers
+
+- The largest integer that many computers will accurately store is about 19 digits long.
+--
+
+- Some identification numbers are longer than that (for instance IBAN numbers used for bank transfers).
+--
+
+- In some cases, R may try to read these numbers in as integers.
+--
+
+- To avoid errors these should be read in as characters.
+
+---
+
+# Column types
+
+- Specifying `col_types='c'` overrides the default behaviour of `readr`.
+--
+
+- You can use this to force everything to be read in as a character.
+--
+
+- If needed these can subsequently be converted to numeric variables.
+
+---
+
+# Getting Data
+
+- Although data will sometimes be provided to you, it is useful to know some ways to get data off the web.
+--
+
+- This can be integrated into you R workflow.
+--
+
+- Techniques range from commands to download files to more sophisticated *web scraping*. 
+--
+
+- Websites can change so always make sure to save data as well.
+
+---
+
+# Downloading files in R
+
+- As an example consider wholesale electricity prices which can be downloaded online.
+
+```{r, echo=F}
+knitr::include_graphics('img/aemo.png')
+```
+
+Hover over download, right click and obtain link location.
+
+---
+
+# Downloading files in R
+
+The `download.file` function in the `utils` package can be used to download a csv file.
+
+```{r,echo=T, eval=F}
+download.file('https://www.aemo.com.au/aemo/data/nem/priceanddemand/PRICE_AND_DEMAND_202006_NSW1.csv',
+              'data/data_202006_NSW.csv')
+dat<-read_csv('data/data_202006_NSW.csv')
+```
+
+The first argument is the URL the second argument is the location where you want to store the data.
+
+---
+
+# Benefits
+
+- Location were data is retrieved is kept.
+--
+
+- Usually URL are created systematically.  
+  + Data for Victoria will have VIC as part of URL.
+  + Data for May 2020 will have 202005 as part of URL.
+--
+
+- A large number of files can be downloaded and combined using a loop.
+
+---
+
+# Web Scraping
+
+- Some websites do not simply include csv files in the URL.
+--
+
+- Instead the data is embedded in the html of the website itself.
+--
+
+- The R package `rvest` can be used to scrape data from websites.
+--
+
+- The example on the next slides scrape data from Yahoo Finance.
+
+---
+
+# Data from Yahoo Finance
+
+```{r, echo=F}
+knitr::include_graphics('img/yahoo.png')
+```
+
+---
+
+#Scrape Data
+
+```{r,message=F, echo=T}
+library(rvest)
+html<-read_html('https://au.finance.yahoo.com/quote/AAPL/analysis?p=AAPL')
+tab<-html_table(html)
+print(tab[[1]])
+```
+
+---
+
+# Web scraping
+
+- This is only the tip of the iceberg
+--
+
+- Data from many websites will not be as easy to download.
+--
+
+- Some knowledge of html can be useful when using the `html_node` and `html_attr` functions.
+--
+
+- Also useful is the [Selector Gadget](https://selectorgadget.com/) tool.
+--
+
+- Comply with a website's Terms and Conditions when web scraping especially if doing so for commercial reasons.
+---
+
+class: inverse, center, middle
+
+# Data is messy
+
 ---
 
 # Data 
@@ -50,23 +226,17 @@ require(GGally)
 # A few simple functions
 
 - Much can be done with a few simple functions from the `dplyr` package:
-  - Choose variables with `select`
-  - Choose observations with `filter`
-  - Transform variables with `mutate`
+--
+
+  + Choose variables with `select`
+  + Choose observations with `filter`
+  + Transform variables with `mutate`
+--
+
 - In all cases both input and output is a data frame.
 
 ---
 
-#Data frame
-
-- A data frame is an object with:
-  - Each row corresponding to an observation or case,
-  - Each column corresponding to a variable.
-- Two types of data frames in R are:
-  - The `data.frame` in base R
-  - The `tibble` in the tidyverse
-
----
 
 # Diamonds
 
@@ -112,12 +282,18 @@ filter(diamonds,(price>1000))
 # Logical stamtents
 
 - The term `(price>1000)` is an example of a logical statement.  It can be true or false.
+--
+
 - Other examples are
-  - Price less than 1000 `(price<1000)`
-  - Price less than or equal to 1000 `(price<=1000)`
-  - Price not 1000 `(price!=1000)`
-  - Price exactly 1000 `(price==1000)`
+  + Price less than 1000 `(price<1000)`
+  + Price less than or equal to 1000 `(price<=1000)`
+  + Price not 1000 `(price!=1000)`
+  + Price exactly 1000 `(price==1000)`
+--
+
 - Note **two** equals signs.
+--
+
 - In general `!` is the negation of a statement.
 
 ---
@@ -209,8 +385,14 @@ mpgMet
 # The pipe operator
 
 - The fact that the input and output are always data frames makes the pipe operator useful.
+--
+
 - Simply use `%>%` to chain commands together.
+--
+
 - Sometimes it is clearer to use `->` rather than use `<-` for assignment.
+--
+
 ```{r, echo=TRUE}
 c(1,12,4)%>%
   mean%>%
@@ -222,14 +404,16 @@ str(out)
 #Pipes and dplyr
 
 This code
-
+--
 ```{r,echo=TRUE}
 mpgSel<-select(mpg,cty,hwy)
 mpgMet<-mutate(mpgSel,ctyMetric=0.425144*cty,
                   hwyMetric=0.425144*hwy)
 ```
+--
 
 does the same as this code
+--
 
 ```{r,echo=TRUE}
 select(mpg,cty,hwy)%>%
@@ -247,8 +431,14 @@ class: inverse, middle, center
 # Group by function
 
 - A powerful function in `dplyr` is the `group_by` function.
+--
+
 - Used in combination with `summarise`, it can construct  new datasets.
+--
+
 - Consider the `txhousing` dataset.  There is monthly data for each city.
+--
+
 - Suppose the aim is to find total number of sales for all cities in a year.
 
 ---
@@ -275,8 +465,14 @@ TotSales
 #Group by two variables
 
 - In earlier years, data for some cities is unavailable and is filled in as `NA`.
+--
+
 - The option `na.rm=TRUE` removes missing data before taking the sum.
+--
+
 - Next, suppose we want to get the yearly total for each city.
+--
+
 - Need to group by `city` and `year`.
 
 
@@ -346,9 +542,13 @@ kable(eg)%>%
 #Problems
 
 - Carol's entry not a valid email.  
-  - A function can be written to check and remove this.
+  + A function can be written to check and remove this.
+--
+
 - A bigger problem is that the email entry is not **atomic**.  There are two emails for Bin.
   - If code is written to check if the email is valid, then this code will also fail for Bin.
+--
+
 - On the next slide is a solution.
 
 ---
@@ -473,30 +673,40 @@ ggplot(economics,aes(x=uempmed,y=psavert))+
 
 # Use long
 
-```{r,echo=TRUE,fig.height=4.5}
+```{r,echo=TRUE,fig.height=4}
 ggplot(economics_long,aes(x=date,y=value))+
   geom_line()+
   facet_wrap(~variable, scales = 'free_y')
 ```
+
+We will learn about `facet_wrap` later.
 
 ---
 
 # From wide to long
 
 ```{r,echo=TRUE}
-gather(economics,key = Variable, 
-       value = Value,-date)->long
+pivot_longer(economics,
+             cols = -date,
+             names_to = 'Variable',
+             values_to = 'Value')->long
 long
 ```
 
 ---
 
-# Gather function
+# Pivot Longer
 
-- The `key` will be the name of the function that stores the variable name.
-- The `value` will be the name of the variables that stores values.
-- Use `-` to exclude variable(s) from gathering.
-- Here this was done for date
+- The `names_to` will be a variable of column names.
+--
+
+- The `values_to` will be a variable that stores the body of the data frame.
+--
+
+- Use `-` in the `cols` argument to exclude variable(s).
+--
+
+- Here this was done for the `date` variable.
 
 ---
 
@@ -504,58 +714,82 @@ long
 
 ```{r,echo=TRUE}
 economics_long%>%
-  select(-value01)%>%
-  spread(key = variable, 
-         value = value)->wide
+  pivot_wider(id_cols = date,
+              names_from = variable,
+              values_from = value)->wide
 wide
 ```
 
 ---
-class: inverse, center middle
 
-# Data Import
+# Pivot Wider
 
----
-# Data Import
+- The `names_from` will be a variable including column names of the new data frame.
+--
 
-- In many cases data is stored in a *flat database*.
-- This means the data is stored in a single table.
-- Columns are separated by a comma or a tab.
-- Usually this table is contained in a single file.
-- For reading in such data the `readr` package is very useful.
+- The `values_from` will be a variable that will become the body of the new data frame.
+--
+
+- The `id_cols` will be the variables used to identify the observations in the new data frame.
 
 ---
+class: inverse, center, middle
 
-# The readr package
-
-- Two of the more useful functions are `read_csv` and `read_tsv` for comma delimited and tab delimited files respectively.
-- Generally the defaults for this function work quite well.
-- One argument that is worth discussing a little is `col_types`
+# Joins
 
 ---
 
-# Reading in long numbers
+# Join
 
-- The largest integer that many computers will accurately store is about 19 digits long.
-- Some identification numbers are longer than that (for instance IBAN numbers used for bank transfers).
-- In some cases, R may try to read these numbers in as integers.
-- To avoid errors these should be read in as characters.
+- Often we work with two data tables.
+--
+
+- We will consider an example with two datasets
+--
+
+  + Electricity price, demand and export
+  + Maximum Temperature, Wind Direction and Wind Speed
+--
+
+- We want to combine these two datasets.
 
 ---
 
-# Column types
+# Energy data
 
-- Specifying `col_types='c'` overrides the default behaviour of `readr`.
-- You can use this to force everything to be read in as a string.
-- If needed these can subsequently be converted to numeric variables using `as.numeric`.
+```{r,echo=T,message=FALSE}
+energy<-read_csv('data/energydata.csv')
+energy
+```
 
 ---
-# Summary
 
-- With a small number of functions, much can be done
-  - `select`, `filter`, `mutate`
-  - `group_by`, `summarise`
-  - `gather`, `spread`
-- Mastering these functions takes practice.
-- Often these functions are the key to creating plots.
+```{r,echo=T,message=FALSE}
+weather<-read_csv('data/weather.csv')
+weather
+```
+
+---
+
+# Joined data
+
+```{r,echo=T}
+all_data<-inner_join(energy,weather)
+all_data
+```
+
+---
+
+# Types of join
+
+- Using `inner_join(x,y)` returns all rows from `x` with matching values in `y`.
+--
+
+- Using `left_join(x,y)` returns all rows from `x` with matching values in `y`, with `NA` if there is no match.
+--
+
+- Using `right_join(x,y)` returns all rows from `y` with matching values in `x`, with `NA` if there is no match.
+--
+
+- Using `right_join(x,y)` returns all rows from `x` or `y` with `NA` if there is no match.
 
