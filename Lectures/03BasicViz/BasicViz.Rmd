@@ -246,8 +246,9 @@ class:inverse, middle center
 
 - **10** in hexadecimal is $1\times 16+0=16$ in decimal
 - **1a** in hexadecimal is $1\times 16+10=26$ in decimal
-- **2b** in hexadecimal is $2\times 16+11=42$ in decimal
+- **2b** in hexadecimal is $2\times 16+11=43$ in decimal
 - What is e4 in decimal?
+
 ---
 
 # Color picker 

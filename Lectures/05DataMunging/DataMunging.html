@@ -110,7 +110,7 @@ class: inverse, center middle
 
 # Downloading files in R
 
-- As an example consider wholesale electricity prices which can be downloaded online.
+- As an example consider wholesale electricity prices which can be downloaded [online](https://www.aemo.com.au/energy-systems/electricity/national-electricity-market-nem/data-nem/aggregated-data).
 
 &lt;img src="img/aemo.png" width="2476" style="display: block; margin: auto;" /&gt;
 
@@ -158,7 +158,7 @@ The first argument is the URL the second argument is the location where you want
 - The R package `rvest` can be used to scrape data from websites.
 --
 
-- The example on the next slides scrape data from Yahoo Finance.
+- The example on the next slides scrape data from [Yahoo Finance](https://finance.yahoo.com/quote/AAPL/analysis?p=AAPL).
 
 ---
 
@@ -1091,10 +1091,10 @@ long
 
 
 ```r
-economics_long%&gt;%
-  pivot_wider(id_cols = date,
-              names_from = variable,
-              values_from = value)-&gt;wide
+pivot_wider(economics_long,
+            id_cols = date,
+            names_from = variable,
+            values_from = value)-&gt;wide
 wide
 ```
 
@@ -1177,6 +1177,8 @@ energy
 
 ---
 
+# Weather data
+
 
 ```r
 weather&lt;-read_csv('data/weather.csv')
@@ -1247,7 +1249,7 @@ all_data
 - Using `right_join(x,y)` returns all rows from `y` with matching values in `x`, with `NA` if there is no match.
 --
 
-- Using `right_join(x,y)` returns all rows from `x` or `y` with `NA` if there is no match.
+- Using `full_join(x,y)` returns all rows from `x` or `y` with `NA` if there is no match.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
