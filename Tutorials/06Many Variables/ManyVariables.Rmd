@@ -2,7 +2,7 @@
 output: pdf_document
 urlcolor: blue
 author: "Department of Econometrics and Business Statistics, Monash University"
-date: "Tutorial 5"
+date: "Tutorial 6"
 ---
 
 ```{r, echo = FALSE}
@@ -23,17 +23,52 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Swiss Data
 
-  1. Repeat question 3 from last week but use text to represent the country and color to represent the region. Note these regions are very loosely defined for instance Mexico could easily be in North America, and the Central Asian (CA) could be better named the former Soviet region, etc.
+1. Plot time series line plots of yearly Swiss exports to Germany (DE), the USA (US), China (CN) and India (IN).  Facet by country.
+
+```{r, echo = sols, eval=sols, message=FALSE}
+#The following block of code was all covered in the previous tutorial
+library(tidyverse)
+SwissWide<-read_csv('SwissExportsFull.csv')%>%
+  rename(`NA`=X154)%>%
+  pivot_longer(cols=c(-Date,-Year),
+               names_to = 'Country', 
+               values_to =  'Exports')%>%
+  group_by(Year,Country)%>%
+  summarise(YearlyExports=sum(Exports))->SwissYearly
+
+#New code below
+SwissYearly%>%
+  filter(Country %in% c('DE','US','CN','IN'))%>%
+  ggplot(aes(x=Year,y=YearlyExports))+
+  geom_line()+
+  facet_wrap(~Country)
+```
+
+2. Plot these four lines on a single plot with each country in a different colour.  Hint: Use the aesthetic `col`.
+
+```{r, echo = sols, eval=sols, message=FALSE}
+SwissYearly%>%
+  filter(Country %in% c('DE','US','CN','IN'))%>%
+  ggplot(aes(x=Year,y=YearlyExports,col=Country))+
+  geom_line()
+```
+
+3. Comment on these plots
+
+`r if(sols) "*Both plots show the same information, Swiss exports are mostly trending upwards, Germany and the US are much bigger trading partners for Switzerland than China and India.  Any seasonality has been lost by taking the yearly aggregate.*\n\n *The second plot allows us to more easily line up the impact of the GFC. There was a drop in exports to all markets but this was most pronounced in Germany and hardly there at all in China and India.  Post GFC the recovery in exports has been quickest and strongest for the US and China.  Exports to Germany were volatile but have picked up in the last three years while growth in exports to India has stagnated*"`  
+
+
+4. Construct the same scatterplot from Question 3 of tutorial 3.  Use text to represent the country and color to represent the region. Note these regions are very loosely defined for instance Mexico could easily be in North America, and the Central Asian (CA) could be better named the former Soviet region, etc.
   
 ```{r, echo = sols, eval=sols, message=FALSE}
-  library(tidyverse)
-  SwissE<-readRDS('SwissExport.rds')
-  ggplot(SwissE,
-         aes(x=ExportsJan1988,
+  SwissExp<-readRDS('SwissExport.rds')
+  SwissExp%>%
+    filter((ExportsJan1988!=0)&(ExportsDec2018!=0))%>%
+    ggplot(aes(x=ExportsJan1988,
              y=ExportsDec2018,
-             col=Region, #Region mapped to color
-             label=Country))+ #Country mapped to label
-           geom_text()+ #use geom_text not geom_point
+             label=Country,
+             col=Region))+
+    geom_text(size=2)+
     scale_x_log10()+scale_y_log10()
 ```
 
@@ -45,16 +80,16 @@ knitr::opts_chunk$set(echo = TRUE)
   
 ```{r, echo = sols, eval=sols, message=FALSE}
   library(tidyverse)
-  SwissE<-readRDS('SwissExport.rds')
-  ggplot(SwissE,
-         aes(x=ExportsJan1988,
+  SwissExp%>%
+    filter((ExportsJan1988!=0)&(ExportsDec2018!=0))%>%
+    ggplot(aes(x=ExportsJan1988,
              y=ExportsDec2018,
-             col=Region, #Region mapped to color
-             label=Country))+ #Country mapped to label
-           geom_text(size=2)+ #use geom_text not geom_point
-    scale_x_log10()+scale_y_log10()+
+             label=Country))+
+    geom_text(size=2)+
+    scale_x_log10()+scale_y_log10()
     facet_wrap(~Region,nrow = 4)
 ```  
+
 
 # U.S. States Data
 
