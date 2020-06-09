@@ -9,7 +9,7 @@ date: "Tutorial 5"
 ```{r, echo = FALSE}
 #rmarkdown::render('DataMunging.Rmd',output_file='DataMunging.pdf')
 #rmarkdown::render('DataMunging.Rmd',output_file='DataMungingSols.pdf')
-sols<-TRUE
+sols<-FALSE
 title<-ifelse(sols, 'DataVizA Tutorial: Data Munging: Solutions','DataVizA Tutorial: Data Munging')
 ```
 
@@ -57,7 +57,7 @@ SwissLong<-pivot_longer(data = SwissWide,
 SwissLong
 ```
 
-3. Recall that in the previous tutorial, one issue was that monthly data were noisy.  Using `group_by` and `summarise` create a new dataset of yearly aggregate exports to each country.
+3. Using `group_by` and `summarise` create a new dataset of yearly aggregate exports to each country.
 
 ```{r, echo = sols, eval=sols, message=FALSE}
 SwissLong%>% #This is much easier with long data
@@ -98,7 +98,7 @@ SwissYearlyWide%>%
 
 ## Options data
 
-The following example uses Options data from Yahoo Finance. The owner of an put option has the right (but not the obligation) to sell stocks at a predetermined price (the Strike Price) on some fixed date (the Expiry date). A call is the same but gives the owner the right to buy stocks.  
+The following example uses Options data from Yahoo Finance. The owner of an put option has the right (but not the obligation) to sell stocks at a predetermined price (the Strike Price) on some fixed date (the Expiry date). A call option is the same but gives the owner the right to buy stocks.  
 
 The objective of this exercise is to produce the well-known *volatility smile* result from finance.  This result states that for a given Expiry date, a plot of Implied Volatilty against Strike Price is U-shaped.  Implied Volatilty is the volatilty of a stock that is computed from stock option data assuming a specific pricing model.  The exercise uses the data `apple_options.csv` which can be found on Moodle. 
 
@@ -110,7 +110,7 @@ apple<-read_csv('apple_options.csv')
 
 ```
 
-2. The Implied Volatility has been imported as a character variable.  To plot this is must be converted to a numeric variable.  Create this using the `mutate` function.
+2. The Implied Volatility has been imported as a character variable.  To plot this it must be converted to a numeric variable.  Create this using the `mutate` function.
 
 Hint: The following code removes the percentage sign, converts to numeric and divides by 100.
 
@@ -205,12 +205,14 @@ url%>%
 
 `r if(sols) '*This returns a list with first element:*'`
 
-```{r, echo=F}
+```{r, echo=F, eval=sols}
 data[[1]]%>%
-  as_tibble()%>%
-  print
+  as_tibble()->d1t
 ```
 
+```{r, echo=F,eval=sols}
+print(d1t)
+```
 ## First Normal Form
 
 Discuss whether the following databases satisfy first normal form.
