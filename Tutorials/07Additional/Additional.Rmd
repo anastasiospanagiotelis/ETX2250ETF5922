@@ -90,10 +90,11 @@ SwissWide<-read_csv('SwissExportsFull.csv')%>%
   rename(`NA`=X154)
 
 #Convert to long form
-SwissLong<-gather(data = SwissWide,
-       key = Country, #Column names become variable
-       value = Exports, #All numbers are exports
-       -Date,-Year) #Do not gather these variables
+SwissLong<-pivot_longer(data = SwissWide,
+                        cols = c(-Date, -Year), #Do not use these variables 
+                        names_to = 'Country', #Column names become variable
+                        values_to = 'Exports') #All numbers are exports
+                          
 
 #Create yearly aggregate
 SwissLong%>% #This is much easier with long data
@@ -101,11 +102,12 @@ SwissLong%>% #This is much easier with long data
   group_by(Year,Country)%>%
   summarise(YearlyExports=sum(Exports))->SwissYearly
 
-#Select Germany and US spread
+#Select Germany and US 
 SwissYearly%>%
   filter(Country %in% c('DE','US'))%>%
-  spread(Country,YearlyExports)->
-  Exports_DE_US
+  pivot_wider(id_cols = Year,
+              names_from = Country, 
+              values_from = YearlyExports)->Exports_DE_US
 
 #Finally make plot
 
