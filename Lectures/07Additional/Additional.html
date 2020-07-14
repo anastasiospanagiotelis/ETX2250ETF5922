@@ -3,7 +3,7 @@
   <head>
     <title>Additional Issues</title>
     <meta charset="utf-8" />
-    <meta name="author" content="Anastasios Panagiotelis" />
+    <meta name="author" content="Anastasios Panagiotelis and Lauren Kennedy" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <script src="libs/htmlwidgets/htmlwidgets.js"></script>
     <script src="libs/pymjs/pym.v1.js"></script>
@@ -17,7 +17,7 @@ class: center, middle, inverse, title-slide
 
 # Additional Issues
 ## Data Visualisation and Analytics
-### Anastasios Panagiotelis
+### Anastasios Panagiotelis and Lauren Kennedy
 ### Lecture 7
 
 ---
@@ -166,7 +166,9 @@ txhousing%&gt;%
   select(date,sales,listings)-&gt;houston_sales_listings
 
 houston_sales_listings%&gt;%
-  gather('variable','value',-date)%&gt;%
+  pivot_longer(cols = -date, 
+               names_to = 'variable', 
+               values_to = 'value')%&gt;%
   ggplot(aes(x=date,y=value,group=variable))+
   geom_line()
 ```
@@ -321,11 +323,21 @@ ggplot(mpg,aes(x=displ,y=cty))+
 
 # Local fit
 
+
+```
+## `geom_smooth()` using formula 'y ~ x'
+```
+
 &lt;img src="Additional_files/figure-html/unnamed-chunk-20-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
 #Nearest Neighbours
+
+
+```
+## `geom_smooth()` using formula 'y ~ x'
+```
 
 &lt;img src="Additional_files/figure-html/unnamed-chunk-21-1.png" style="display: block; margin: auto;" /&gt;
 
@@ -351,6 +363,10 @@ ggplot(mpg,aes(x=displ,y=cty))+
   geom_point()+geom_smooth(method = 'lm')
 ```
 
+```
+## `geom_smooth()` using formula 'y ~ x'
+```
+
 &lt;img src="Additional_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" /&gt;
 ---
 
@@ -360,6 +376,10 @@ ggplot(mpg,aes(x=displ,y=cty))+
 ```r
 ggplot(mpg,aes(x=displ,y=cty,col=drv))+
   geom_point()+geom_smooth(method = 'lm')
+```
+
+```
+## `geom_smooth()` using formula 'y ~ x'
 ```
 
 &lt;img src="Additional_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" /&gt;

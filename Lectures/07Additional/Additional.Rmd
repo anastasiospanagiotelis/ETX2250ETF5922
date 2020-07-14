@@ -1,7 +1,7 @@
 ---
 title: "Additional Issues"
 subtitle: "Data Visualisation and Analytics"
-author: "Anastasios Panagiotelis"
+author: "Anastasios Panagiotelis and Lauren Kennedy"
 date: "Lecture 7"
 output:
   xaringan::moon_reader:
@@ -151,7 +151,9 @@ txhousing%>%
   select(date,sales,listings)->houston_sales_listings
 
 houston_sales_listings%>%
-  gather('variable','value',-date)%>%
+  pivot_longer(cols = -date, 
+               names_to = 'variable', 
+               values_to = 'value')%>%
   ggplot(aes(x=date,y=value,group=variable))+
   geom_line()
 ```
