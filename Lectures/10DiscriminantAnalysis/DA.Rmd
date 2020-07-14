@@ -1,7 +1,7 @@
 ---
 title: "Discriminant Analysis"
 subtitle: "Data Visualisation and Analytics"
-author: "Anastasios Panagiotelis"
+author: "Anastasios Panagiotelis and Lauren Kennedy"
 date: "Lecture 10"
 output:
   xaringan::moon_reader:
