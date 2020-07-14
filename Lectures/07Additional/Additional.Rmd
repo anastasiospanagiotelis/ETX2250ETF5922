@@ -343,7 +343,7 @@ ggplot(df,aes(x=x,col=nn))+geom_rug(size=1.5)+theme(legend.position = 'none')+ge
 
 # Local fit
 
-```{r}
+```{r, message=F}
 ggplot(df,aes(x=x,col=nn))+geom_rug(size=1.5)+theme(legend.position = 'none')+geom_point(data = df[2:20,],mapping = aes(x=x,y=y,col=nn),size=3)+scale_color_manual(values = c("#E69F00", "#56B4E9", "#009E73"))+geom_smooth(data = filter(df,nn=='nn'),mapping = aes(x=x,y=y),method = 'lm',se = F)
 ```
 
@@ -351,7 +351,7 @@ ggplot(df,aes(x=x,col=nn))+geom_rug(size=1.5)+theme(legend.position = 'none')+ge
 
 #Nearest Neighbours
 
-```{r}
+```{r,message=F}
 lmloc<-lm(data = filter(df,nn=='nn'),y~x)
 y0<-predict.lm(lmloc,newdata = filter(df,nn=='x0'))%>%as.numeric
 df$y[q]<-y0
