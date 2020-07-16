@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Ethics as a Data Scientist</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Anastasios Panagiotelis and Lauren Kennedy" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/mtheme.css" type="text/css" />
+    <link rel="stylesheet" href="css/mod.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Ethics as a Data Scientist
+## Data Visualisation and Analytics
+### Anastasios Panagiotelis and Lauren Kennedy
+### Lecture 04
+
+---
+
+
+class: inverse, center, middle
+
+
+
+---
+
+# Why does ethical practice matter?
+
+- Legal responsibility 
+--
+
+- Institutional requirements
+--
+
+- Moral &amp; Social responsibility 
+--
+---
+
+# How to consider 
+
+- Not about following a series of rules
+--
+
+- About having a discussion about risk, risk mitigation and benefits
+--
+
+- Not a single decision, but ongoing conversation
+--
+---
+
+# Things to consider
+
+- Data collection
+--
+
+- Data storage
+--
+
+- Analysis
+--
+
+- Communication
+--
+
+- Deployment
+--
+---
+class: inverse, center, middle
+
+# Data collection
+
+---
+
+# Data collection
+
+- Often something that happens before data scientist/statisticians are involved in the project
+--
+
+- Can determine the structure and nature of the data we recieve
+--
+---
+
+# Informed consent
+- Do participants understand how the data will be used?
+--
+
+- Are participants capable of giving consent (e.g., children)
+--
+
+- Is there coersion? 
+--
+
+- Do participants understand the risks?
+--
+
+- What happens to any incentive if participants drop out halfway through
+  
+---
+
+# Collection bias
+- Who has the potential to be represented in the data?
+--
+
+-  How was the data collected?
+--
+
+- What are the limitations in the data collection method?
+--
+
+- Will the collection method limit generalization?
+
+---
+
+# Limit exposure
+- Only collect the data you need
+
+--
+- Do you need to collect contact information? 
+  + What happens if you need to contact someone (e.g., test results)
+
+--
+- If you do collect personal information, does it need to be linked to the rest of the data? 
+
+---
+class: inverse, center, middle
+# Data storage
+
+---
+
+# Data security
+
+- Often determined by the data stakeholders (generally who collects the data, but not always)
+--
+
+- If you didn't collect the data, and haven't been told how to store it, ask whoever gave it you
+--
+
+- As a general rule, if you don't have permission to share someone else's data, don't.
+--
+
+---
+
+# Data storage
+
+- Try not to store even public data on sites like Github. 
+  + Public, freely available data often require consent/agreement to particular stewardship practices
+  + Instead provide directions on how to download, and when you downloaded
+--
+
+- If data is sent to you with a type of procedure, use this encryption as a default for all data transfer in future
+  + for example encrypted zip file with password sent via text
+  
+---
+
+# Right to be forgotten
+
+- General Data Protection Regulation in 2014 added a section on the right to be forgotten. Under this, any EU citizen has the right to request that personal data be removed. For more see here https://gdpr-info.eu/issues/right-to-be-forgotten/.
+
+---
+
+# Data retention plan
+
+- Is there a plan to archive the data for replication of results? How will you ensure that the meaning of the data and any idiosyncracies be recorded?
+--
+
+- How will you protect the security of the data in the future? Who will be responsible? Do you have a plan for changing archival procedures as technology changes (e.g., storing on floppy disks)
+
+---
+
+# Data retention plan
+
+- Will data be deleted after a certain period of time? If so, who is responsible for doing that? Who confirms that it has been completed adequately?
+--
+
+- Will the data be kept for future analyses? Did the individuals consent to this analysis? How will permission be granted?
+---
+class: inverse, center, middle
+# Data fairness
+
+---
+
+# Data
+
+- Sampling bias
+(where your sample doesn't represent the population you're interested in)
+--
+
+- Selective labels
+(where there is more measurement error for some parts of your sample than others)
+--
+
+- Systematic Error
+(when societal differences can make the conclusions you draw from data)
+
+---
+
+# Model
+
+- Modelling choices and justification
+--
+
+- Interpretability
+--
+
+- Evaluation 
+
+---
+
+# Communication
+
+- Do the analyses, summaries and visualizations accurately reflect the data?
+--
+
+- Are the results reported with reflection on limitations of the data and analysis?
+--
+
+- Does the data/model/assumptions justify the generalizations made with the data?
+--
+
+- Have we provided our results with sufficient detail to communicate the decisions made in conducting the analysis (reproducibility?)
+--
+
+- Have we sought feedback from relevant members of the communities which our results are likely to effect?
+
+---
+class: inverse, center, middle
+# Deployment
+
+---
+
+# Deployment 
+
+- Do you have a plan for halting the use of your model once it is in production?
+--
+
+- For models that will be updated - do we have a plan to evaluate whether the algorithm will become less fair?
+--
+
+- For models that will not be updated - do we clearly state when the results generalize to or have a plan for identifying when the results no longer change (e.g., due to society changing?)
+
+--
+
+---
+class: inverse, center, middle
+# Resources
+---
+
+# Resources
+
+- Ethical practice checklist https://deon.drivendata.org/
+--
+
+- GDPR copy https://gdpr-info.eu/
+--
+
+- The national statement on ethical conduct in human research https://www.nhmrc.gov.au/about-us/publications/national-statement-ethical-conduct-human-research-2007-updated-2018
+--
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

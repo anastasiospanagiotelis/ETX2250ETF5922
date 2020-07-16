@@ -1,0 +1,270 @@
+---
+title: "Ethics as a Data Scientist"
+subtitle: "Data Visualisation and Analytics"
+author: "Anastasios Panagiotelis and Lauren Kennedy"
+date: "Lecture 04"
+output:
+  xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css: [default,"css/mtheme.css","css/mod.css"]
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      
+---
+
+class: inverse, center, middle
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
+require(magrittr)
+require(tidyverse)
+require(plotly)
+require(widgetframe)
+require(animation)
+require(DT)
+require(PoEdata)
+require(kableExtra)
+require(gridExtra)
+require(ggmosaic)
+```
+
+---
+
+# Why does ethical practice matter?
+
+- Legal responsibility 
+--
+
+- Institutional requirements
+--
+
+- Moral & Social responsibility 
+--
+---
+
+# How to consider 
+
+- Not about following a series of rules
+--
+
+- About having a discussion about risk, risk mitigation and benefits
+--
+
+- Not a single decision, but ongoing conversation
+--
+---
+
+# Things to consider
+
+- Data collection
+--
+
+- Data storage
+--
+
+- Analysis
+--
+
+- Communication
+--
+
+- Deployment
+--
+---
+class: inverse, center, middle
+
+# Data collection
+
+---
+
+# Data collection
+
+- Often something that happens before data scientist/statisticians are involved in the project
+--
+
+- Can determine the structure and nature of the data we recieve
+--
+---
+
+# Informed consent
+- Do participants understand how the data will be used?
+--
+
+- Are participants capable of giving consent (e.g., children)
+--
+
+- Is there coersion? 
+--
+
+- Do participants understand the risks?
+--
+
+- What happens to any incentive if participants drop out halfway through
+  
+---
+
+# Collection bias
+- Who has the potential to be represented in the data?
+--
+
+-  How was the data collected?
+--
+
+- What are the limitations in the data collection method?
+--
+
+- Will the collection method limit generalization?
+
+---
+
+# Limit exposure
+- Only collect the data you need
+
+--
+- Do you need to collect contact information? 
+  + What happens if you need to contact someone (e.g., test results)
+
+--
+- If you do collect personal information, does it need to be linked to the rest of the data? 
+
+---
+class: inverse, center, middle
+# Data storage
+
+---
+
+# Data security
+
+- Often determined by the data stakeholders (generally who collects the data, but not always)
+--
+
+- If you didn't collect the data, and haven't been told how to store it, ask whoever gave it you
+--
+
+- As a general rule, if you don't have permission to share someone else's data, don't.
+--
+
+---
+
+# Data storage
+
+- Try not to store even public data on sites like Github. 
+  + Public, freely available data often require consent/agreement to particular stewardship practices
+  + Instead provide directions on how to download, and when you downloaded
+--
+
+- If data is sent to you with a type of procedure, use this encryption as a default for all data transfer in future
+  + for example encrypted zip file with password sent via text
+  
+---
+
+# Right to be forgotten
+
+- General Data Protection Regulation in 2014 added a section on the right to be forgotten. Under this, any EU citizen has the right to request that personal data be removed. For more see here https://gdpr-info.eu/issues/right-to-be-forgotten/.
+
+---
+
+# Data retention plan
+
+- Is there a plan to archive the data for replication of results? How will you ensure that the meaning of the data and any idiosyncracies be recorded?
+--
+
+- How will you protect the security of the data in the future? Who will be responsible? Do you have a plan for changing archival procedures as technology changes (e.g., storing on floppy disks)
+
+---
+
+# Data retention plan
+
+- Will data be deleted after a certain period of time? If so, who is responsible for doing that? Who confirms that it has been completed adequately?
+--
+
+- Will the data be kept for future analyses? Did the individuals consent to this analysis? How will permission be granted?
+---
+class: inverse, center, middle
+# Data fairness
+
+---
+
+# Data
+
+- Sampling bias
+(where your sample doesn't represent the population you're interested in)
+--
+
+- Selective labels
+(where there is more measurement error for some parts of your sample than others)
+--
+
+- Systematic Error
+(when societal differences can make the conclusions you draw from data)
+
+---
+
+# Model
+
+- Modelling choices and justification
+--
+
+- Interpretability
+--
+
+- Evaluation 
+
+---
+
+# Communication
+
+- Do the analyses, summaries and visualizations accurately reflect the data?
+--
+
+- Are the results reported with reflection on limitations of the data and analysis?
+--
+
+- Does the data/model/assumptions justify the generalizations made with the data?
+--
+
+- Have we provided our results with sufficient detail to communicate the decisions made in conducting the analysis (reproducibility?)
+--
+
+- Have we sought feedback from relevant members of the communities which our results are likely to effect?
+
+---
+class: inverse, center, middle
+# Deployment
+
+---
+
+# Deployment 
+
+- Do you have a plan for halting the use of your model once it is in production?
+--
+
+- For models that will be updated - do we have a plan to evaluate whether the algorithm will become less fair?
+--
+
+- For models that will not be updated - do we clearly state when the results generalize to or have a plan for identifying when the results no longer change (e.g., due to society changing?)
+
+--
+
+---
+class: inverse, center, middle
+# Resources
+---
+
+# Resources
+
+- Ethical practice checklist https://deon.drivendata.org/
+--
+
+- GDPR copy https://gdpr-info.eu/
+--
+
+- The national statement on ethical conduct in human research https://www.nhmrc.gov.au/about-us/publications/national-statement-ethical-conduct-human-research-2007-updated-2018
+--
+
+
